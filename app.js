@@ -167,44 +167,31 @@
   }
 
   const soundButton=document.querySelector('#sound-toggle'),soundLabel=document.querySelector('#sound-label');
-  let audioContext,masterGain,audioIsOn=false,soundBusy=false,musicTimer=null,nextBeat=0,musicBeat=0;
-  const voices=new Set();
-  const beatLength=60/96;
-  const harmony=[[48,52,55],[43,47,50],[45,48,52],[41,45,48]];
-  const melody=[64,67,69,67,62,59,62,67,69,72,71,69,67,64,65,64,64,67,72,71,67,62,67,69,69,67,64,62,65,64,62,60];
-  const frequency=midi=>440*Math.pow(2,(midi-69)/12);
-  function tone(midi,at,duration,level,type='triangle'){
-    const osc=audioContext.createOscillator(),gain=audioContext.createGain();osc.type=type;osc.frequency.value=frequency(midi);
-    gain.gain.setValueAtTime(0,at);gain.gain.linearRampToValueAtTime(level,at+.018);gain.gain.exponentialRampToValueAtTime(.0001,at+duration);
-    osc.connect(gain);gain.connect(masterGain);osc.start(at);osc.stop(at+duration+.03);voices.add(osc);
-    osc.onended=()=>{voices.delete(osc);osc.disconnect();gain.disconnect();};
-  }
-  function scheduleMusic(){
-    if(!audioIsOn)return;
-    while(nextBeat<audioContext.currentTime+.3){
-      const chord=harmony[Math.floor(musicBeat/4)%4],step=musicBeat%4;
-      if(step===0){chord.forEach((n,i)=>tone(n+12,nextBeat+i*.025,beatLength*3.9,.085));tone(chord[0]-12,nextBeat,beatLength*2.7,.16,'sine');}
-      tone(chord[step%3]+12,nextBeat+beatLength*.5,beatLength*.75,.075);
-      tone(melody[musicBeat%melody.length],nextBeat,beatLength*1.45,.14);
-      nextBeat+=beatLength;musicBeat++;
-    }
+  const bgm=new Audio('assets/youth-bgm.mp3');
+  bgm.loop=true;bgm.preload='auto';bgm.volume=.75;
+  let audioIsOn=false,soundEpoch=0;
+  function soundUI(){
+    soundButton.setAttribute('aria-pressed',String(audioIsOn));
+    soundLabel.textContent=audioIsOn?'音 ON':'音 OFF';
   }
   async function setSound(on){
-    if(soundBusy)return;soundBusy=true;
+    const epoch=++soundEpoch;
+    if(!on){bgm.pause();audioIsOn=false;soundUI();return;}
+    soundLabel.textContent='音 読込中';
     try{
-      if(on){
-        if(!audioContext){audioContext=new (window.AudioContext||window.webkitAudioContext)();masterGain=audioContext.createGain();masterGain.gain.value=0;masterGain.connect(audioContext.destination);}
-        await audioContext.resume();audioIsOn=true;nextBeat=audioContext.currentTime+.06;musicBeat=0;
-        masterGain.gain.cancelScheduledValues(audioContext.currentTime);masterGain.gain.setValueAtTime(0,audioContext.currentTime);masterGain.gain.linearRampToValueAtTime(.48,audioContext.currentTime+.6);
-        clearInterval(musicTimer);scheduleMusic();musicTimer=setInterval(scheduleMusic,100);
-      }else{
-        audioIsOn=false;clearInterval(musicTimer);musicTimer=null;
-        if(audioContext){masterGain.gain.cancelScheduledValues(audioContext.currentTime);masterGain.gain.setValueAtTime(0,audioContext.currentTime);for(const osc of voices){try{osc.stop();}catch{}}voices.clear();await audioContext.suspend();}
-      }
-      soundButton.setAttribute('aria-pressed',String(audioIsOn));soundLabel.textContent=audioIsOn?'音 ON':'音 OFF';
-    }catch{audioIsOn=false;clearInterval(musicTimer);soundButton.setAttribute('aria-pressed','false');soundLabel.textContent='音 OFF';announce('音楽を再生できませんでした。音なしでもムービーを楽しめます。');}
-    finally{soundBusy=false;}
+      // Call play within the tap handler; iPad routes media through playback audio.
+      await bgm.play();
+      if(epoch!==soundEpoch)return;
+      audioIsOn=!bgm.paused;soundUI();
+    }catch(error){
+      if(epoch!==soundEpoch)return;
+      audioIsOn=false;soundUI();
+      announce('音楽を開始できませんでした。「音 OFF」を押すと再試行できます。');
+    }
   }
+  bgm.addEventListener('pause',()=>{audioIsOn=false;soundUI();});
+  bgm.addEventListener('playing',()=>{audioIsOn=true;soundUI();});
+  bgm.addEventListener('error',()=>{audioIsOn=false;soundUI();announce('音楽を読み込めませんでした。ページを再読み込みしてください。');});
   soundButton.addEventListener('click',()=>{const next=!audioIsOn;if(movieOn)movieMusicWanted=next;setSound(next);});
 
   const film=['start','stairs','panorama','door','glass','chapel','corridor','morning','lunch','friends','after','windowTalk','ideas','summerWindow','summerFriends','summerIdeas','sunset','end'];
@@ -234,7 +221,7 @@
     if(busy){announce('場面が変わったら、もう一度再生してください。');return;}
     movieOn=true;moviePaused=false;movieMusicWanted=true;movieEpoch++;movieIndex=0;setLandscape(false);stage.classList.add('is-cinema');moviePanel.hidden=false;movieLaunch.hidden=true;
     // Resume audio directly from this user gesture for Safari on iPad.
-    const music=setSound(true);await movieGo(0);await music;movieUI();moviePlay.focus({preventScroll:true});
+    bgm.currentTime=0;const music=setSound(true);await movieGo(0);await music;movieUI();moviePlay.focus({preventScroll:true});
   }
   function pauseMovie(){moviePaused=true;clearTimeout(movieTimer);movieUI();setSound(false);}
   function exitMovie(){movieOn=false;movieEpoch++;clearTimeout(movieTimer);moviePaused=true;stage.classList.remove('is-cinema','movie-paused');moviePanel.hidden=true;movieLaunch.hidden=false;setSound(false);movieLaunch.focus({preventScroll:true});}
