@@ -116,7 +116,20 @@
   const hotspotLayer=document.querySelector('#scene-hotspots');
   const routeDialog=document.querySelector('#route-dialog');
   let cameraX=0,cameraY=0,cameraZoom=1.08,dragState=null,landscapeOnly=false;
-  function applyCamera(){stage.style.setProperty('--camera-x',cameraX+'px');stage.style.setProperty('--camera-y',cameraY+'px');stage.style.setProperty('--camera-zoom',String(cameraZoom));}
+  function cameraGeometry(plane){
+    const img=plane.querySelector('img'),w=stage.clientWidth,h=stage.clientHeight;
+    const cover=Math.max(w/(img.naturalWidth||w),h/(img.naturalHeight||h));
+    const width=(img.naturalWidth||w)*cover,height=(img.naturalHeight||h)*cover;
+    const focus=(plane.style.getPropertyValue(w<=700?'--mobile-focus':'--focus')||'50% 50%').trim().split(/\s+/).map(v=>parseFloat(v)/100);
+    const left=(w-width)*focus[0],top=(h-height)*(focus[1]??.5);
+    return {img,width,height,left,top,minX:w-left-width-(cameraZoom-1)*width/2,maxX:-left+(cameraZoom-1)*width/2,minY:h-top-height-(cameraZoom-1)*height/2,maxY:-top+(cameraZoom-1)*height/2};
+  }
+  function applyCamera(){
+    const bounds=cameraGeometry(planes[activePlane]);
+    cameraX=Math.max(bounds.minX,Math.min(bounds.maxX,cameraX));cameraY=Math.max(bounds.minY,Math.min(bounds.maxY,cameraY));
+    for(const plane of planes){const g=cameraGeometry(plane);g.img.style.width=g.width+'px';g.img.style.height=g.height+'px';g.img.style.left=g.left+'px';g.img.style.top=g.top+'px';}
+    stage.style.setProperty('--camera-x',cameraX+'px');stage.style.setProperty('--camera-y',cameraY+'px');stage.style.setProperty('--camera-zoom',String(cameraZoom));
+  }
   function resetCamera(){cameraX=0;cameraY=0;cameraZoom=motionOff?1:1.08;applyCamera();}
   function renderHotspots(scene){
     hotspotLayer.replaceChildren();
@@ -139,8 +152,9 @@
   document.querySelector('#view-reset').addEventListener('click',resetCamera);
   window.addEventListener('resize',resetCamera);
   const surface=document.querySelector('#look-surface');
-  surface.addEventListener('pointerdown',event=>{if(busy||motionOff)return;dragState={x:event.clientX,y:event.clientY,originX:cameraX,originY:cameraY};surface.setPointerCapture(event.pointerId);stage.classList.add('is-looking');});
-  surface.addEventListener('pointermove',event=>{if(!dragState)return;const maxX=innerWidth*(cameraZoom-1)/2*.8,maxY=innerHeight*(cameraZoom-1)/2*.8;cameraX=Math.max(-maxX,Math.min(maxX,dragState.originX+(event.clientX-dragState.x)*.5));cameraY=Math.max(-maxY,Math.min(maxY,dragState.originY+(event.clientY-dragState.y)*.5));applyCamera();});
+  surface.addEventListener('pointerdown',event=>{if(busy)return;dragState={x:event.clientX,y:event.clientY,originX:cameraX,originY:cameraY};surface.setPointerCapture(event.pointerId);stage.classList.add('is-looking');});
+  surface.addEventListener('pointermove',event=>{if(!dragState)return;cameraX=dragState.originX+event.clientX-dragState.x;cameraY=dragState.originY+event.clientY-dragState.y;applyCamera();});
+  planes.forEach(plane=>plane.querySelector('img').addEventListener('load',applyCamera));
   function stopLooking(){dragState=null;stage.classList.remove('is-looking');}
   surface.addEventListener('pointerup',stopLooking);surface.addEventListener('pointercancel',stopLooking);
   document.querySelector('#route-toggle').addEventListener('click',()=>{

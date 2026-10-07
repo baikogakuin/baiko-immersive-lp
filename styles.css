@@ -55,3 +55,6 @@ html[data-motion=off] .look-hint{display:none}
 @media(max-width:700px){.movie-launch{top:158px;right:7%;padding:10px 14px;font-size:10px}.movie-launch small{font-size:8px}#experience.is-cinema .scene-caption{bottom:26%;max-height:calc(100svh - 265px)}#experience.is-cinema h1{font-size:clamp(27px,8vw,40px);line-height:1.75}.movie-controls{bottom:27px;padding:10px 12px}.movie-controls-row{gap:4px}.movie-controls button{font-size:10px;min-width:27px}.movie-controls #movie-play{min-width:88px}.movie-controls #movie-position{font-size:8px}.movie-controls #movie-exit{font-size:9px}.movie-controls input{margin-top:8px}}
 #experience.is-cinema[data-scene=end] .actions{display:flex!important}
 #experience.is-cinema.movie-paused .photo-plane.is-active img{animation-play-state:paused}
+
+/* Render the full cover-sized photograph so dragging can reach every edge. */ .photo-plane img{right:auto;bottom:auto;max-width:none;object-fit:fill} html[data-motion=off] .photo-plane img{transform:translate(var(--camera-x,0px),var(--camera-y,0px)) scale(var(--camera-zoom,1));}
+
