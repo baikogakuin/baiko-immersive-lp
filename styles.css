@@ -58,3 +58,25 @@ html[data-motion=off] .look-hint{display:none}
 
 /* Render the full cover-sized photograph so dragging can reach every edge. */ .photo-plane img{right:auto;bottom:auto;max-width:none;object-fit:fill} html[data-motion=off] .photo-plane img{transform:translate(var(--camera-x,0px),var(--camera-y,0px)) scale(var(--camera-zoom,1));}
 
+/* Mobile: one primary action and a menu for optional controls. */
+#mobile-menu-toggle{display:none}
+#mobile-menu{width:min(440px,90vw);max-height:85svh;overflow:auto;background:linear-gradient(#061521c9,#061521db),url('assets/high-view.webp') center/cover;border-radius:12px;padding:24px}
+#mobile-menu h2{font-size:22px}
+#mobile-menu-controls{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+#mobile-menu-controls button{position:static!important;display:block!important;width:auto;height:auto;min-height:48px;padding:12px 10px;border:1px solid #ffffff88;border-radius:8px;background:#ffffff0b;font-size:12px;text-align:center;margin:0}
+#mobile-menu-controls #movie-launch,#mobile-menu-controls #restart-button{grid-column:1/-1}
+#mobile-menu-controls #zoom-in::after{content:' 拡大'}
+#mobile-menu-controls #zoom-out::after{content:' 縮小'}
+#mobile-menu-controls #view-reset::after{content:' 視点を戻す'}
+#mobile-menu-controls #about-button::after{content:' この体験について'}
+@media(max-width:700px){
+#mobile-menu-toggle{display:block;min-height:44px;padding:10px 16px;border:1px solid #ffffff99;border-radius:24px;background:#07192338;backdrop-filter:blur(10px);font-size:11px}
+#scene-hotspots,.explore-tools,.settings,.about-button{display:none!important}
+.look-hint{top:137px;font-size:10px}
+.scene-caption{bottom:16%;max-height:calc(100svh - 225px)}
+footer{bottom:20px;grid-template-columns:1fr;gap:3px}
+.day-track{grid-row:1;opacity:.75}
+#back-button{grid-row:2;justify-self:start;min-height:44px;font-size:10px}
+#experience[data-scene=start] #back-button{visibility:hidden}
+.movie-launch{top:157px;right:7%}
+}

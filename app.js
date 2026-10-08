@@ -67,6 +67,7 @@
   function controls(disabled){document.querySelectorAll('#scene-actions button,#view-options button,#scene-hotspots button,#route-dialog [data-route]').forEach(b=>b.disabled=disabled);back.disabled=disabled||!history.length;restart.disabled=disabled||current==='start';stage.setAttribute('aria-busy',String(disabled));}
   function renderScene(scene,focus=true){
     stage.dataset.scene=current; resetCamera(); renderHotspots(scene); document.querySelector('#place-name').textContent=(current==='start'?'一日のはじまり':scene.label.split('｜').pop().trim());
+    syncMobileControls();
     setText(scene.title);label.textContent=scene.label;note.textContent=current==='end'&&selectedMood?(selectedMood==='friends'?'みんなと笑った時間を、また。':'自分のペースで過ごす時間を、また。'):scene.note;
     document.querySelector('#interaction-hint').textContent=current==='start'?'ボタンを押して、あなたの一日を進めてください。':current==='views'?'写真を選ぶと、眺める方向が変わります。':'';
     actions.replaceChildren();
@@ -113,6 +114,21 @@
   views.forEach((view,i)=>{const b=document.createElement('button');b.className='view-button';b.type='button';b.dataset.view=String(i);b.setAttribute('aria-label',view.name+'の景色を見る');b.setAttribute('aria-pressed',String(i===0));const img=document.createElement('img');img.src='assets/'+view.image+'.webp';img.alt='';const span=document.createElement('span');span.textContent=view.name;b.append(img,span);b.addEventListener('click',()=>{if(i!==viewIndex)transition('views',{view:i});});viewOptions.append(b);});
   const about=document.querySelector('#about-dialog');document.querySelector('#about-button').addEventListener('click',()=>about.showModal());document.querySelector('#about-close').addEventListener('click',()=>about.close());
 
+  const mobileQuery=matchMedia('(max-width:700px)');
+  const mobileMenu=document.createElement('dialog');mobileMenu.id='mobile-menu';mobileMenu.setAttribute('aria-labelledby','mobile-menu-title');
+  mobileMenu.innerHTML='<div class="route-heading"><h2 id="mobile-menu-title">体験メニュー</h2><button id="mobile-menu-close" type="button">閉じる ×</button></div><p>写真は指で動かして見渡せます。</p><div id="mobile-menu-controls"></div>';
+  document.body.append(mobileMenu);
+  const mobileMenuButton=document.createElement('button');mobileMenuButton.id='mobile-menu-toggle';mobileMenuButton.type='button';mobileMenuButton.textContent='メニュー';mobileMenuButton.setAttribute('aria-haspopup','dialog');document.querySelector('header').append(mobileMenuButton);
+  const mobileControls=['route-toggle','landscape-toggle','zoom-in','zoom-out','view-reset','sound-toggle','motion-toggle','restart-button','about-button','movie-launch'].map(id=>{const element=document.getElementById(id),anchor=document.createComment(id+' home');element.before(anchor);return {element,anchor};});
+  function syncMobileControls(){
+    document.querySelector('.look-hint').textContent=mobileQuery.matches?'写真を指で動かして見渡す':'ドラッグして見回す · ＋を押して移動';
+    for(const {element,anchor} of mobileControls){const inMenu=mobileQuery.matches&&(element.id!=='movie-launch'||current!=='start');if(inMenu)document.querySelector('#mobile-menu-controls').append(element);else anchor.after(element);}
+    if(!mobileQuery.matches&&mobileMenu.open)mobileMenu.close();
+  }
+  mobileQuery.addEventListener('change',syncMobileControls);syncMobileControls();
+  mobileMenuButton.addEventListener('click',()=>mobileMenu.showModal());
+  document.querySelector('#mobile-menu-close').addEventListener('click',()=>mobileMenu.close());
+  mobileMenu.addEventListener('click',event=>{if(event.target.closest('#route-toggle,#landscape-toggle,#restart-button,#about-button,#movie-launch'))mobileMenu.close();},true);
   const hotspotLayer=document.querySelector('#scene-hotspots');
   const routeDialog=document.querySelector('#route-dialog');
   let cameraX=0,cameraY=0,cameraZoom=1.08,dragState=null,landscapeOnly=false;
