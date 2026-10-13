@@ -58,8 +58,10 @@ html[data-motion=off] .look-hint{display:none}
 
 /* Render the full cover-sized photograph so dragging can reach every edge. */ .photo-plane img{right:auto;bottom:auto;max-width:none;object-fit:fill} html[data-motion=off] .photo-plane img{transform:translate(var(--camera-x,0px),var(--camera-y,0px)) scale(var(--camera-zoom,1));}
 
-/* Mobile: one primary action and a menu for optional controls. */
-#mobile-menu-toggle{display:none}
+/* One primary action on the photo; optional controls live in one menu on every screen. */
+#mobile-menu-toggle{display:block;min-height:44px;padding:10px 18px;border:1px solid #ffffff99;border-radius:24px;background:#07192338;backdrop-filter:blur(10px);font-size:12px;text-shadow:0 1px 4px #0008}
+#mobile-menu-toggle:hover{background:#ffffff24}
+.explore-tools,.settings{display:none!important}
 #mobile-menu{width:min(440px,90vw);max-height:85svh;overflow:auto;background:linear-gradient(#061521c9,#061521db),url('assets/high-view.webp') center/cover;border-radius:12px;padding:24px}
 #mobile-menu h2{font-size:22px}
 #mobile-menu-controls{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -70,8 +72,8 @@ html[data-motion=off] .look-hint{display:none}
 #mobile-menu-controls #view-reset::after{content:' 視点を戻す'}
 #mobile-menu-controls #about-button::after{content:' この体験について'}
 @media(max-width:700px){
-#mobile-menu-toggle{display:block;min-height:44px;padding:10px 16px;border:1px solid #ffffff99;border-radius:24px;background:#07192338;backdrop-filter:blur(10px);font-size:11px}
-#scene-hotspots,.explore-tools,.settings,.about-button{display:none!important}
+#mobile-menu-toggle{padding:10px 16px;font-size:11px}
+#scene-hotspots{display:none!important}
 .look-hint{top:137px;font-size:10px}
 .scene-caption{bottom:16%;max-height:calc(100svh - 225px)}
 footer{bottom:20px;grid-template-columns:1fr;gap:3px}
@@ -80,3 +82,35 @@ footer{bottom:20px;grid-template-columns:1fr;gap:3px}
 #experience[data-scene=start] #back-button{visibility:hidden}
 .movie-launch{top:157px;right:7%}
 }
+
+/* Landscape phones: keep caption, choices and back button clear of each other. */
+@media(max-height:560px){
+.place-status,.look-hint,#scene-hotspots{display:none!important}
+header{padding-top:12px}
+.scene-caption{bottom:50px;max-height:calc(100svh - 115px);padding:4px 0}
+h1,#experience.is-cinema h1,#experience[data-scene=views] h1{font-size:24px;line-height:1.45}
+#scene-label{margin-bottom:6px}#scene-note{margin-top:6px;line-height:1.7}
+.actions{margin-top:12px;flex-direction:row;flex-wrap:wrap;gap:8px}
+.actions button,.actions a{width:auto;min-width:0;min-height:42px;padding:8px 16px;gap:24px}
+footer{bottom:4px;display:flex}.day-track{display:none}
+#back-button{min-height:40px}
+.movie-launch{top:14px;right:calc(4.5% + 110px)}
+.movie-controls{bottom:6px;padding:6px 12px}.movie-controls input{margin-top:4px}
+#experience.is-cinema .scene-caption{bottom:84px;max-height:calc(100svh - 140px)}
+}
+
+/* Always available, including while the opening makes the experience inert. */
+#online-shortcut{position:fixed;z-index:110;right:4.5%;bottom:24px;min-height:46px;padding:12px 20px;display:flex;align-items:center;gap:22px;border:1px solid #eee5d4a6;border-radius:28px;background:#172d32e8;color:#fff8e9;box-shadow:0 4px 24px #0003;backdrop-filter:blur(14px);font-size:12px;letter-spacing:.05em}
+#online-shortcut:hover{background:#29434a}#online-shortcut:disabled{opacity:.7}
+#experience footer{right:calc(4.5% + 225px)}
+body.opening-active #online-shortcut,body:has(#experience.is-cinema) #online-shortcut{bottom:132px}
+@media(max-width:700px){#online-shortcut{right:7%;bottom:max(20px,env(safe-area-inset-bottom));font-size:11px;gap:14px;padding:11px 16px}#experience footer{right:7%}}
+@media(max-height:560px){#online-shortcut{bottom:4px;min-height:40px;padding:8px 16px}body.opening-active #online-shortcut,body:has(#experience.is-cinema) #online-shortcut{bottom:100px}}
+/* Scene-aware photographic grading, shared by stills and the opening. */
+.photo-plane img,#opening .opening-panel img{filter:saturate(.88) contrast(1.04) brightness(1.025)}
+.photo-plane img[src*="sea-view"],#opening .opening-panel img[src*="sea-view"]{filter:saturate(.77) contrast(1.12) brightness(.98)}
+.photo-plane img[src*="window"],#opening .opening-panel img[src*="window"],.photo-plane img[src*="friends"],#opening .opening-panel img[src*="friends"]{filter:saturate(.86) contrast(1.025) brightness(1.055) sepia(.045)}
+.photo-plane img[src*="chapel"],#opening .opening-panel img[src*="chapel"]{filter:saturate(.82) contrast(1.04) brightness(1.09)}
+.photo-plane img[src*="sunset"]{filter:saturate(.92) contrast(1.06) brightness(1.035) sepia(.08)}
+#experience[data-scene="start"] .photo-shade{background:linear-gradient(180deg,#061b293b,transparent 28%,#061b2920 65%,#06182291),linear-gradient(90deg,#082330a6, #08233040 45%,transparent 76%)}
+#experience[data-scene="start"] h1{text-shadow:0 2px 22px #06182255}

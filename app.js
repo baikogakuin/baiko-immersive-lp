@@ -27,7 +27,8 @@
   ];
   const scenes={
     start:{image:'sea-view',phase:0,label:'YOUR FIRST DAY IN BAIKO',title:'この景色の中で、\nありのままで。',note:'今日は、梅光生の気分で。',focus:'60% 50%',mobile:'60% 50%',choices:[['一日をはじめる','stairs']]},
-    stairs:{image:'summer-stairs',phase:1,label:'朝 ｜ 登校',title:'空へ向かって、\n一段ずつ。',note:'いつもの朝が、少し楽しみになる。',mobile:'48% 50%',choices:[['階段をのぼって、振り返る','panorama']]},
+    stairs:{image:'summer-stairs',phase:1,label:'朝 ｜ 登校',title:'空へ向かって、\n一段ずつ。',note:'いつもの朝が、少し楽しみになる。',mobile:'48% 50%',choices:[['途中で、空を見上げる','sky']]},
+    sky:{image:'sunny-stairs',phase:1,label:'朝 ｜ 階段の途中',title:'見上げると、\n空が近い。',note:'風が抜けていく。少しだけ、深呼吸。',focus:'48% 50%',mobile:'48% 50%',choices:[['のぼりきって、振り返る','panorama']]},
     panorama:{image:'high-view',phase:1,label:'朝 ｜ 階段の上',title:'振り返ると、\n街がひらけた。',note:'足を止めたくなる、いつもの景色。',mobile:'58% 50%',choices:[['景色を眺めて、校舎へ','door']]},
     door:{image:'summer-building',phase:1,label:'朝 ｜ 校舎の入口',title:'この校舎が、\n今日の居場所。',note:'さあ、中へ。',mobile:'60% 50%',choices:[['校舎に入る','glass']]},
     glass:{image:'stained-glass',phase:1,label:'朝 ｜ 光に誘われて',title:'光にも、\nいろんな色がある。',note:'好きな色を、見つけてみる。',focus:'50% 50%',mobile:'76% 50%',choices:[['チャペルを見渡す','chapel']]},
@@ -46,14 +47,32 @@
     summerFriends:{image:'summer-friends',phase:5,label:'夏の放課後 ｜ 友人と',title:'何気ない時間が、\n思い出になる。',note:'あと少しだけ、話していこう。',mobile:'40% 50%',choices:[['黒板の前へ','summerIdeas']]},
     summerIdeas:{image:'summer-ideas',phase:5,label:'夏の放課後 ｜ 黒板の前で',title:'思いついたことを、\n一緒に書いてみる。',note:'ここから、何がはじまるだろう。',mobile:'55% 50%',choices:[['今日の帰り道へ','sunset']]},
     sunset:{image:'sunset',phase:6,label:'帰り道 ｜ 今日の終わり',title:'朝の階段が、\n少し違って見えた。',note:'「また明日。」',mobile:'55% 50%',choices:[['今日を振り返る','end']]},
-    end:{image:'sunset',phase:6,label:'あなたの、梅光の一日',title:'ありのままで、\n本気の青春。',note:'次は、この景色の中で。',mobile:'55% 50%',choices:[]}
+    end:{image:'sunset',phase:6,label:'あなたの、梅光の一日',title:'ありのままで、\n本気の青春。',note:'次は、この景色の中で。',mobile:'55% 50%',choices:[['オンライン説明会をのぞく','online']]},
+    online:{image:'summer-building',phase:6,label:'つぎの一歩 ｜ オンライン説明会',title:'まずは画面越しに、\n梅光をのぞいてみる。',event:'online',mobile:'60% 50%',choices:[['その次は、本物の景色へ','visit']]},
+    visit:{image:'summer-stairs',phase:6,label:'つぎの一歩 ｜ 入試説明会（来校）',title:'写真で見た階段を、\n自分の足で。',event:'visit',mobile:'48% 50%',choices:[['来校したあと、家族と振り返る','recap']]},
+    recap:{image:'high-view',phase:6,label:'来校のあとで ｜ 家族と振り返る',title:'見てきた景色を、\nもう一度いっしょに。',note:'「ここ、どうだった？」と話してみる。',mobile:'58% 50%',choices:[],tools:[['場所の写真で振り返る','places'],['このページを家族に送る','share']]}
   };
+
+  scenes.start.title='もし、梅光を\n選んだら。';
+  scenes.start.note='今日は、梅光生の気分で。';
+  scenes.start.choices=[['梅光の日常へ','stairs'],['オンライン説明会の案内','online']];
+  scenes.stairs.choices=[['校舎へ向かう','door'],['景色に寄り道する','sky']];
+  scenes.chapel.choices=[['教室へ','morning'],['廊下を歩く','corridor']];
+  const events=window.BAIKO_EVENTS||{};
+  const fallbackUrl=events.fallbackUrl||'https://www.baiko.ac.jp/highschool/openschool/';
+  const eventNames={online:'オンライン説明会',visit:'入試説明会'};
+  function eventNote(key){const e=events[key]||{};return e.date?'日時：'+e.date:'日時・申込方法は未確定です。決まり次第、ここでお知らせします。';}
+  function sceneLinks(key){
+    if(key==='end')return [['学校をもっと知る ↗','https://www.baiko.ac.jp/highschool/']];
+    const event=scenes[key].event;if(!event)return [];
+    const e=events[event]||{};return [[e.url?eventNames[event]+'に申し込む ↗':'学校サイトで最新の案内を見る ↗',e.url||fallbackUrl]];
+  }
   const cache=new Map();
   function loadPhoto(name){
     if(cache.has(name))return cache.get(name);
     const promise=new Promise((resolve,reject)=>{
       const img=new Image(); let timer=setTimeout(()=>reject(new Error('画像の読み込みに時間がかかっています。')),12000);
-      img.onload=async()=>{try{await img.decode();}catch{} clearTimeout(timer);resolve(img);};
+      img.onload=async()=>{await Promise.race([img.decode().catch(()=>{}),delay(1500)]);clearTimeout(timer);resolve(img);};
       img.onerror=()=>{clearTimeout(timer);reject(new Error('写真を読み込めませんでした。'));};
       img.src='assets/'+name+'.webp';
     }).catch(error=>{cache.delete(name);throw error;});
@@ -68,13 +87,12 @@
   function renderScene(scene,focus=true){
     stage.dataset.scene=current; resetCamera(); renderHotspots(scene); document.querySelector('#place-name').textContent=(current==='start'?'一日のはじまり':scene.label.split('｜').pop().trim());
     syncMobileControls();
-    setText(scene.title);label.textContent=scene.label;note.textContent=current==='end'&&selectedMood?(selectedMood==='friends'?'みんなと笑った時間を、また。':'自分のペースで過ごす時間を、また。'):scene.note;
-    document.querySelector('#interaction-hint').textContent=current==='start'?'ボタンを押して、あなたの一日を進めてください。':current==='views'?'写真を選ぶと、眺める方向が変わります。':'';
+    setText(scene.title);label.textContent=scene.label;note.textContent=current==='end'&&selectedMood?(selectedMood==='friends'?'みんなと笑った時間を、また。':'自分のペースで過ごす時間を、また。'):scene.event?eventNote(scene.event):scene.note;
+    document.querySelector('#interaction-hint').textContent=current==='start'?'ボタンを押して、あなたの一日を進めてください。':current==='views'?'写真を選ぶと、眺める方向が変わります。':current==='online'?'開催日時・参加方法・当日の内容は、確定後にご案内します。':'';
     actions.replaceChildren();
     for(const [text,next] of scene.choices){const button=document.createElement('button');button.type='button';button.dataset.next=next;button.append(document.createTextNode(text));const arrow=document.createElement('span');arrow.textContent='→';arrow.setAttribute('aria-hidden','true');button.append(arrow);actions.append(button);}
-    if(current==='end'){
-      for(const [text,url] of [['本当の梅光を見に行く ↗','https://www.baiko.ac.jp/highschool/openschool/'],['学校をもっと知る ↗','https://www.baiko.ac.jp/highschool/']]){const a=document.createElement('a');a.textContent=text;a.href=url;a.target='_blank';a.rel='noopener noreferrer';actions.append(a);}
-    }
+    for(const [text,action] of scene.tools||[]){const button=document.createElement('button');button.type='button';button.dataset.action=action;button.append(document.createTextNode(text));const arrow=document.createElement('span');arrow.textContent='→';arrow.setAttribute('aria-hidden','true');button.append(arrow);actions.append(button);}
+    for(const [text,url] of sceneLinks(current)){const a=document.createElement('a');a.textContent=text;a.href=url;a.target='_blank';a.rel='noopener noreferrer';actions.append(a);}
     viewOptions.hidden=current!=='views';
     document.querySelectorAll('[data-phase]').forEach(li=>{const phase=Number(li.dataset.phase);li.classList.toggle('is-past',phase<scene.phase);if(phase===scene.phase)li.setAttribute('aria-current','step');else li.removeAttribute('aria-current');});
     document.querySelector('#scene-announcement').textContent=scene.label+'。'+scene.title.replace('\n','');
@@ -91,7 +109,8 @@
       const destination=planes[1-activePlane], image=destination.querySelector('img');
       destination.style.transition='none';destination.style.opacity='0';
       destination.style.zIndex='2';outgoing.style.zIndex='1';
-      image.src='assets/'+scene.image+'.webp';await image.decode();
+      // decode() can stall in background tabs or reject on some Safari builds; the photo is already loaded, so cap the wait.
+      image.src='assets/'+scene.image+'.webp';await Promise.race([image.decode().catch(()=>{}),delay(1500)]);
       destination.style.setProperty('--focus',scene.focus||'50% 50%');destination.style.setProperty('--mobile-focus',scene.mobile||'50% 50%');
       stage.classList.add('is-changing');await delay(motionOff?0:220);
       // Both decoded photographs stay mounted throughout the dissolve.
@@ -99,7 +118,7 @@
       if(reset){history=[];selectedMood=null;viewIndex=0;}else if(backward){history.pop();}else if(next!==current){history.push(current);}
       current=next;if(next==='friends'||next==='quiet')selectedMood=next;if(next==='break')selectedMood=null;
       if(view!==null)viewIndex=view;
-      renderScene(scene);document.querySelectorAll('[data-view]').forEach(b=>b.setAttribute('aria-pressed',String(Number(b.dataset.view)===viewIndex)));
+      renderScene(scene);controls(true);document.querySelectorAll('[data-view]').forEach(b=>b.setAttribute('aria-pressed',String(Number(b.dataset.view)===viewIndex)));
       await delay(motionOff?0:420);stage.classList.remove('is-changing');
       await delay(motionOff?0:850);
       outgoing.style.transition='none';outgoing.style.opacity='0';outgoing.classList.remove('is-active');
@@ -108,7 +127,19 @@
     }catch(error){announce(error.message||'次の写真を読み込めませんでした。もう一度お試しください。');stage.classList.remove('is-changing');}
     finally{clearTimeout(loadTimer);loading.textContent='';busy=false;controls(false);}
   }
-  actions.addEventListener('click',event=>{const button=event.target.closest('[data-next]');if(button)transition(button.dataset.next);});
+  actions.addEventListener('click',event=>{
+    const tool=event.target.closest('[data-action]');
+    if(tool){if(tool.dataset.action==='places')document.querySelector('#route-toggle').click();else shareRecap();return;}
+    const button=event.target.closest('[data-next]');if(!button)return;
+    if(movieOn)exitMovie();transition(button.dataset.next);
+  });
+  async function shareRecap(){
+    const url=location.origin+location.pathname+'?recap';
+    try{
+      if(navigator.share){await navigator.share({title:'今日は、梅光生。',text:'見てきた梅光の景色を、もう一度いっしょに。',url});return;}
+      await navigator.clipboard.writeText(url);announce('ページのURLをコピーしました。LINEなどに貼り付けて送れます。');
+    }catch(error){if(error&&error.name==='AbortError')return;announce('共有できませんでした。このページのURLを家族に送ってください。');}
+  }
   back.addEventListener('click',()=>{if(history.length)transition(history[history.length-1],{backward:true});});
   restart.addEventListener('click',()=>transition('start',{reset:true}));
   views.forEach((view,i)=>{const b=document.createElement('button');b.className='view-button';b.type='button';b.dataset.view=String(i);b.setAttribute('aria-label',view.name+'の景色を見る');b.setAttribute('aria-pressed',String(i===0));const img=document.createElement('img');img.src='assets/'+view.image+'.webp';img.alt='';const span=document.createElement('span');span.textContent=view.name;b.append(img,span);b.addEventListener('click',()=>{if(i!==viewIndex)transition('views',{view:i});});viewOptions.append(b);});
@@ -116,14 +147,14 @@
 
   const mobileQuery=matchMedia('(max-width:700px)');
   const mobileMenu=document.createElement('dialog');mobileMenu.id='mobile-menu';mobileMenu.setAttribute('aria-labelledby','mobile-menu-title');
-  mobileMenu.innerHTML='<div class="route-heading"><h2 id="mobile-menu-title">体験メニュー</h2><button id="mobile-menu-close" type="button">閉じる ×</button></div><p>写真は指で動かして見渡せます。</p><div id="mobile-menu-controls"></div>';
+  mobileMenu.innerHTML='<div class="route-heading"><h2 id="mobile-menu-title">体験メニュー</h2><button id="mobile-menu-close" type="button">閉じる ×</button></div><p>写真はドラッグや指で動かして見渡せます。</p><div id="mobile-menu-controls"></div>';
   document.body.append(mobileMenu);
   const mobileMenuButton=document.createElement('button');mobileMenuButton.id='mobile-menu-toggle';mobileMenuButton.type='button';mobileMenuButton.textContent='メニュー';mobileMenuButton.setAttribute('aria-haspopup','dialog');document.querySelector('header').append(mobileMenuButton);
   const mobileControls=['route-toggle','landscape-toggle','zoom-in','zoom-out','view-reset','sound-toggle','motion-toggle','restart-button','about-button','movie-launch'].map(id=>{const element=document.getElementById(id),anchor=document.createComment(id+' home');element.before(anchor);return {element,anchor};});
   function syncMobileControls(){
-    document.querySelector('.look-hint').textContent=mobileQuery.matches?'写真を指で動かして見渡す':'ドラッグして見回す · ＋を押して移動';
-    for(const {element,anchor} of mobileControls){const inMenu=mobileQuery.matches&&(element.id!=='movie-launch'||current!=='start');if(inMenu)document.querySelector('#mobile-menu-controls').append(element);else anchor.after(element);}
-    if(!mobileQuery.matches&&mobileMenu.open)mobileMenu.close();
+    document.querySelector('.look-hint').textContent=mobileQuery.matches?'写真を指で動かして見渡す':'ドラッグして見回す · ホイールで拡大 · ＋を押して移動';
+    // One menu on every screen size; the movie stays on the first screen only.
+    for(const {element,anchor} of mobileControls){const inMenu=element.id!=='movie-launch'||current!=='start';if(inMenu)document.querySelector('#mobile-menu-controls').append(element);else anchor.after(element);}
   }
   mobileQuery.addEventListener('change',syncMobileControls);syncMobileControls();
   mobileMenuButton.addEventListener('click',()=>mobileMenu.showModal());
@@ -173,10 +204,14 @@
   planes.forEach(plane=>plane.querySelector('img').addEventListener('load',applyCamera));
   function stopLooking(){dragState=null;stage.classList.remove('is-looking');}
   surface.addEventListener('pointerup',stopLooking);surface.addEventListener('pointercancel',stopLooking);
+  surface.addEventListener('wheel',event=>{event.preventDefault();const min=motionOff?1:1.08;cameraZoom=Math.max(min,Math.min(1.6,cameraZoom-Math.sign(event.deltaY)*.08));applyCamera();},{passive:false});
   document.querySelector('#route-toggle').addEventListener('click',()=>{
+    const recap=current==='recap';
+    document.querySelector('#route-title').textContent=recap?'どの場所が、心に残った？':'今日は、どこへ。';
+    routeDialog.querySelector('p').textContent=recap?'写真を開いて、家族と話してみてください。':'一日の気になる場所へ。';
     const list=document.querySelector('#route-places');list.replaceChildren();
     for(const [key,scene] of Object.entries(scenes)){
-      if(['friends','quiet','views','end'].includes(key))continue;
+      if(['friends','quiet','views','end','online','visit','recap'].includes(key))continue;
       const b=document.createElement('button');b.type='button';b.dataset.route=key;b.setAttribute('aria-current',key===current?'location':'false');
       const img=document.createElement('img');img.src='assets/'+scene.image+'.webp';img.alt='';const text=document.createElement('span');text.textContent=scene.label.replace('YOUR FIRST DAY IN BAIKO','一日のはじまり');b.append(img,text);list.append(b);
     }
@@ -187,6 +222,8 @@
   document.addEventListener('keydown',event=>{if(event.key==='Escape'&&landscapeOnly)setLandscape(false);});
 
   renderScene(scenes.start,false);controls(false);loadPhoto('summer-stairs').catch(()=>{});
+  // QR for families after the campus visit: ?recap opens the look-back scene.
+  if(new URLSearchParams(location.search).has('recap'))transition('recap');
   let toastTimer;
   function announce(text) {
     const toast = document.querySelector('#status-message');
@@ -224,7 +261,7 @@
   bgm.addEventListener('error',()=>{audioIsOn=false;soundUI();announce('音楽を読み込めませんでした。ページを再読み込みしてください。');});
   soundButton.addEventListener('click',()=>{const next=!audioIsOn;if(movieOn)movieMusicWanted=next;setSound(next);});
 
-  const film=['start','stairs','panorama','door','glass','chapel','corridor','morning','lunch','friends','after','windowTalk','ideas','summerWindow','summerFriends','summerIdeas','sunset','end'];
+  const film=['start','stairs','door','glass','chapel','morning','lunch','friends','ideas','sunset','end'];
   const movieLaunch=document.querySelector('#movie-launch'),moviePanel=document.querySelector('#movie-controls'),moviePlay=document.querySelector('#movie-play'),movieSeek=document.querySelector('#movie-seek');
   let movieOn=false,moviePaused=true,movieMusicWanted=true,movieIndex=0,movieTimer=null,movieEpoch=0;
   function movieUI(){
@@ -263,4 +300,19 @@
   movieSeek.max=String(film.length-1);movieSeek.addEventListener('change',()=>movieGo(Number(movieSeek.value)));
   document.addEventListener('keydown',event=>{if(event.key==='Escape'&&movieOn)exitMovie();});
   document.addEventListener('visibilitychange',()=>{if(document.hidden){if(movieOn)pauseMovie();else if(audioIsOn)setSound(false);}});
+  const onlineShortcut=document.querySelector('#online-shortcut');
+  let onlineJump=false;
+  onlineShortcut.addEventListener('click',async()=>{
+    if(onlineJump)return;
+    onlineJump=true;onlineShortcut.disabled=true;
+    try{
+      document.dispatchEvent(new Event('baiko:open-online'));
+      if(movieOn)exitMovie();
+      setLandscape(false);
+      document.querySelectorAll('dialog[open]').forEach(dialog=>dialog.close());
+      while(busy)await new Promise(resolve=>setTimeout(resolve,50));
+      if(current!=='online')await transition('online');
+      title.focus({preventScroll:true});
+    }finally{onlineJump=false;onlineShortcut.disabled=false;}
+  });
 })();
