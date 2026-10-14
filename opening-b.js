@@ -63,7 +63,7 @@ scene(6.6,10.2,(s,l)=>{
 // 04 Lunch break: snapshots land on the desk; we dive into one of them.
 const cardSet=[['friends',-27,-15,-9],['summer-window',26,-18,7],['window-near',-25,19,6],['ideas',25,18,-6],['summer-friends',0,1,-2]];
 scene(9.6,12.95,(s,l)=>{
- s.bg=photo('classroom',l,'ob-photo ob-blurred');s.word=el('p','ob-giant',l);s.word.textContent='笑う。';
+ s.bg=photo('classroom',l,'ob-photo ob-blurred');s.word=el('p','ob-giant',l);s.word.textContent='仲間。';
  s.cards=cardSet.map(([name,x,y,r],i)=>{const card=el('figure','ob-card',l);const img=photo(name,card,'ob-card-img');
   return {card,img,x,y,r,at:i*.3,from:[(i%2?1:-1)*(70+rand()*40),(rand()-.5)*80,(i%2?1:-1)*(35+rand()*30)]};});
 },(s,t)=>{
@@ -130,14 +130,14 @@ scene(20.4,99,(s,l)=>{
 
 /* ---------- Type ---------- */
 const cues=[
- {at:1.55,end:3.45,lines:['海の見える丘に、'],anim:'blur',pos:'center',label:'CHAPTER 01'},
- {at:3.95,end:6.35,lines:['坂を','のぼる。'],anim:'stairs',pos:'bl',label:'CHAPTER 02'},
- {at:7.05,end:9.45,lines:['光が、','ふりそそぐ。'],anim:'drop',pos:'center',label:'CHAPTER 03'},
- {at:12.75,end:14.85,lines:['考える。'],anim:'slam',pos:'tl'},
- {at:13.85,end:14.85,lines:['ぶつけあう。'],anim:'slam',pos:'br',chalk:true},
- {at:15.4,end:17.25,lines:['窓の向こうへ、'],anim:'depth',pos:'center',label:'CHAPTER 06'},
- {at:17.95,end:20.35,lines:['まだ、','帰りたくない。'],anim:'type',pos:'bl',label:'CHAPTER 07'},
- {at:21.55,end:99,lines:['きみの一日が、','ここにある。'],anim:'rise',pos:'center',final:true}
+ {at:1.55,end:3.45,lines:['もし、梅光を','選んだら。'],anim:'blur',pos:'center',label:'CHAPTER 01'},
+ {at:3.95,end:6.35,lines:['昨日の自分を、','ひとつ越える。'],anim:'stairs',pos:'bl',label:'CHAPTER 02'},
+ {at:7.05,end:9.45,lines:['ここでは、','そのままでいい。'],anim:'drop',pos:'center',label:'CHAPTER 03'},
+ {at:12.75,end:14.85,lines:['やりたい。'],anim:'slam',pos:'tl',label:'CHAPTER 04'},
+ {at:13.85,end:14.85,lines:['やってみる。'],anim:'slam',pos:'br',chalk:true},
+ {at:15.4,end:17.25,lines:['境界の、その先へ。'],anim:'depth',pos:'center',label:'CHAPTER 05'},
+ {at:17.95,end:20.35,lines:['まだ、','帰りたくない。'],anim:'type',pos:'bl',label:'CHAPTER 06'},
+ {at:21.55,end:99,lines:['自分らしさが、','武器になる。'],anim:'rise',pos:'center',final:true}
 ].map(cue=>{
  const node=el('div',`ob-cue ${cue.anim} pos-${cue.pos}`,typeLayer);
  if(cue.label){cue.labelNode=el('small','ob-label',node);cue.labelNode.textContent=cue.label;}
