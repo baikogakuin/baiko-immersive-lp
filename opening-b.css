@@ -47,7 +47,7 @@
 #opening .ob-lid{position:absolute;left:-12%;right:-12%;height:66%;background:linear-gradient(var(--dir),#000 62%,#0a0302 80%,#2a0d0700);filter:blur(16px);will-change:transform}
 #opening .ob-lid.top{--dir:180deg;top:-6%;border-radius:0 0 50% 50%/0 0 30% 30%}
 #opening .ob-lid.bottom{--dir:0deg;bottom:-6%;border-radius:50% 50% 0 0/30% 30% 0 0}
-#opening .ob-credit-line{font-family:"Yu Mincho","Hiragino Mincho ProN",serif!important;font-weight:600!important;font-size:11px!important;letter-spacing:.14em!important;line-height:1.6!important;color:#ffffffd9;opacity:0;margin-top:6px!important}
+#opening .ob-credit-line{font-family:"Yu Mincho","Hiragino Mincho ProN",serif!important;font-weight:600!important;font-size:clamp(17px,1.7vw,24px)!important;letter-spacing:.08em!important;line-height:1.8!important;color:#fff;opacity:0;margin-top:18px!important}
 
 /* Light */
 #opening .ob-particles{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;mix-blend-mode:screen}
@@ -112,7 +112,7 @@ body.opening-active #experience{pointer-events:none}
  #opening .ob-hint{bottom:16%}
  #opening .ob-window{left:14%;width:72%;top:15%;height:44%}#opening .ob-rail{left:8%;right:8%;top:11.5%}#opening .ob-sill{left:12%;right:12%;top:59%}#opening .ob-curtain{width:40%;height:52%;top:12%}#opening .ob-curtain.left{left:10%}#opening .ob-curtain.right{right:10%}#opening .ob-slit{top:12.5%;height:50%}
  #opening .depth p{font-size:clamp(26px,8vw,40px);letter-spacing:.02em}
- #opening .ob-credit-line{font-size:9.5px!important;letter-spacing:.06em!important}
+ #opening .ob-credit-line{font-size:clamp(14px,3.8vw,19px)!important;letter-spacing:.025em!important}
  #opening .pos-bl{padding-bottom:20vh}#opening .pos-br{padding-bottom:22vh}#opening .pos-tl{padding-top:16vh}
  #opening .ob-clock{left:6%;bottom:7.5%}#opening .opening-bottom{left:6%;right:6%;gap:16px;font-size:8px}
  #opening .ob-sub{font-size:10px!important;letter-spacing:.2em}
@@ -168,3 +168,6 @@ body.opening-active #experience{pointer-events:none}
 #opening .ob-arrival-light{position:absolute;inset:0;z-index:4;background:#fffdf6;pointer-events:none;opacity:0;will-change:opacity}
 #opening .rise>p:first-child{font-size:clamp(32px,5.4vw,88px);letter-spacing:.04em}
 @media(max-width:700px){#opening .rise>p:first-child{font-size:clamp(22px,7.1vw,44px);letter-spacing:.015em}}
+
+#opening .ob-digital{display:block;font-family:ui-monospace,"SFMono-Regular",Consolas,monospace;font-size:clamp(23px,2.6vw,38px);font-weight:400;font-variant-numeric:tabular-nums;line-height:1.1;letter-spacing:.04em;color:#fff7e7;text-shadow:0 0 18px #ffe7b84d}
+#opening .ob-cue.rise{padding-bottom:12vh}

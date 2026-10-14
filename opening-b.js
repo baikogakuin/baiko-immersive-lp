@@ -16,9 +16,8 @@ const show=(node,on)=>{node.style.visibility=on?'visible':'hidden';return on;};
 const world=opening.querySelector('.ob-world'),typeLayer=opening.querySelector('.ob-type');
 const flash=opening.querySelector('.ob-flash'),leak=opening.querySelector('.ob-leak'),rays=opening.querySelector('.ob-rays');
 const canvas=opening.querySelector('.ob-particles'),ctx=canvas.getContext('2d');
-const clock=opening.querySelector('.ob-clock'),dial=opening.querySelector('.ob-dial'),hourHand=opening.querySelector('.ob-hour'),minuteHand=opening.querySelector('.ob-minute');
-const bells=opening.querySelector('.ob-bells'),ringMarks=opening.querySelector('.ob-ring'),clockChapter=opening.querySelector('.ob-clock-chapter'),counter=opening.querySelector('.opening-time');
-{const ticks=opening.querySelector('.ob-ticks');for(let i=0;i<12;i++){const a=i*Math.PI/6,r0=i%3?39:34;ticks.insertAdjacentHTML('beforeend',`<line x1="${50+Math.sin(a)*r0}" y1="${50-Math.cos(a)*r0}" x2="${50+Math.sin(a)*43}" y2="${50-Math.cos(a)*43}"/>`);}}
+const clock=opening.querySelector('.ob-clock'),dial=opening.querySelector('.ob-digital');
+const clockChapter=opening.querySelector('.ob-clock-chapter'),counter=opening.querySelector('.opening-time');
 let W=innerWidth,H=innerHeight,portrait=H>W;
 
 /* ---------- Scenes ---------- */
@@ -207,7 +206,7 @@ const cues=[
  const text=el('p','',node);text.setAttribute('aria-label',cue.lines.join(''));cue.text=text;cue.chars=[];let n=0;
  cue.lines.forEach((line,li)=>{const row=el('span','ob-row',text);row.setAttribute('aria-hidden','true');[...line].forEach((ch,ci)=>{const c=el('span','ob-char',row);c.textContent=ch;cue.chars.push({c,li,ci,n:n++,r:rand()});});});
  if(cue.chalk){node.insertAdjacentHTML('beforeend','<svg class="ob-chalk" viewBox="0 0 300 40" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M6 26C58 12 118 34 178 19S262 21 294 11"/></svg>');cue.chalk=node.querySelector('path');}
- if(cue.final){cue.sub=el('p','ob-sub',node);cue.sub.textContent='梅光学院 中学校・高等学校';cue.credit=el('p','ob-credit-line',node);cue.credit.textContent='このWEBサイトは、生徒が0から100まで作成しています。';}
+ if(cue.final){cue.sub=el('p','ob-sub',node);cue.sub.textContent='梅光学院 中学校・高等学校';cue.credit=el('p','ob-credit-line',node);cue.credit.innerHTML='このWEBサイトは、<br>生徒が0から100まで作成しています。';}
  cue.node=node;return cue;
 });
 function drawCue(cue,t){
@@ -268,20 +267,20 @@ function camera(t){
  leak.style.opacity=String(Math.exp(-Math.abs(t-(2.2-PRE))*2.5)*.55+Math.exp(-Math.abs(t-17.55)*3.2)*.85+Math.exp(-Math.abs(t-1.5)*4)*.25);
  const ray=ease((t-8.55)/.5)*(1-ease((t-10)/.4));rays.style.opacity=String(ray*.55);rays.style.transform=`rotate(${t*4}deg)`;
  let key=clockKeys[0],prev=key;clockKeys.forEach(k=>{if(t>=k[0]){prev=key;key=k;}});
- // Analog hands sweep forward through the hours between chapters.
+ // Digital time advances with each chapter.
  const minutes=lerp(prev[1],key[1],out((t-key[0])/.55));
- minuteHand.setAttribute('transform',`rotate(${minutes*6} 50 50)`);hourHand.setAttribute('transform',`rotate(${minutes*.5} 50 50)`);
+ const wholeMinutes=Math.round(minutes);dial.textContent=String(Math.floor(wholeMinutes/60)%24).padStart(2,'0')+':'+String(wholeMinutes%60).padStart(2,'0');
  clockChapter.textContent=featured?'FEATURED':key[2];
 }
 
-// The alarm clock rings large in the dark, then settles into the corner.
+// The digital alarm appears in the dark, then settles into the corner.
 let clockHome={ox:0,oy:0,dx:0,dy:0};
 function measureClock(){clock.style.transform='none';const c=clock.getBoundingClientRect(),d=dial.getBoundingClientRect(),box=opening.querySelector('.ob-sticky').getBoundingClientRect();
  clockHome={ox:d.left+d.width/2-c.left,oy:d.top+d.height/2-c.top,dx:box.left+W/2-(d.left+d.width/2),dy:box.top+H*.4-(d.top+d.height/2)};clock.style.transformOrigin=`${clockHome.ox}px ${clockHome.oy}px`;}
 function placeClock(t){
  const home=out((t-1.7)/.7),big=lerp(portrait?3.2:3.6,1,home),ring=1-ease((t-1.35)/.4),now=performance.now()/1000;
  clock.style.transform=home>=1?'none':`translate3d(${clockHome.dx*(1-home)}px,${clockHome.dy*(1-home)}px,0) scale(${big}) rotate(${Math.sin(now*55)*9*ring}deg)`;
- bells.style.opacity=String(1-ease((t-2.6)/.6));ringMarks.style.opacity=String(ring*(.5+.5*Math.sin(now*30)));clockChapter.style.opacity=String(ease((t-2.2)/.4));
+ dial.style.opacity=String(1-ring*.18*(.5+.5*Math.sin(now*8)));clockChapter.style.opacity=String(ease((t-2.2)/.4));
 }
 
 /* ---------- Playback: scroll drives the clock ---------- */
