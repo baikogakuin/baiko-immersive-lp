@@ -5,7 +5,7 @@
 #opening::-webkit-scrollbar{display:none}
 /* The stage stays pinned while the track below it supplies the scroll distance. */
 #opening .ob-sticky{position:sticky;top:0;height:100%;overflow:clip;isolation:isolate}
-#opening .ob-track{height:1500%}
+#opening .ob-track{height:2100%}
 #opening .ob-world,#opening .ob-type{position:absolute;inset:0}
 #opening .ob-scene{position:absolute;inset:0;overflow:hidden;visibility:hidden;perspective:1100px}
 #opening .ob-dark{background:#05080b}
