@@ -1,7 +1,11 @@
-@font-face{font-family:'OB Black';font-weight:900;font-display:block;src:url(assets/opening-b-black.woff2) format('woff2')}
+@font-face{font-family:'OB Mincho';font-weight:700;font-display:block;src:url(assets/opening-b-mincho.woff2) format('woff2')}
 
 #opening[hidden]{display:none!important}
-#opening{position:fixed;inset:0;z-index:100;background:#05080b;color:#fff;overflow:hidden;font-family:var(--sans);isolation:isolate;--progress:0}
+#opening{position:fixed;inset:0;z-index:100;background:#05080b;color:#fff;overflow:hidden;font-family:var(--sans);isolation:isolate;--progress:0;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:none;outline:none}
+#opening::-webkit-scrollbar{display:none}
+/* The stage stays pinned while the track below it supplies the scroll distance. */
+#opening .ob-sticky{position:sticky;top:0;height:100%;overflow:hidden;isolation:isolate}
+#opening .ob-track{height:1300%}
 #opening .ob-world,#opening .ob-type{position:absolute;inset:0}
 #opening .ob-scene{position:absolute;inset:0;overflow:hidden;visibility:hidden;perspective:1100px}
 #opening .ob-dark{background:#05080b}
@@ -17,7 +21,7 @@
 /* Snapshots */
 #opening .ob-card{position:absolute;left:50%;top:50%;margin:0;width:clamp(220px,31vw,480px);padding:1.4% 1.4% 5.2%;background:#f6f2ea;box-shadow:0 18px 50px #0009,0 2px 6px #0006;visibility:hidden}
 #opening .ob-card-img{display:block;width:100%;aspect-ratio:3/2;object-fit:cover}
-#opening .ob-giant{position:absolute;left:50%;top:50%;margin:0;font-family:'OB Black',sans-serif;font-weight:900;font-size:min(34vw,52vh);line-height:1;white-space:nowrap;color:transparent;-webkit-text-stroke:2px #fff;letter-spacing:-.02em}
+#opening .ob-giant{position:absolute;left:50%;top:50%;margin:0;font-family:'OB Mincho',serif;font-weight:700;font-size:min(30vw,48vh);line-height:1;white-space:nowrap;color:transparent;-webkit-text-stroke:2px #fff;letter-spacing:-.02em}
 
 /* Slices, sunset, final wall */
 #opening .ob-slice{position:absolute;top:0;bottom:0;overflow:hidden;visibility:hidden}
@@ -40,19 +44,19 @@
 /* Kinetic type */
 #opening .ob-type{pointer-events:none;perspective:900px}
 #opening .ob-cue{position:absolute;inset:0;display:flex;flex-direction:column;gap:14px;padding:0 7%;visibility:hidden;transform-style:preserve-3d;text-shadow:0 4px 30px #02060ab3}
-#opening .ob-cue p{margin:0;font-family:'OB Black',sans-serif;font-weight:900;font-size:clamp(40px,6.4vw,110px);line-height:1.18;letter-spacing:.02em;transform-style:preserve-3d}
+#opening .ob-cue p{margin:0;font-family:'OB Mincho',"Yu Mincho","Hiragino Mincho ProN",serif;font-weight:700;font-size:clamp(38px,5.8vw,100px);line-height:1.32;letter-spacing:.08em;transform-style:preserve-3d}
 #opening .ob-row{display:block;white-space:nowrap;transform-style:preserve-3d}
 #opening .ob-char{display:inline-block;will-change:transform,opacity}
-#opening .ob-label{font-size:11px;font-weight:700;letter-spacing:.3em;color:#ffe7b8}
+#opening .ob-label{font-family:"Yu Mincho","Hiragino Mincho ProN",serif;font-size:11px;font-weight:600;letter-spacing:.3em;color:#ffe7b8}
 #opening .pos-center{justify-content:center;align-items:center;text-align:center}
 #opening .pos-bl{justify-content:flex-end;align-items:flex-start;padding-bottom:15vh}
 #opening .pos-tl{justify-content:flex-start;align-items:flex-start;padding-top:17vh}
 #opening .pos-br{justify-content:flex-end;align-items:flex-end;padding-bottom:16vh;text-align:right}
-#opening .slam p{transform-origin:center;font-size:clamp(48px,8vw,140px)}
+#opening .slam p{transform-origin:center;font-size:clamp(46px,7.4vw,128px)}
 #opening .rise .ob-row{overflow:hidden;padding-bottom:.06em}
 #opening .ob-chalk{width:clamp(180px,30vw,460px);height:clamp(18px,3vw,40px);overflow:visible}
 #opening .ob-chalk path{fill:none;stroke:#f3efdf;stroke-width:5;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:1;vector-effect:non-scaling-stroke;filter:drop-shadow(0 0 6px #fff8)}
-#opening .ob-sub{font-size:12px!important;font-family:var(--sans)!important;font-weight:700!important;letter-spacing:.3em;color:#f1e3c4;opacity:0;margin-top:18px!important}
+#opening .ob-sub{font-size:12px!important;font-family:"Yu Mincho","Hiragino Mincho ProN",serif!important;font-weight:700!important;letter-spacing:.3em;color:#f1e3c4;opacity:0;margin-top:18px!important}
 
 /* HUD */
 #opening .opening-credit{position:absolute;top:3%;left:5%;margin:0;font-size:10px;letter-spacing:.25em;color:#e2e6e6}
@@ -66,6 +70,9 @@
 #opening .opening-line{height:2px;flex:1;background:#ffffff22;overflow:hidden}
 #opening .opening-line::after{content:'';display:block;height:100%;background:linear-gradient(90deg,#9fd3ff,#ffe7b8,#ff9a5c);transform:scaleX(var(--progress));transform-origin:left}
 #opening .opening-time{font-variant-numeric:tabular-nums;min-width:35px}
+#opening .ob-hint{position:absolute;left:50%;bottom:11%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:10px;font-size:11px;letter-spacing:.24em;background:transparent;backdrop-filter:none;text-shadow:0 2px 12px #000a}
+#opening .ob-hint i{width:1px;height:42px;background:linear-gradient(#fff0,#fff);transform-origin:top;animation:ob-hint 1.8s cubic-bezier(.6,0,.2,1) infinite}
+@keyframes ob-hint{0%{transform:scaleY(0)}50%{transform:scaleY(1)}100%{transform:scaleY(1);opacity:0}}
 body.opening-active #experience{pointer-events:none}
 #mobile-menu-controls #opening-replay{grid-column:1/-1}
 
@@ -73,10 +80,11 @@ body.opening-active #experience{pointer-events:none}
  #opening .opening-credit{top:3.5%;font-size:8px;left:6%;letter-spacing:.16em}
  #opening .opening-controls{gap:0}#opening button{font-size:10px;padding:10px}
  #opening .ob-cue{padding:0 6%}
- #opening .ob-cue p{font-size:clamp(34px,11vw,54px)}
- #opening .slam p{font-size:clamp(44px,14vw,66px)}
+ #opening .ob-cue p{font-size:clamp(32px,10vw,50px);letter-spacing:.05em}
+ #opening .slam p{font-size:clamp(42px,13vw,62px)}
  #opening .ob-card{width:64vw;padding:2.4% 2.4% 8%}
- #opening .ob-giant{font-size:40vw}
+ #opening .ob-giant{font-size:36vw}
+ #opening .ob-hint{bottom:16%}
  #opening .pos-bl{padding-bottom:20vh}#opening .pos-br{padding-bottom:22vh}#opening .pos-tl{padding-top:16vh}
  #opening .ob-clock{left:6%;bottom:7.5%}#opening .opening-bottom{left:6%;right:6%;gap:16px;font-size:8px}
  #opening .ob-sub{font-size:10px!important;letter-spacing:.2em}

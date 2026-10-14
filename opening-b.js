@@ -1,5 +1,5 @@
 "use strict";
-// Opening B: a 24-second kinetic day. One clock drives photos, type, particles and sound.
+// Opening B: a kinetic school day. Scroll position drives photos and type; particles also breathe in real time.
 (() => {
 const opening=document.querySelector('#opening'),stage=document.querySelector('#experience'),reduced=matchMedia('(prefers-reduced-motion: reduce)');
 if(!opening)return;
@@ -173,21 +173,22 @@ function drawCue(cue,t){
 const motes=Array.from({length:150},()=>({x:rand(),y:rand(),vx:(rand()-.5)*.02,vy:.01+rand()*.035,s:.6+rand()*2.2,tw:rand()*6.28,hue:Math.floor(rand()*4),a:Math.atan2(rand()-.5,rand()-.5),d:.15+rand()*.6}));
 const glass=['255,94,82','74,168,255','255,212,84','96,226,160'];
 function particles(t){
+ const a=performance.now()/1000;
  ctx.clearRect(0,0,canvas.width,canvas.height);const k=canvas.width/W;
  const gather=t<1.3?ease(t/1.25):t<2.6?1-expo((t-1.25)/1.1):0,regather=t>21.2?(t<22?ease((t-21.2)/.7):1-expo((t-22)/1.3)):0;
  const chapel=ease((t-6.9)/.5)*(1-ease((t-9.8)/.5)),warm=ease((t-17.6)/.6)*(1-ease((t-21)/.6));
  const level=t<1.3?1:lerp(.55,1,Math.max(chapel,warm))*(t>22.8?1-ease((t-22.8)/1):1);
  for(const m of motes){
-  const rise=.012+warm*.05;let x=((m.x+m.vx*t)%1+1)%1,y=((m.y-(m.vy+rise)*t)%1+1)%1;
-  const pull=Math.max(gather,regather);if(pull>0){const cx=.5+Math.cos(m.a+t*2)*m.d*.08*(1-pull),cy=.52+Math.sin(m.a+t*2)*m.d*.08*(1-pull);x=lerp(x,cx,pull);y=lerp(y,cy,pull);}
-  const twinkle=.45+.55*Math.sin(t*3+m.tw),size=m.s*(1+warm*1.6+chapel*.6),rgb=warm>.3?'255,178,92':chapel>.3?glass[m.hue]:'255,247,226';
+  const rise=.012+warm*.05;let x=((m.x+m.vx*a)%1+1)%1,y=((m.y-(m.vy+rise)*a)%1+1)%1;
+  const pull=Math.max(gather,regather);if(pull>0){const cx=.5+Math.cos(m.a+a*2)*m.d*.08*(1-pull),cy=.52+Math.sin(m.a+a*2)*m.d*.08*(1-pull);x=lerp(x,cx,pull);y=lerp(y,cy,pull);}
+  const twinkle=.45+.55*Math.sin(a*3+m.tw),size=m.s*(1+warm*1.6+chapel*.6),rgb=warm>.3?'255,178,92':chapel>.3?glass[m.hue]:'255,247,226';
   ctx.globalAlpha=clamp(twinkle*level*(.35+pull*.65));ctx.fillStyle=`rgb(${rgb})`;
   ctx.shadowBlur=(warm+chapel)*10*k;ctx.shadowColor=`rgb(${rgb})`;
   ctx.beginPath();ctx.arc(x*W*k,y*H*k,size*k,0,6.283);ctx.fill();
  }
  ctx.globalAlpha=1;ctx.shadowBlur=0;
 }
-function resize(){W=opening.clientWidth||innerWidth;H=opening.clientHeight||innerHeight;const dpr=Math.min(1.5,devicePixelRatio||1);canvas.width=Math.round(W*dpr);canvas.height=Math.round(H*dpr);}
+function resize(){const box=opening.querySelector('.ob-sticky');W=box.clientWidth||innerWidth;H=box.clientHeight||innerHeight;const dpr=Math.min(1.5,devicePixelRatio||1);canvas.width=Math.round(W*dpr);canvas.height=Math.round(H*dpr);}
 
 /* ---------- Camera, light and clock ---------- */
 const flashes=[[3.6,.22],[5.4,.6],[8.65,.35],[12.6,.5],[13.07,.25],[14.1,.35],[17.35,.15],[20.4,.25]];
@@ -205,40 +206,52 @@ function camera(t){
  clockChapter.textContent=key[2];
 }
 
-/* ---------- Playback ---------- */
+/* ---------- Playback: scroll drives the clock ---------- */
+// The film occupies the first FILM share of the scroll track; the rest dissolves into the LP.
+const FILM=.92,sticky=opening.querySelector('.ob-sticky'),hint=opening.querySelector('.ob-hint');
 const sound=opening.querySelector('#opening-sound'),skip=opening.querySelector('#opening-skip');
-const audio=new Audio('assets/opening-b-score.mp3');audio.preload='none';audio.volume=.75;
-let done=true,playing=false,elapsed=0,last=0,raf=0,wantsSound=false,audioEpoch=0,startupTimer,previousFocus=null;
+const audio=new Audio('assets/opening-b-score.mp3');audio.preload='none';audio.loop=true;audio.volume=.75;
+let done=true,ready=false,shown=0,raf=0,wantsSound=false,audioEpoch=0,startupTimer,previousFocus=null;
 function draw(t){
  opening.style.setProperty('--progress',String(clamp(t/DURATION)));
- scenes.forEach(s=>{if(show(s.layer,t>=s.from&&t<s.to))s.draw(s,t);});
+ // display, not visibility: children set visible must not leak through when scrolling back.
+ scenes.forEach(s=>{const on=t>=s.from&&t<s.to;s.layer.style.display=on?'':'none';if(on){s.layer.style.visibility='visible';s.draw(s,t);}});
  cues.forEach(c=>drawCue(c,t));camera(t);particles(t);
- counter.textContent=String(Math.min(DURATION,Math.floor(t))).padStart(2,'0')+' / '+DURATION;
- opening.style.opacity=String(1-ease((t-(DURATION-.5))/.5));opening.dataset.time=t.toFixed(2);
- if(wantsSound)audio.volume=.75*(1-ease((t-(DURATION-1.5))/1.5));
+ hint.style.opacity=String(1-ease(t/.8));
+ counter.textContent=String(Math.min(DURATION,Math.floor(t))).padStart(2,'0')+' / '+DURATION;opening.dataset.time=t.toFixed(2);
+}
+function scrolled(){const max=opening.scrollHeight-opening.clientHeight;return max>0?clamp(opening.scrollTop/max):0;}
+function frame(){
+ if(done)return;raf=requestAnimationFrame(frame);if(!ready)return;
+ const p=scrolled(),target=clamp(p/FILM)*DURATION;
+ // Ease toward the scroll position so wheel steps glide instead of jump.
+ shown+=(target-shown)*.1;if(Math.abs(target-shown)<.003)shown=target;
+ draw(shown);
+ const fade=ease((p-FILM)/(1-FILM));opening.style.opacity=String(1-fade);if(wantsSound)audio.volume=.75*(1-fade);
+ if(p>.995&&shown>DURATION-.05)finish();
 }
 function finish(focus=false){
- if(done)return;done=true;playing=false;cancelAnimationFrame(raf);clearTimeout(startupTimer);audioEpoch++;audio.pause();
+ if(done)return;done=true;ready=false;cancelAnimationFrame(raf);clearTimeout(startupTimer);audioEpoch++;audio.pause();
  opening.hidden=true;stage.inert=false;document.body.classList.remove('opening-active');
  document.removeEventListener('visibilitychange',visibility);document.removeEventListener('keydown',keyboard);reduced.removeEventListener('change',motionChange);removeEventListener('resize',resize);
- if(focus||opening.contains(document.activeElement)){(previousFocus?.isConnected&&previousFocus!==document.body&&previousFocus.getClientRects().length?previousFocus:document.querySelector('#scene-title')).focus({preventScroll:true});}
+ if(focus||opening.contains(document.activeElement)||document.activeElement===opening){(previousFocus?.isConnected&&previousFocus!==document.body&&previousFocus.getClientRects().length?previousFocus:document.querySelector('#scene-title')).focus({preventScroll:true});}
 }
-function tick(now){if(done||!playing)return;if(last)elapsed+=(now-last)/1000;last=now;if(elapsed>=DURATION){finish();return;}draw(elapsed);raf=requestAnimationFrame(tick);}
-async function playSound(){const epoch=++audioEpoch;try{audio.currentTime=Math.min(elapsed,DURATION-.1);await audio.play();if(done||!wantsSound||epoch!==audioEpoch){audio.pause();return;}sound.textContent='音を消す';sound.setAttribute('aria-pressed','true');}catch{if(epoch===audioEpoch){wantsSound=false;sound.textContent='音をつける';sound.setAttribute('aria-pressed','false');}}}
-function visibility(){playing=!document.hidden;last=0;if(document.hidden){cancelAnimationFrame(raf);audioEpoch++;audio.pause();}else if(!done){if(wantsSound)playSound();raf=requestAnimationFrame(tick);}}
+async function playSound(){const epoch=++audioEpoch;try{await audio.play();if(done||!wantsSound||epoch!==audioEpoch){audio.pause();return;}sound.textContent='音を消す';sound.setAttribute('aria-pressed','true');}catch{if(epoch===audioEpoch){wantsSound=false;sound.textContent='音をつける';sound.setAttribute('aria-pressed','false');}}}
+function visibility(){if(document.hidden){audioEpoch++;audio.pause();}else if(!done&&wantsSound)playSound();}
 function keyboard(event){if(event.key==='Escape'){event.preventDefault();finish(true);}}
 function motionChange(event){if(event.matches)finish();}
 sound.addEventListener('click',()=>{wantsSound=!wantsSound;if(wantsSound)playSound();else{audioEpoch++;audio.pause();sound.textContent='音をつける';sound.setAttribute('aria-pressed','false');}});
 skip.addEventListener('click',()=>finish(true));
-function start(){if(done)return;clearTimeout(startupTimer);resize();draw(0);playing=!document.hidden;if(playing)raf=requestAnimationFrame(tick);}
+hint.addEventListener('click',()=>opening.scrollBy({top:opening.clientHeight*1.2,behavior:'smooth'}));
+function start(){if(done)return;clearTimeout(startupTimer);resize();ready=true;}
 function launch(){
  if(reduced.matches)return;
  if(stage.classList.contains('is-cinema'))document.querySelector('#movie-exit')?.click();
  const mainSound=document.querySelector('#sound-toggle');if(mainSound?.getAttribute('aria-pressed')==='true')mainSound.click();
- previousFocus=document.activeElement;done=false;playing=false;elapsed=0;last=0;wantsSound=false;audio.volume=.75;
- sound.textContent='音をつける';sound.setAttribute('aria-pressed','false');opening.hidden=false;opening.style.opacity='1';stage.inert=true;document.body.classList.add('opening-active');
+ previousFocus=document.activeElement;done=false;ready=false;shown=0;wantsSound=false;audio.volume=.75;
+ sound.textContent='音をつける';sound.setAttribute('aria-pressed','false');opening.hidden=false;opening.style.opacity='1';opening.scrollTop=0;stage.inert=true;document.body.classList.add('opening-active');
  document.addEventListener('visibilitychange',visibility);document.addEventListener('keydown',keyboard);reduced.addEventListener('change',motionChange);addEventListener('resize',resize);
- resize();draw(0);
+ resize();draw(0);opening.focus({preventScroll:true});raf=requestAnimationFrame(frame);
  // Start once the first photographs are ready; never hold the page hostage.
  startupTimer=setTimeout(()=>finish(),3500);
  const first=all.slice(0,3);let pending=first.length;
