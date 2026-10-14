@@ -28,7 +28,7 @@ function scene(from,to,build,draw){const layer=el('div','ob-scene',world);const 
 const wake=(()=>{
  const layer=el('div','ob-scene ob-wake',world);
  const room=el('div','ob-home-camera',layer),canvas=el('div','ob-home-canvas',room);
- const image=el('img','ob-home-image',canvas);image.src='assets/morning-home.png';image.alt='';all.push(image);
+ const image=el('img','ob-home-image',canvas);image.src='assets/morning-home.webp';image.alt='';all.push(image);
  const portal=el('div','ob-door-portal',canvas);photo('sea-view',portal,'ob-door-view');
  const door=el('div','ob-door-leaf',canvas),shade=el('div','ob-door-shade',door);
  const light=el('div','ob-door-light',canvas);
@@ -326,9 +326,12 @@ function draw(t){
  scenes.forEach(s=>{const on=old>=s.from&&old<s.to;s.layer.style.display=on?'':'none';if(on){s.layer.style.visibility='visible';s.draw(s,old);}});
  cues.forEach(c=>drawCue(c,old));camera(old);particles(old);placeClock(t);
  if(drawMontage(tt))clockChapter.textContent='SCHOOL EVENTS';
- hint.style.opacity='1';
- hint.querySelector('span').textContent=t<1.9?'スクロールして、目を覚ます':t<5.2?'スクロールして、扉を開ける':t<8.9?'光の先へ、スクロール':'スクロールで、時間を進める';
- hint.querySelector('small').textContent=portrait?'タップかスワイプで進む · 止めると映像も止まる':'クリックかスクロールで進む · 止めると映像も止まる';
+ // Phones are the main audience: name the tap first, keep it to one short line.
+ const verb=portrait?'タップ':'スクロール',last=t>=TOTAL-1.2;
+ // On phones the hint shows only at the start and the end, so it never sits on the words or photos.
+ const quiet=portrait&&t>=1.9&&!last;hint.style.opacity=quiet?'0':'1';hint.style.pointerEvents=quiet?'none':'';
+ hint.querySelector('span').textContent=last?`${verb}して、本編へ`:t<1.9?`${verb}して、目を覚ます`:t<5.2?`${verb}して、扉を開ける`:t<8.9?`光の先へ、${verb}`:`${verb}で、時間を進める`;
+ hint.querySelector('small').textContent=portrait?'スワイプでも進めます':'クリックかスクロールで進む · 止めると映像も止まる';
  counter.textContent=String(Math.min(TOTAL,Math.floor(t))).padStart(2,'0')+' / '+Math.round(TOTAL);opening.dataset.time=t.toFixed(2);
 }
 function scrolled(){const max=opening.scrollHeight-opening.clientHeight;return max>0?clamp(opening.scrollTop/max):0;}
@@ -374,7 +377,7 @@ opening.hidden=false;opening.style.opacity='1';opening.scrollTop=0;stage.inert=t
  document.addEventListener('visibilitychange',visibility);document.addEventListener('keydown',keyboard);reduced.addEventListener('change',motionChange);addEventListener('resize',resize);unlockEvents.forEach(e=>document.addEventListener(e,unlock,true));
  resize();draw(0);playSound();opening.focus({preventScroll:true});raf=requestAnimationFrame(frame);
  // Start once the first photographs are ready; never hold the page hostage.
- startupTimer=setTimeout(()=>finish(),3500);
+ startupTimer=setTimeout(()=>finish(),6000); // phones on mobile data need longer
  const first=all.slice(0,3);let pending=first.length;
  first.forEach(img=>{if(img.complete&&img.naturalWidth){if(!--pending)start();}else{img.addEventListener('load',()=>{if(!--pending)start();},{once:true});img.addEventListener('error',()=>finish(),{once:true});}});
 }

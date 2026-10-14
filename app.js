@@ -28,12 +28,10 @@
   const scenes={
     start:{image:'sea-view',phase:0,label:'YOUR FIRST DAY IN BAIKO',title:'この景色の中で、\nありのままで。',note:'今日は、梅光生の気分で。',focus:'60% 50%',mobile:'60% 50%',choices:[['一日をはじめる','stairs']]},
     stairs:{image:'summer-stairs',phase:1,label:'朝 ｜ 登校',title:'空へ向かって、\n一段ずつ。',note:'いつもの朝が、少し楽しみになる。',mobile:'48% 50%',choices:[['途中で、空を見上げる','sky']]},
-    sky:{image:'sunny-stairs',phase:1,label:'朝 ｜ 階段の途中',title:'見上げると、\n空が近い。',note:'風が抜けていく。少しだけ、深呼吸。',focus:'48% 50%',mobile:'48% 50%',choices:[['のぼりきって、振り返る','panorama']]},
-    panorama:{image:'high-view',phase:1,label:'朝 ｜ 階段の上',title:'振り返ると、\n街がひらけた。',note:'足を止めたくなる、いつもの景色。',mobile:'58% 50%',choices:[['景色を眺めて、校舎へ','door']]},
+    sky:{image:'sunny-stairs',phase:1,label:'朝 ｜ 階段の途中',title:'見上げると、\n空が近い。',note:'風が抜けていく。少しだけ、深呼吸。',focus:'48% 50%',mobile:'48% 50%',choices:[['のぼりきって、校舎へ','door']]},
     door:{image:'summer-building',phase:1,label:'朝 ｜ 校舎の入口',title:'この校舎が、\n今日の居場所。',note:'さあ、中へ。',mobile:'60% 50%',choices:[['校舎に入る','glass']]},
     glass:{image:'stained-glass',phase:1,label:'朝 ｜ 光に誘われて',title:'光にも、\nいろんな色がある。',note:'好きな色を、見つけてみる。',focus:'50% 50%',mobile:'76% 50%',choices:[['チャペルを見渡す','chapel']]},
-    chapel:{image:'chapel-wide',phase:1,label:'朝 ｜ チャペル',title:'光が落ちる、\n静かな場所。',note:'ゆっくり、見渡してみる。',mobile:'42% 50%',choices:[['廊下を歩く','corridor']]},
-    corridor:{image:'corridor',phase:2,label:'午前 ｜ 教室へ',title:'廊下の先に、\n今日の続き。',note:'足音が、少し響く。',mobile:'35% 50%',choices:[['教室に入る','morning']]},
+    chapel:{image:'chapel-wide',phase:1,label:'朝 ｜ チャペル',title:'光が落ちる、\n静かな場所。',note:'ゆっくり、見渡してみる。',mobile:'42% 50%',choices:[['教室へ','morning']]},
     morning:{image:'window',phase:2,label:'午前 ｜ 窓辺の席',title:'窓の向こうに、\nいつもの街。',note:'ノートを開く。一日が動き出す。',mobile:'50% 50%',choices:[['午前を過ごして、お昼へ','lunch']]},
     lunch:{image:'classroom',phase:3,label:'昼 ｜ お弁当の時間',title:'お腹、すいた。\nいつもの席に座ろう。',note:'ふたを開ける。お弁当の香り。',mobile:'42% 50%',choices:[['お昼を食べて、ひと休み','break']]},
     break:{image:'high-view',phase:4,label:'休み時間 ｜ いまの気分は？',title:'少し、時間がある。\nどこで過ごそう。',note:'にぎやかな時間も、静かな時間も。',mobile:'58% 50%',choices:[['みんなのところへ','friends'],['窓辺でひと息','quiet']]},
@@ -42,10 +40,7 @@
     views:{image:'sea-view',phase:4,label:'寄り道 ｜ 好きな景色を探す',title:'顔を上げると、\nこんな景色。',note:'遠くまで、見渡してみる。',mobile:'60% 50%',choices:[['教室に戻って、午後を過ごす','after']]},
     after:{image:'window-near',phase:5,label:'放課後 ｜ まだ帰りたくない',title:'もう少しだけ、\nここにいよう。',note:'窓の外を眺めて、ひと息。',mobile:'53% 50%',choices:[['となりの景色を見てみる','windowTalk']]},
     windowTalk:{image:'window-talk',phase:5,label:'放課後 ｜ 窓辺で',title:'同じ景色を、\nとなりで眺める。',note:'なんでもない話が、続いていく。',mobile:'53% 50%',choices:[['やってみたいことを話す','ideas']]},
-    ideas:{image:'ideas',phase:5,label:'放課後 ｜ アイデアの時間',title:'「やってみたい」を、\nここから。',note:'浮かんだことを、黒板に。',mobile:'58% 50%',choices:[['夏の放課後にも寄り道','summerWindow'],['帰り道へ','sunset']]},
-    summerWindow:{image:'summer-window',phase:5,label:'夏の放課後 ｜ 窓辺',title:'季節が変わっても、\n好きな場所。',note:'夏の光の中で、ひと息。',mobile:'33% 50%',choices:[['みんなの席へ','summerFriends']]},
-    summerFriends:{image:'summer-friends',phase:5,label:'夏の放課後 ｜ 友人と',title:'何気ない時間が、\n思い出になる。',note:'あと少しだけ、話していこう。',mobile:'40% 50%',choices:[['黒板の前へ','summerIdeas']]},
-    summerIdeas:{image:'summer-ideas',phase:5,label:'夏の放課後 ｜ 黒板の前で',title:'思いついたことを、\n一緒に書いてみる。',note:'ここから、何がはじまるだろう。',mobile:'55% 50%',choices:[['今日の帰り道へ','sunset']]},
+    ideas:{image:'ideas',phase:5,label:'放課後 ｜ アイデアの時間',title:'「やってみたい」を、\nここから。',note:'浮かんだことを、黒板に。',mobile:'58% 50%',choices:[['帰り道へ','sunset']]},
     sunset:{image:'sunset',phase:6,label:'帰り道 ｜ 今日の終わり',title:'朝の階段が、\n少し違って見えた。',note:'「また明日。」',mobile:'55% 50%',choices:[['今日を振り返る','end']]},
     end:{image:'sunset',phase:6,label:'あなたの、梅光の一日',title:'ありのままで、\n本気の青春。',note:'次は、この景色の中で。',mobile:'55% 50%',choices:[['オンライン説明会をのぞく','online']]},
     online:{image:'summer-building',phase:6,label:'つぎの一歩 ｜ オンライン説明会',title:'まずは画面越しに、\n梅光をのぞいてみる。',event:'online',mobile:'60% 50%',choices:[['その次は、本物の景色へ','visit']]},
@@ -57,7 +52,6 @@
   scenes.start.note='今日は、梅光生の気分で。';
   scenes.start.choices=[['梅光の日常へ','stairs'],['オンライン説明会の案内','online']];
   scenes.stairs.choices=[['校舎へ向かう','door'],['景色に寄り道する','sky']];
-  scenes.chapel.choices=[['教室へ','morning'],['廊下を歩く','corridor']];
   const events=window.BAIKO_EVENTS||{};
   const fallbackUrl=events.fallbackUrl||'https://www.baiko.ac.jp/highschool/openschool/';
   const eventNames={online:'オンライン説明会',visit:'入試説明会'};
@@ -90,7 +84,9 @@
     setText(scene.title);label.textContent=scene.label;note.textContent=current==='end'&&selectedMood?(selectedMood==='friends'?'みんなと笑った時間を、また。':'自分のペースで過ごす時間を、また。'):scene.event?eventNote(scene.event):scene.note;
     document.querySelector('#interaction-hint').textContent=current==='start'?'ボタンを押して、あなたの一日を進めてください。':current==='views'?'写真を選ぶと、眺める方向が変わります。':current==='online'?'開催日時・参加方法・当日の内容は、確定後にご案内します。':'';
     actions.replaceChildren();
-    for(const [text,next] of scene.choices){const button=document.createElement('button');button.type='button';button.dataset.next=next;button.append(document.createTextNode(text));const arrow=document.createElement('span');arrow.textContent='→';arrow.setAttribute('aria-hidden','true');button.append(arrow);actions.append(button);}
+    // One way forward is not a choice: show it as a single "next" step, and let a tap on the photo advance too.
+    const single=scene.choices.length===1&&!scene.event&&current!=='end';stage.dataset.single=String(single);
+    for(const [text,next] of scene.choices){const button=document.createElement('button');button.type='button';button.dataset.next=next;if(single)button.className='is-next';button.append(document.createTextNode(text));const arrow=document.createElement('span');arrow.textContent='→';arrow.setAttribute('aria-hidden','true');button.append(arrow);actions.append(button);}
     for(const [text,action] of scene.tools||[]){const button=document.createElement('button');button.type='button';button.dataset.action=action;button.append(document.createTextNode(text));const arrow=document.createElement('span');arrow.textContent='→';arrow.setAttribute('aria-hidden','true');button.append(arrow);actions.append(button);}
     for(const [text,url] of sceneLinks(current)){const a=document.createElement('a');a.textContent=text;a.href=url;a.target='_blank';a.rel='noopener noreferrer';actions.append(a);}
     viewOptions.hidden=current!=='views';
@@ -154,7 +150,8 @@
   function syncMobileControls(){
     document.querySelector('.look-hint').textContent=mobileQuery.matches?'写真を指で動かして見渡す':'ドラッグして見回す · ホイールで拡大 · ＋を押して移動';
     // One menu on every screen size; the movie stays on the first screen only.
-    for(const {element,anchor} of mobileControls){const inMenu=element.id!=='movie-launch'||current!=='start';if(inMenu)document.querySelector('#mobile-menu-controls').append(element);else anchor.after(element);}
+    // Phones keep the first screen to one message and two buttons, so the movie also lives in the menu there.
+    for(const {element,anchor} of mobileControls){const inMenu=element.id!=='movie-launch'||current!=='start'||mobileQuery.matches;if(inMenu)document.querySelector('#mobile-menu-controls').append(element);else anchor.after(element);}
   }
   mobileQuery.addEventListener('change',syncMobileControls);syncMobileControls();
   mobileMenuButton.addEventListener('click',()=>mobileMenu.showModal());
@@ -164,7 +161,8 @@
   const routeDialog=document.querySelector('#route-dialog');
   let cameraX=0,cameraY=0,cameraZoom=1.08,dragState=null,landscapeOnly=false;
   function cameraGeometry(plane){
-    const img=plane.querySelector('img'),w=stage.clientWidth,h=stage.clientHeight;
+    // Measure the photo frame, not the stage: on phones the frame is a 3:2 window so no one is cropped out.
+    const img=plane.querySelector('img'),w=plane.clientWidth||stage.clientWidth,h=plane.clientHeight||stage.clientHeight;
     const cover=Math.max(w/(img.naturalWidth||w),h/(img.naturalHeight||h));
     const width=(img.naturalWidth||w)*cover,height=(img.naturalHeight||h)*cover;
     const focus=(plane.style.getPropertyValue(w<=700?'--mobile-focus':'--focus')||'50% 50%').trim().split(/\s+/).map(v=>parseFloat(v)/100);
@@ -199,7 +197,9 @@
   document.querySelector('#view-reset').addEventListener('click',resetCamera);
   window.addEventListener('resize',resetCamera);
   const surface=document.querySelector('#look-surface');
-  surface.addEventListener('pointerdown',event=>{if(busy)return;dragState={x:event.clientX,y:event.clientY,originX:cameraX,originY:cameraY};surface.setPointerCapture(event.pointerId);stage.classList.add('is-looking');});
+  // Phones show the whole photo, so a tap moves the day forward instead of panning.
+  surface.addEventListener('click',()=>{if(!mobileQuery.matches||busy||stage.dataset.single!=='true')return;const next=actions.querySelector('[data-next]');if(next)next.click();});
+  surface.addEventListener('pointerdown',event=>{if(busy||mobileQuery.matches)return;dragState={x:event.clientX,y:event.clientY,originX:cameraX,originY:cameraY};surface.setPointerCapture(event.pointerId);stage.classList.add('is-looking');});
   surface.addEventListener('pointermove',event=>{if(!dragState)return;cameraX=dragState.originX+event.clientX-dragState.x;cameraY=dragState.originY+event.clientY-dragState.y;applyCamera();});
   planes.forEach(plane=>plane.querySelector('img').addEventListener('load',applyCamera));
   function stopLooking(){dragState=null;stage.classList.remove('is-looking');}
