@@ -52,6 +52,13 @@
   scenes.start.note='今日は、梅光生の気分で。';
   scenes.start.choices=[['梅光の日常へ','stairs'],['オンライン説明会の案内','online']];
   scenes.stairs.choices=[['校舎へ向かう','door'],['景色に寄り道する','sky']];
+  // Phone backdrop: which detail of each photo to enlarge behind the frame ([position, zoom]).
+  const backdrops={
+    'sea-view':['82% 50%',1.5],'summer-stairs':['45% 78%',1.4],'sunny-stairs':['80% 25%',1.6],'summer-building':['72% 22%',1.5],
+    'stained-glass':['66% 42%',1.8],'chapel-wide':['56% 36%',1.7],'window':['24% 48%',1.5],'classroom':['72% 70%',1.6],
+    'high-view':['30% 28%',1.5],'friends':['42% 48%',1.4],'window-near':['86% 52%',1.6],'window-talk':['62% 66%',1.6],
+    'ideas':['34% 46%',1.6],'sunset':['46% 30%',1.5],'corridor':['35% 50%',1.5],'building':['60% 40%',1.5]
+  };
   const events=window.BAIKO_EVENTS||{};
   const fallbackUrl=events.fallbackUrl||'https://www.baiko.ac.jp/highschool/openschool/';
   const eventNames={online:'オンライン説明会',visit:'入試説明会'};
@@ -108,6 +115,9 @@
       // decode() can stall in background tabs or reject on some Safari builds; the photo is already loaded, so cap the wait.
       image.src='assets/'+scene.image+'.webp';await Promise.race([image.decode().catch(()=>{}),delay(1500)]);
       destination.style.setProperty('--focus',scene.focus||'50% 50%');destination.style.setProperty('--mobile-focus',scene.mobile||'50% 50%');
+      // Phones lay the same photograph behind the framed one, enlarged on a chosen detail.
+      const spot=backdrops[scene.image]||['50% 50%',1.4];
+      stage.style.setProperty('--backdrop',`url('assets/${scene.image}.webp')`);stage.style.setProperty('--backdrop-pos',spot[0]);stage.style.setProperty('--backdrop-zoom',String(spot[1]));
       stage.classList.add('is-changing');await delay(motionOff?0:220);
       // Both decoded photographs stay mounted throughout the dissolve.
       destination.style.transition='';destination.classList.add('is-active');destination.style.opacity='1';activePlane=1-activePlane;

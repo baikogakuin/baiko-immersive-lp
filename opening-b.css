@@ -128,7 +128,7 @@ body.opening-active #experience{pointer-events:none}
 #opening .ob-hint span{font-size:14px;font-weight:600}
 #opening .ob-hint small{font-size:10px;letter-spacing:.03em;color:#fff9e4}
 #opening .ob-hint i{height:20px}
-@media(max-width:700px){#opening .ob-hint{bottom:8%;max-width:76%;padding:10px 13px}#opening .ob-hint span{font-size:12px}#opening .ob-hint small{font-size:9px}body.opening-active #online-shortcut{bottom:185px}}
+@media(max-width:700px){#opening .ob-hint{bottom:8%;max-width:76%;padding:10px 13px}#opening .ob-hint span{font-size:12px}#opening .ob-hint small{font-size:9px}}
 @media(max-height:450px){#opening .ob-hint{bottom:5%;padding:7px 13px}#opening .ob-hint i{display:none}}
 
 /* An editorial interlude from the credited Instagram reel. */
@@ -196,7 +196,6 @@ body.opening-active #experience{pointer-events:none}
  #opening .ob-clock{left:5%;bottom:calc(var(--safe-b) + 40px)}
  #opening .ob-digital{font-size:24px}
  #opening .ob-clock-chapter{font-size:9px;letter-spacing:.22em}
- body.opening-active #online-shortcut{bottom:calc(env(safe-area-inset-bottom,0px) + 42px);right:5%;min-height:44px;padding:10px 16px;font-size:12px}
  #opening .ob-hint{bottom:calc(var(--safe-b) + 100px);max-width:90%;padding:9px 18px;border-radius:24px;gap:3px;transition:opacity .4s,transform .4s}
  #opening .ob-hint span{font-size:13px;letter-spacing:.06em}
  #opening .ob-hint small{font-size:10px}

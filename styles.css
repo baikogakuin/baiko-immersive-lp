@@ -173,3 +173,38 @@ h1,#experience[data-scene=views] h1{font-size:clamp(22px,6.4vw,26px);line-height
 .actions button,.actions a{min-height:46px;padding:10px 16px}
 #online-shortcut,body.opening-active #online-shortcut{min-height:52px;padding:10px 18px;bottom:calc(env(safe-area-inset-bottom,0px) + 10px);font-size:15px}
 }
+
+/* Phones, revised (2026-10-14 late): the photograph fills the whole screen behind everything,
+   and the framed photo on top keeps every face in view; the frame melts into it at the bottom. */
+@media(max-width:700px){
+#experience{background:#0c1a1f}
+#experience::before{content:'';position:absolute;inset:-24px;z-index:-3;background:var(--backdrop) center/cover no-repeat;filter:blur(7px) saturate(1.05) brightness(.8);transform:scale(1.04)}
+#experience::after{content:'';position:absolute;inset:0;z-index:-3;pointer-events:none;background:linear-gradient(180deg,#06141a55 0%,#06141a10 calc(var(--photo-top) + var(--photo-h)*.6),#06141aa6 calc(var(--photo-top) + var(--photo-h) + 40px),#06141ad9 100%)}
+.photographs{-webkit-mask-image:linear-gradient(180deg,#000 78%,transparent);mask-image:linear-gradient(180deg,#000 78%,transparent)}
+.photo-shade,#experience[data-scene="start"] .photo-shade{background:none}
+}
+/* The one call to action: navy, a fine gold double rule, gold Mincho. */
+#online-shortcut{font-family:var(--serif);font-weight:600;letter-spacing:.14em;color:#f3e2b8;background:linear-gradient(180deg,#14303d,#0b1d27);border:1px solid #c9a55a;border-radius:4px;box-shadow:0 0 0 3px #0b1d27,0 0 0 4px #c9a55a8c,0 10px 30px #0008;gap:16px;text-shadow:0 1px 0 #0006}
+#online-shortcut .cta-arrow{font-family:var(--sans);font-size:1.1em;color:#d9b770;transition:transform .3s var(--ease)}
+#online-shortcut:hover{background:linear-gradient(180deg,#1a3a49,#0e2430)}#online-shortcut:hover .cta-arrow{transform:translateX(4px)}
+@media(max-width:700px){
+#online-shortcut,body.opening-active #online-shortcut{left:calc(5% + 4px);right:calc(5% + 4px);bottom:calc(env(safe-area-inset-bottom,0px) + 18px);border:1px solid #c9a55a;border-radius:4px;background:linear-gradient(180deg,#14303d,#0b1d27);color:#f3e2b8;font-size:16px;font-weight:600;letter-spacing:.14em;box-shadow:0 0 0 3px #0b1d27,0 0 0 4px #c9a55a8c,0 10px 30px #0009}
+#online-shortcut:hover{background:linear-gradient(180deg,#1a3a49,#0e2430)}
+}
+@media(max-width:700px) and (max-height:700px){#online-shortcut,body.opening-active #online-shortcut{bottom:calc(env(safe-area-inset-bottom,0px) + 14px);font-size:15px;letter-spacing:.1em}}
+@media(min-width:701px){#experience footer{right:calc(4.5% + 290px)}}
+/* Revised again (2026-10-14 late): the backdrop is enlarged on a chosen detail, not blurred;
+   the call to action is wine red with gold. */
+@media(max-width:700px){
+#experience::before{inset:0;background:var(--backdrop) var(--backdrop-pos,50% 50%)/cover no-repeat;filter:saturate(1.05) brightness(.92);transform:scale(var(--backdrop-zoom,1.4));transform-origin:var(--backdrop-pos,50% 50%)}
+}
+#online-shortcut,body.opening-active #online-shortcut{background:linear-gradient(180deg,#7d2231,#55121f);border:1px solid #d4b06a;color:#f6e3b4;box-shadow:0 0 0 3px #55121f,0 0 0 4px #d4b06aa6,0 10px 30px #0008}
+#online-shortcut .cta-arrow{color:#e2c27c}
+#online-shortcut:hover{background:linear-gradient(180deg,#8f2a3a,#621726)}
+@media(max-width:700px){#online-shortcut,body.opening-active #online-shortcut{background:linear-gradient(180deg,#7d2231,#55121f);border:1px solid #d4b06a;color:#f6e3b4;box-shadow:0 0 0 3px #55121f,0 0 0 4px #d4b06aa6,0 10px 30px #0009}#online-shortcut:hover{background:linear-gradient(180deg,#8f2a3a,#621726)}}
+
+/* The online-session call to action: white with a wine-red frame. */
+#online-shortcut,body.opening-active #online-shortcut,#online-shortcut:hover{background:#fff;color:#7d2231;border:2px solid #7d2231;box-shadow:0 6px 24px #0005;text-shadow:none}
+#online-shortcut:hover{background:#fbf3f4}
+#online-shortcut .cta-arrow{color:#b8924a}
+@media(max-width:700px){#online-shortcut,body.opening-active #online-shortcut,#online-shortcut:hover{background:#fff;color:#7d2231;border:2px solid #7d2231;box-shadow:0 6px 24px #0006}#online-shortcut:hover{background:#fbf3f4}}
