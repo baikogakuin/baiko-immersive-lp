@@ -37,7 +37,13 @@ const wake=(()=>{
  return {layer,room,canvas,door,shade,light,lidTop,lidBottom};
 })();
 function lids(t){if(t<.2)return .04;if(t<.85)return .04+.48*out((t-.2)/.65);if(t<1.1)return .52-.4*ease((t-.85)/.25);return .12+.88*out((t-1.1)/.8);}
+const arrivalLight=el('div','ob-arrival-light',opening.querySelector('.ob-sticky'));
+arrivalLight.setAttribute('aria-hidden','true');
 function drawWake(t){
+ // A sustained white exposure hides the room cut, then reveals the school.
+ const exposure=ease((t-4.5)/1.8)*(1-ease((t-7.25)/1.65));
+ arrivalLight.style.opacity=String(exposure);
+ arrivalLight.style.display=exposure>0?'':'none';
  const on=t<PRE+.85;wake.layer.style.display=on?'':'none';if(!on)return;
  wake.layer.style.visibility='visible';
  const eyes=lids(t),door=ease((t-2.8)/2.5),push=ease((t-5.1)/2.5);
@@ -45,10 +51,10 @@ function drawWake(t){
  wake.lidBottom.style.transform=`translateY(${eyes*108}%)`;
  const roomWidth=Math.max(W,H*1.5),zoom=Math.max(W/(roomWidth*.2585),H/(roomWidth/1.5*.835))*1.12;
  wake.room.style.transform=`translateY(${lerp(2,0,ease((t-1.4)/1.4))}%) scale(${lerp(1,zoom,push)})`;
- wake.room.style.filter=`blur(${(1-ease(t/1.8))*5}px) brightness(${lerp(.68,1,ease(t/2.4))})`;
+ wake.room.style.filter=`blur(${(1-ease(t/1.8))*5}px) brightness(${lerp(.68,1,ease(t/2.4))+door*.65})`;
  wake.door.style.transform=`perspective(1600px) rotateY(${-door*104}deg)`;
  wake.shade.style.opacity=String(door*.4);
- wake.light.style.opacity=String(Math.sin(door*Math.PI)*.3);
+ wake.light.style.opacity=String(ease((t-3.1)/1.9)*.95);
  wake.layer.style.opacity=String(1-ease((t-PRE)/.8));
 }
 
@@ -70,7 +76,7 @@ scene(3.6,7.2,(s,l)=>{s.a=photo('summer-stairs',l);s.b=photo('summer-building',l
 });
 
 // 03 Chapel: stained glass assembles from flying shards, the lead lines melt away.
-scene(6.6,10.2,(s,l)=>{
+scene(11.6,15.2,(s,l)=>{
  l.classList.add('ob-dark');s.mosaic=el('div','ob-mosaic',l);s.tiles=[];
  const cols=portrait?4:8,rows=portrait?7:5;
  for(let r=0;r<rows;r++)for(let c=0;c<cols;c++){
@@ -81,7 +87,7 @@ scene(6.6,10.2,(s,l)=>{
  }
  s.chapel=photo('chapel-wide',l);s.chapel.style.objectPosition='42% 50%';
 },(s,t)=>{
- const lt=t-6.6;
+ const lt=t-11.6;
  s.tiles.forEach(p=>{const r=out((lt-p.delay)/.85);p.tile.style.opacity=String(clamp(r*3));
   p.tile.style.transform=r>=1?'none':`translate3d(${(1-r)*p.x}vw,${(1-r)*p.y}vh,${(1-r)*p.z}px) rotateX(${(1-r)*p.rx}deg) rotateY(${(1-r)*p.ry}deg) rotateZ(${(1-r)*p.rz}deg)`;});
  s.mosaic.style.setProperty('--lead',lerp(3,0,ease((lt-1.45)/.6))+'px');
@@ -91,12 +97,12 @@ scene(6.6,10.2,(s,l)=>{
 
 // 04 Lunch break: snapshots land on the desk; we dive into one of them.
 const cardSet=[['friends',-27,-15,-9],['summer-window',26,-18,7],['window-near',-25,19,6],['ideas',25,18,-6],['summer-friends',0,1,-2]];
-scene(9.6,12.95,(s,l)=>{
+scene(14.6,17.95,(s,l)=>{
  s.bg=photo('classroom',l,'ob-photo ob-blurred');s.word=el('p','ob-giant',l);s.word.textContent='仲間。';
  s.cards=cardSet.map(([name,x,y,r],i)=>{const card=el('figure','ob-card',l);const img=photo(name,card,'ob-card-img');
   return {card,img,x,y,r,at:i*.3,from:[(i%2?1:-1)*(70+rand()*40),(rand()-.5)*80,(i%2?1:-1)*(35+rand()*30)]};});
 },(s,t)=>{
- const lt=t-9.6,enter=out(lt/.5);
+ const lt=t-14.6,enter=out(lt/.5);
  s.layer.style.clipPath=`inset(0 ${(1-enter)*50}% 0 ${(1-enter)*50}%)`;
  s.bg.style.transform=`scale(${lerp(1.35,1.2,ease(lt/3))})`;
  const word=out((lt-.1)/1.1);s.word.style.transform=`translate(-50%,-50%) scale(${lerp(1.5,1,word)})`;
@@ -116,33 +122,33 @@ scene(9.6,12.95,(s,l)=>{
 });
 
 // 05 Class: words are thrown at the blackboard; the frame slices into the next board.
-scene(12.6,15.35,(s,l)=>{
+scene(17.6,20.35,(s,l)=>{
  s.a=photo('summer-ideas',l);s.a.style.objectPosition='65% 50%';s.slices=[];
  for(let i=0;i<5;i++){const slice=el('div','ob-slice',l);Object.assign(slice.style,{left:i*20+'%',width:'20.2%'});
   const img=photo('ideas',slice);Object.assign(img.style,{width:'500%',left:-i*100+'%',objectPosition:'58% 50%'});s.slices.push({slice,img,delay:[.12,0,.2,.06,.16][i]});}
 },(s,t)=>{
- const lt=t-12.6;s.layer.style.clipPath=`polygon(0 0,${expo(lt/.45)*140}% 0,${expo(lt/.45)*140-40}% 100%,0 100%)`;
+ const lt=t-17.6;s.layer.style.clipPath=`polygon(0 0,${expo(lt/.45)*140}% 0,${expo(lt/.45)*140-40}% 100%,0 100%)`;
  s.a.style.transform=`scale(${lerp(1.25,1.08,out(lt/1.2))})`;
  s.slices.forEach((p,i)=>{const r=expo((lt-1.2-p.delay)/.5);show(p.slice,r>0);p.slice.style.transform=`translate3d(0,${(i%2?1:-1)*(1-r)*105}%,0)`;p.img.style.transform=`scale(${lerp(1.18,1.05,out((lt-1.2)/1.4))})`;});
 });
 
 // 06 Window: push through the glass into the town beyond.
-scene(15,17.95,(s,l)=>{s.a=photo('window-talk',l);s.a.style.objectPosition='53% 50%';s.a.style.transformOrigin='73% 32%';s.b=photo('high-view',l);},(s,t)=>{
- const lt=t-15,enter=out(lt/.45);
+scene(20,22.95,(s,l)=>{s.a=photo('window-talk',l);s.a.style.objectPosition='53% 50%';s.a.style.transformOrigin='73% 32%';s.b=photo('high-view',l);},(s,t)=>{
+ const lt=t-20,enter=out(lt/.45);
  s.layer.style.transform=`translate3d(${(1-enter)*100}%,0,0) skewX(${(1-enter)*-8}deg)`;s.a.style.filter=`blur(${(1-enter)*14}px)`;
  const push=inn((lt-.9)/1.55);s.a.style.transform=`scale(${lerp(1.06,7,push)})`;
  const b=ease((lt-1.75)/.6);show(s.b,b>0);s.b.style.opacity=String(b);s.b.style.transform=`scale(${lerp(1.8,1.1,out((lt-1.75)/1.2))})`;
 });
 
 // 07 Sunset: time slows; warm light and fireflies.
-scene(17.4,21.1,(s,l)=>{s.a=photo('sunset',l);s.a.style.objectPosition='50% 60%';s.glow=el('div','ob-sunglow',l);},(s,t)=>{
- const lt=t-17.4;s.layer.style.opacity=String(ease(lt/.5)*(1-ease((t-20.55)/.5)));
+scene(22.4,26.1,(s,l)=>{s.a=photo('sunset',l);s.a.style.objectPosition='50% 60%';s.glow=el('div','ob-sunglow',l);},(s,t)=>{
+ const lt=t-22.4;s.layer.style.opacity=String(ease(lt/.5)*(1-ease((t-25.55)/.5)));
  s.a.style.transform=`translate3d(${lerp(-3,2,ease(lt/3.6))}%,0,0) scale(${lerp(1.2,1.07,out(lt/3.4))})`;
  s.glow.style.opacity=String(.35+Math.sin(lt*1.6)*.12);
 });
 
 // Featured reel: three captured moments, credited to the original creator.
-scene(20.4,26,(s,l)=>{
+scene(6.6,12.2,(s,l)=>{
  l.classList.add('ob-feature');opening.querySelector('.ob-sticky').append(l);
  s.bg=photo('sea-view',l,'ob-feature-sea');
  const shade=el('div','ob-feature-shade',l);
@@ -161,7 +167,7 @@ scene(20.4,26,(s,l)=>{
  const note=el('p','ob-feature-note',s.copy);note.textContent='海の向こうまで、青春が広がる。';
  const source=el('a','ob-feature-source',s.copy);source.href=credit.href;source.target='_blank';source.rel='noopener noreferrer';source.textContent='紹介リールを見る ↗';
 },(s,t)=>{
- const lt=t-20.4,enter=ease(lt/.65),exit=ease((lt-5)/.6);
+ const lt=t-6.6,enter=ease(lt/.65),exit=ease((lt-5)/.6);
  s.layer.style.opacity=String(enter*(1-exit));s.layer.style.pointerEvents=enter>.8&&exit<.2?'auto':'none';s.layer.inert=enter<.8||exit>.2;
  s.bg.style.transform=`scale(${lerp(1.16,1.04,ease(lt/5.5))})`;
  s.cards.forEach((card,i)=>{const r=out((lt-.2-i*.24)/1);card.style.opacity=String(r);card.style.transform=`translateY(${(1-r)*100}px) rotate(${[-7,3,-4][i]*(.5+.5*r)}deg) scale(${lerp(.85,1,r)})`;});
@@ -189,12 +195,12 @@ const cues=[
  {at:2.6-PRE,end:3.95-PRE,lines:['今日が、','待ちきれない。'],anim:'bounce',pos:'center'},
  {at:1.55,end:3.45,lines:['もし、梅光を','選んだら。'],anim:'blur',pos:'center',label:'CHAPTER 01'},
  {at:3.95,end:6.35,lines:['昨日の自分を、','ひとつ越える。'],anim:'stairs',pos:'bl',label:'CHAPTER 02'},
- {at:7.05,end:9.45,lines:['ここでは、','そのままでいい。'],anim:'drop',pos:'center',label:'CHAPTER 03'},
- {at:12.75,end:14.85,lines:['やりたい。'],anim:'slam',pos:'tl',label:'CHAPTER 04'},
- {at:13.85,end:14.85,lines:['やってみる。'],anim:'slam',pos:'br',chalk:true},
- {at:15.1,end:17.25,lines:['ここから、','誰と何をしてみよう。'],anim:'depth',pos:'center',label:'CHAPTER 05'},
- {at:17.95,end:20.35,lines:['まだ、','帰りたくない。'],anim:'type',pos:'bl',label:'CHAPTER 06'},
- {at:26.55,end:99,lines:['自分らしさが、','武器になる。'],anim:'rise',pos:'center',final:true}
+ {at:12.05,end:14.45,lines:['ここでは、','そのままでいい。'],anim:'drop',pos:'center',label:'CHAPTER 03'},
+ {at:17.75,end:19.85,lines:['やりたい。'],anim:'slam',pos:'tl',label:'CHAPTER 04'},
+ {at:18.85,end:19.85,lines:['やってみる。'],anim:'slam',pos:'br',chalk:true},
+ {at:20.1,end:22.25,lines:['この街で、','可能性が広がる。'],anim:'depth',pos:'center',label:'CHAPTER 05'},
+ {at:22.95,end:25.35,lines:['まだ、','帰りたくない。'],anim:'type',pos:'bl',label:'CHAPTER 06'},
+ {at:26.55,end:99,lines:['ここから、','誰と何をやってみよう。'],anim:'rise',pos:'center',final:true}
 ].map(cue=>{
  const node=el('div',`ob-cue ${cue.anim} pos-${cue.pos}`,typeLayer);
  if(cue.label){cue.labelNode=el('small','ob-label',node);cue.labelNode.textContent=cue.label;}
@@ -218,7 +224,7 @@ function drawCue(cue,t){
   if(cue.anim==='blur'){const r=out((age-n*.07)/.7);o=r;tr=`translate3d(${(1-r)*(n-mid)*.5}em,0,0) scale(${lerp(1.6,1,r)})`;f=`blur(${(1-r)*14}px)`;}
   else if(cue.anim==='stairs'){const r=back((age-n*.13)/.42);o=clamp(r*2);tr=`translate3d(0,${(1-r)*120-ci*9}%,0) scale(${lerp(.4,1,r)})`;}
   else if(cue.anim==='drop'){const r=out((age-rnd*.75)/.75);o=clamp(r*3);tr=`translate3d(0,${-(1-r)*60}vh,0) rotate(${(1-r)*(rnd-.5)*90}deg)`;f=r<1?`blur(${(1-r)*6}px)`:'';}
-  else if(cue.anim==='depth'){const r=out((age-n*.03)/.7),fly=inn((t-16.8-n*.02)/.6);tr=`translate3d(${(n-mid)*fly*.9}em,0,${lerp(-1600,0,r)+fly*1100}px)`;o=clamp(r*2)*(1-ease(fly*1.4));}
+  else if(cue.anim==='depth'){const r=out((age-n*.03)/.7),fly=inn((t-21.8-n*.02)/.6);tr=`translate3d(${(n-mid)*fly*.9}em,0,${lerp(-1600,0,r)+fly*1100}px)`;o=clamp(r*2)*(1-ease(fly*1.4));}
   else if(cue.anim==='type'){const r=out((age-n*.1)/.5);o=r;tr=`translate3d(0,${(1-r)*24}px,0)`;f=`blur(${(1-r)*8}px)`;}
   else if(cue.anim==='bounce'){const r=back((age-n*.06)/.5);o=clamp(r*2);tr=`translate3d(0,${(1-r)*90}%,0) scale(${lerp(.3,1,r)}) rotate(${(1-r)*(n%2?16:-16)}deg)`;}
   else if(cue.anim==='rise'){const r=out((age-li*.28-ci*.05)/.8);o=r;tr=`translate3d(0,${(1-r)*110}%,0)`;}
@@ -231,6 +237,7 @@ function drawCue(cue,t){
 const motes=Array.from({length:150},()=>({x:rand(),y:rand(),vx:(rand()-.5)*.02,vy:.01+rand()*.035,s:.6+rand()*2.2,tw:rand()*6.28,hue:Math.floor(rand()*4),a:Math.atan2(rand()-.5,rand()-.5),d:.15+rand()*.6}));
 const glass=['255,94,82','74,168,255','255,212,84','96,226,160'];
 function particles(t){
+ t=t>=11.6?t-5:t>=6.6?6.6:t;
  const a=performance.now()/1000;
  ctx.clearRect(0,0,canvas.width,canvas.height);const k=canvas.width/W;
  const gather=t<1.3?ease(t/1.25):t<2.6?1-expo((t-1.25)/1.1):0,regather=t>21.2?(t<22?ease((t-21.2)/.7):1-expo((t-22)/1.3)):0;
@@ -251,8 +258,10 @@ function resize(){portrait=innerHeight>innerWidth;const box=opening.querySelecto
 /* ---------- Camera, light and clock ---------- */
 const flashes=[[2.05-PRE,.45],[3.6,.22],[5.4,.6],[8.65,.35],[12.6,.5],[13.07,.25],[14.1,.35],[17.35,.15],[20.4,.25]];
 const shakes=[[2.55-PRE,7],[5.4,6],[10.15,4],[10.45,4],[10.75,4],[11.05,4],[11.35,5],[13.07,12],[14.17,12]];
-const clockKeys=[[-PRE,390,'WAKE UP'],[0,450,'MORNING'],[3.6,485,'THE HILL'],[6.6,515,'CHAPEL'],[9.6,745,'LUNCH BREAK'],[12.6,830,'CLASS'],[15,940,'AFTER SCHOOL'],[17.4,1040,'SUNSET'],[20.4,1050,'FEATURED'],[25.4,1062,'YOUR DAY']];
+const clockKeys=[[-PRE,390,'WAKE UP'],[0,450,'MORNING'],[3.6,485,'THE HILL'],[6.6,515,'CHAPEL'],[9.6,745,'LUNCH BREAK'],[12.6,830,'CLASS'],[15,940,'AFTER SCHOOL'],[17.4,1040,'SUNSET'],[20.4,1062,'YOUR DAY']];
 function camera(t){
+ const featured=t>=6.6&&t<11.6;
+ t=t>=11.6?t-5:featured?6.59:t;
  let f=0,sx=0,sy=0;flashes.forEach(([at,a])=>{if(t>=at)f+=a*Math.exp(-(t-at)*7);});flash.style.opacity=String(clamp(f));
  shakes.forEach(([at,a])=>{const d=t-at;if(d>=0&&d<.5){const e=Math.exp(-d*10)*a;sx+=Math.sin(d*90)*e;sy+=Math.cos(d*77)*e;}});
  world.style.transform=typeLayer.style.transform=`translate3d(${sx}px,${sy}px,0)`;
@@ -262,7 +271,7 @@ function camera(t){
  // Analog hands sweep forward through the hours between chapters.
  const minutes=lerp(prev[1],key[1],out((t-key[0])/.55));
  minuteHand.setAttribute('transform',`rotate(${minutes*6} 50 50)`);hourHand.setAttribute('transform',`rotate(${minutes*.5} 50 50)`);
- clockChapter.textContent=key[2];
+ clockChapter.textContent=featured?'FEATURED':key[2];
 }
 
 // The alarm clock rings large in the dark, then settles into the corner.
@@ -288,7 +297,7 @@ function draw(t){
  scenes.forEach(s=>{const on=tt>=s.from&&tt<s.to;s.layer.style.display=on?'':'none';if(on){s.layer.style.visibility='visible';s.draw(s,tt);}});
  cues.forEach(c=>drawCue(c,tt));camera(tt);particles(tt);placeClock(t);
  hint.style.opacity='1';
- hint.querySelector('span').textContent=t<1.9?'スクロールして、目を覚ます':t<5.2?'スクロールして、扉を開ける':'スクロールで、時間を進める';
+ hint.querySelector('span').textContent=t<1.9?'スクロールして、目を覚ます':t<5.2?'スクロールして、扉を開ける':t<8.9?'光の先へ、スクロール':'スクロールで、時間を進める';
  hint.querySelector('small').textContent=portrait?'上にスワイプで進む · 止めると映像も止まる':'下にスクロールで進む · 止めると映像も止まる';
  counter.textContent=String(Math.min(TOTAL,Math.floor(t))).padStart(2,'0')+' / '+TOTAL;opening.dataset.time=t.toFixed(2);
 }
