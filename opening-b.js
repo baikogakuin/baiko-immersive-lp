@@ -3,7 +3,7 @@
 (() => {
 const opening=document.querySelector('#opening'),stage=document.querySelector('#experience'),reduced=matchMedia('(prefers-reduced-motion: reduce)');
 if(!opening)return;
-const DURATION=24;
+const DURATION=24,PRE=4,TOTAL=DURATION+PRE; // PRE: the wake-up prologue before the school day
 const clamp=(x,a=0,b=1)=>Math.max(a,Math.min(b,x)),lerp=(a,b,p)=>a+(b-a)*p;
 const ease=x=>{x=clamp(x);return x*x*(3-2*x);},out=x=>1-(1-clamp(x))**3,inn=x=>clamp(x)**3;
 const expo=x=>{x=clamp(x);return x===1?1:1-2**(-10*x);},back=x=>{x=clamp(x);return 1+2.7*(x-1)**3+1.7*(x-1)**2;};
@@ -16,12 +16,37 @@ const show=(node,on)=>{node.style.visibility=on?'visible':'hidden';return on;};
 const world=opening.querySelector('.ob-world'),typeLayer=opening.querySelector('.ob-type');
 const flash=opening.querySelector('.ob-flash'),leak=opening.querySelector('.ob-leak'),rays=opening.querySelector('.ob-rays');
 const canvas=opening.querySelector('.ob-particles'),ctx=canvas.getContext('2d');
-const clockTime=opening.querySelector('.ob-clock-time'),clockChapter=opening.querySelector('.ob-clock-chapter'),counter=opening.querySelector('.opening-time');
+const clock=opening.querySelector('.ob-clock'),dial=opening.querySelector('.ob-dial'),hourHand=opening.querySelector('.ob-hour'),minuteHand=opening.querySelector('.ob-minute');
+const bells=opening.querySelector('.ob-bells'),ringMarks=opening.querySelector('.ob-ring'),clockChapter=opening.querySelector('.ob-clock-chapter'),counter=opening.querySelector('.opening-time');
+{const ticks=opening.querySelector('.ob-ticks');for(let i=0;i<12;i++){const a=i*Math.PI/6,r0=i%3?39:34;ticks.insertAdjacentHTML('beforeend',`<line x1="${50+Math.sin(a)*r0}" y1="${50-Math.cos(a)*r0}" x2="${50+Math.sin(a)*43}" y2="${50-Math.cos(a)*43}"/>`);}}
 let W=innerWidth,H=innerHeight,portrait=H>W;
 
 /* ---------- Scenes ---------- */
 const scenes=[];
 function scene(from,to,build,draw){const layer=el('div','ob-scene',world);const s={from,to,layer,draw};build(s,layer);scenes.push(s);return s;}
+
+// 00 Wake up: alarm, eyelids, curtains, a leap out of the futon. Drawn graphics only, no photographs.
+const wake=(()=>{
+ const layer=el('div','ob-scene ob-wake');world.prepend(layer);
+ const room=el('div','ob-room',layer),win=el('div','ob-window',room);el('div','ob-sky',win);el('div','ob-mullion',win);
+ const left=el('div','ob-curtain left',room),right=el('div','ob-curtain right',room),beams=el('div','ob-beams',room),warm=el('div','ob-warm',room);
+ const futon=el('div','ob-futon',layer),lidTop=el('div','ob-lid top',layer),lidBottom=el('div','ob-lid bottom',layer);
+ return {layer,room,left,right,beams,warm,futon,lidTop,lidBottom};
+})();
+// Eyes: a sleepy half-open, a blink, then wide awake.
+function lids(t){if(t<.45)return 0;if(t<.75)return .3*out((t-.45)/.3);if(t<.98)return .3*(1-ease((t-.75)/.23));return out((t-1.05)/.65);}
+function drawWake(t){
+ const on=t<PRE+1.4;wake.layer.style.display=on?'':'none';if(!on)return;wake.layer.style.visibility='visible';
+ const open=lids(t);wake.lidTop.style.transform=`translate3d(0,${-open*102}%,0)`;wake.lidBottom.style.transform=`translate3d(0,${open*102}%,0)`;
+ const curtain=back((t-1.9)/.7),gather=lerp(1,.42,clamp(curtain));
+ wake.left.style.transform=`translate3d(${-curtain*62}%,0,0) scaleX(${gather})`;wake.right.style.transform=`translate3d(${curtain*62}%,0,0) scaleX(${gather})`;
+ const light=ease((t-1.95)/.6);wake.beams.style.opacity=String(light*.85);wake.warm.style.opacity=String(.2+light*.8);
+ // Spring up: a small dip, a bouncy leap, then the view rushes to the window.
+ const dip=Math.sin(clamp((t-2.3)/.25)*Math.PI)*4,jump=back((t-2.5)/.6),push=inn((t-3.2)/(PRE+1.1-3.2));
+ wake.room.style.transform=`translate3d(0,${dip-jump*3}%,0) scale(${1+jump*.06+push*1.4})`;
+ wake.room.style.filter=`blur(${(1-out((t-.9)/1))*10}px) brightness(${lerp(.5,1.05,light)})`;
+ wake.futon.style.transform=`translate3d(0,${jump*130}%,0)`;
+}
 
 // 01 Sea: light gathers, then an aperture opens onto the sea.
 scene(0,4.3,(s,l)=>{s.img=photo('sea-view',l);s.img.style.objectPosition='60% 50%';},(s,t)=>{
@@ -130,6 +155,7 @@ scene(20.4,99,(s,l)=>{
 
 /* ---------- Type ---------- */
 const cues=[
+ {at:2.6-PRE,end:3.95-PRE,lines:['今日が、','待ちきれない。'],anim:'bounce',pos:'center'},
  {at:1.55,end:3.45,lines:['もし、梅光を','選んだら。'],anim:'blur',pos:'center',label:'CHAPTER 01'},
  {at:3.95,end:6.35,lines:['昨日の自分を、','ひとつ越える。'],anim:'stairs',pos:'bl',label:'CHAPTER 02'},
  {at:7.05,end:9.45,lines:['ここでは、','そのままでいい。'],anim:'drop',pos:'center',label:'CHAPTER 03'},
@@ -163,6 +189,7 @@ function drawCue(cue,t){
   else if(cue.anim==='drop'){const r=out((age-rnd*.75)/.75);o=clamp(r*3);tr=`translate3d(0,${-(1-r)*60}vh,0) rotate(${(1-r)*(rnd-.5)*90}deg)`;f=r<1?`blur(${(1-r)*6}px)`:'';}
   else if(cue.anim==='depth'){const r=out((age-n*.06)/.8),fly=inn((t-16.45-n*.03)/.75);tr=`translate3d(${(n-mid)*fly*.9}em,0,${lerp(-1600,0,r)+fly*1100}px)`;o=clamp(r*2)*(1-ease(fly*1.4));}
   else if(cue.anim==='type'){const r=out((age-n*.1)/.5);o=r;tr=`translate3d(0,${(1-r)*24}px,0)`;f=`blur(${(1-r)*8}px)`;}
+  else if(cue.anim==='bounce'){const r=back((age-n*.06)/.5);o=clamp(r*2);tr=`translate3d(0,${(1-r)*90}%,0) scale(${lerp(.3,1,r)}) rotate(${(1-r)*(n%2?16:-16)}deg)`;}
   else if(cue.anim==='rise'){const r=out((age-li*.28-ci*.05)/.8);o=r;tr=`translate3d(0,${(1-r)*110}%,0)`;}
   c.style.opacity=String(o);c.style.transform=tr;c.style.filter=f;
  });
@@ -177,7 +204,7 @@ function particles(t){
  ctx.clearRect(0,0,canvas.width,canvas.height);const k=canvas.width/W;
  const gather=t<1.3?ease(t/1.25):t<2.6?1-expo((t-1.25)/1.1):0,regather=t>21.2?(t<22?ease((t-21.2)/.7):1-expo((t-22)/1.3)):0;
  const chapel=ease((t-6.9)/.5)*(1-ease((t-9.8)/.5)),warm=ease((t-17.6)/.6)*(1-ease((t-21)/.6));
- const level=t<1.3?1:lerp(.55,1,Math.max(chapel,warm))*(t>22.8?1-ease((t-22.8)/1):1);
+ const level=t<0?ease((t+PRE-1.95)/.6)*.8:t<1.3?1:lerp(.55,1,Math.max(chapel,warm))*(t>22.8?1-ease((t-22.8)/1):1);
  for(const m of motes){
   const rise=.012+warm*.05;let x=((m.x+m.vx*a)%1+1)%1,y=((m.y-(m.vy+rise)*a)%1+1)%1;
   const pull=Math.max(gather,regather);if(pull>0){const cx=.5+Math.cos(m.a+a*2)*m.d*.08*(1-pull),cy=.52+Math.sin(m.a+a*2)*m.d*.08*(1-pull);x=lerp(x,cx,pull);y=lerp(y,cy,pull);}
@@ -188,59 +215,75 @@ function particles(t){
  }
  ctx.globalAlpha=1;ctx.shadowBlur=0;
 }
-function resize(){const box=opening.querySelector('.ob-sticky');W=box.clientWidth||innerWidth;H=box.clientHeight||innerHeight;const dpr=Math.min(1.5,devicePixelRatio||1);canvas.width=Math.round(W*dpr);canvas.height=Math.round(H*dpr);}
+function resize(){const box=opening.querySelector('.ob-sticky');W=box.clientWidth||innerWidth;H=box.clientHeight||innerHeight;const dpr=Math.min(1.5,devicePixelRatio||1);canvas.width=Math.round(W*dpr);canvas.height=Math.round(H*dpr);measureClock();}
 
 /* ---------- Camera, light and clock ---------- */
-const flashes=[[3.6,.22],[5.4,.6],[8.65,.35],[12.6,.5],[13.07,.25],[14.1,.35],[17.35,.15],[20.4,.25]];
-const shakes=[[5.4,6],[10.15,4],[10.45,4],[10.75,4],[11.05,4],[11.35,5],[13.07,12],[14.17,12]];
-const clockKeys=[[0,460,'MORNING'],[3.6,485,'THE HILL'],[6.6,515,'CHAPEL'],[9.6,745,'LUNCH BREAK'],[12.6,830,'CLASS'],[15,940,'AFTER SCHOOL'],[17.4,1040,'SUNSET'],[20.4,1062,'YOUR DAY']];
+const flashes=[[2.05-PRE,.45],[3.6,.22],[5.4,.6],[8.65,.35],[12.6,.5],[13.07,.25],[14.1,.35],[17.35,.15],[20.4,.25]];
+const shakes=[[2.55-PRE,7],[5.4,6],[10.15,4],[10.45,4],[10.75,4],[11.05,4],[11.35,5],[13.07,12],[14.17,12]];
+const clockKeys=[[-PRE,390,'WAKE UP'],[0,450,'MORNING'],[3.6,485,'THE HILL'],[6.6,515,'CHAPEL'],[9.6,745,'LUNCH BREAK'],[12.6,830,'CLASS'],[15,940,'AFTER SCHOOL'],[17.4,1040,'SUNSET'],[20.4,1062,'YOUR DAY']];
 function camera(t){
  let f=0,sx=0,sy=0;flashes.forEach(([at,a])=>{if(t>=at)f+=a*Math.exp(-(t-at)*7);});flash.style.opacity=String(clamp(f));
  shakes.forEach(([at,a])=>{const d=t-at;if(d>=0&&d<.5){const e=Math.exp(-d*10)*a;sx+=Math.sin(d*90)*e;sy+=Math.cos(d*77)*e;}});
  world.style.transform=typeLayer.style.transform=`translate3d(${sx}px,${sy}px,0)`;
- leak.style.opacity=String(Math.exp(-Math.abs(t-17.55)*3.2)*.85+Math.exp(-Math.abs(t-1.5)*4)*.25);
+ leak.style.opacity=String(Math.exp(-Math.abs(t-(2.2-PRE))*2.5)*.55+Math.exp(-Math.abs(t-17.55)*3.2)*.85+Math.exp(-Math.abs(t-1.5)*4)*.25);
  const ray=ease((t-8.55)/.5)*(1-ease((t-10)/.4));rays.style.opacity=String(ray*.55);rays.style.transform=`rotate(${t*4}deg)`;
  let key=clockKeys[0],prev=key;clockKeys.forEach(k=>{if(t>=k[0]){prev=key;key=k;}});
- const minutes=Math.round(lerp(prev[1],key[1],out((t-key[0])/.55)));
- clockTime.textContent=String(Math.floor(minutes/60)).padStart(2,'0')+':'+String(minutes%60).padStart(2,'0');
+ // Analog hands sweep forward through the hours between chapters.
+ const minutes=lerp(prev[1],key[1],out((t-key[0])/.55));
+ minuteHand.setAttribute('transform',`rotate(${minutes*6} 50 50)`);hourHand.setAttribute('transform',`rotate(${minutes*.5} 50 50)`);
  clockChapter.textContent=key[2];
+}
+
+// The alarm clock rings large in the dark, then settles into the corner.
+let clockHome={ox:0,oy:0,dx:0,dy:0};
+function measureClock(){clock.style.transform='none';const c=clock.getBoundingClientRect(),d=dial.getBoundingClientRect(),box=opening.querySelector('.ob-sticky').getBoundingClientRect();
+ clockHome={ox:d.left+d.width/2-c.left,oy:d.top+d.height/2-c.top,dx:box.left+W/2-(d.left+d.width/2),dy:box.top+H*.4-(d.top+d.height/2)};clock.style.transformOrigin=`${clockHome.ox}px ${clockHome.oy}px`;}
+function placeClock(t){
+ const home=out((t-1.7)/.7),big=lerp(portrait?3.2:3.6,1,home),ring=1-ease((t-1.35)/.4),now=performance.now()/1000;
+ clock.style.transform=home>=1?'none':`translate3d(${clockHome.dx*(1-home)}px,${clockHome.dy*(1-home)}px,0) scale(${big}) rotate(${Math.sin(now*55)*9*ring}deg)`;
+ bells.style.opacity=String(1-ease((t-2.6)/.6));ringMarks.style.opacity=String(ring*(.5+.5*Math.sin(now*30)));clockChapter.style.opacity=String(ease((t-2.2)/.4));
 }
 
 /* ---------- Playback: scroll drives the clock ---------- */
 // The film occupies the first FILM share of the scroll track; the rest dissolves into the LP.
 const FILM=.92,sticky=opening.querySelector('.ob-sticky'),hint=opening.querySelector('.ob-hint');
 const sound=opening.querySelector('#opening-sound'),skip=opening.querySelector('#opening-skip');
-const audio=new Audio('assets/opening-b-score.mp3');audio.preload='none';audio.loop=true;audio.volume=.75;
+const audio=new Audio('assets/opening-b-score.mp3');audio.preload='auto';audio.loop=true;audio.volume=.75;
 let done=true,ready=false,shown=0,raf=0,wantsSound=false,audioEpoch=0,startupTimer,previousFocus=null;
 function draw(t){
- opening.style.setProperty('--progress',String(clamp(t/DURATION)));
+ // t runs over the whole film; tt is school-day time, negative during the wake-up prologue.
+ const tt=t-PRE;opening.style.setProperty('--progress',String(clamp(t/TOTAL)));drawWake(t);
  // display, not visibility: children set visible must not leak through when scrolling back.
- scenes.forEach(s=>{const on=t>=s.from&&t<s.to;s.layer.style.display=on?'':'none';if(on){s.layer.style.visibility='visible';s.draw(s,t);}});
- cues.forEach(c=>drawCue(c,t));camera(t);particles(t);
+ scenes.forEach(s=>{const on=tt>=s.from&&tt<s.to;s.layer.style.display=on?'':'none';if(on){s.layer.style.visibility='visible';s.draw(s,tt);}});
+ cues.forEach(c=>drawCue(c,tt));camera(tt);particles(tt);placeClock(t);
  hint.style.opacity=String(1-ease(t/.8));
- counter.textContent=String(Math.min(DURATION,Math.floor(t))).padStart(2,'0')+' / '+DURATION;opening.dataset.time=t.toFixed(2);
+ counter.textContent=String(Math.min(TOTAL,Math.floor(t))).padStart(2,'0')+' / '+TOTAL;opening.dataset.time=t.toFixed(2);
 }
 function scrolled(){const max=opening.scrollHeight-opening.clientHeight;return max>0?clamp(opening.scrollTop/max):0;}
 function frame(){
  if(done)return;raf=requestAnimationFrame(frame);if(!ready)return;
- const p=scrolled(),target=clamp(p/FILM)*DURATION;
+ const p=scrolled(),target=clamp(p/FILM)*TOTAL;
  // Ease toward the scroll position so wheel steps glide instead of jump.
  shown+=(target-shown)*.1;if(Math.abs(target-shown)<.003)shown=target;
  draw(shown);
  const fade=ease((p-FILM)/(1-FILM));opening.style.opacity=String(1-fade);if(wantsSound)audio.volume=.75*(1-fade);
- if(p>.995&&shown>DURATION-.05)finish();
+ if(p>.995&&shown>TOTAL-.05)finish();
 }
 function finish(focus=false){
  if(done)return;done=true;ready=false;cancelAnimationFrame(raf);clearTimeout(startupTimer);audioEpoch++;audio.pause();
  opening.hidden=true;stage.inert=false;document.body.classList.remove('opening-active');
- document.removeEventListener('visibilitychange',visibility);document.removeEventListener('keydown',keyboard);reduced.removeEventListener('change',motionChange);removeEventListener('resize',resize);
+ document.removeEventListener('visibilitychange',visibility);document.removeEventListener('keydown',keyboard);reduced.removeEventListener('change',motionChange);removeEventListener('resize',resize);unlockEvents.forEach(e=>document.removeEventListener(e,unlock,true));
  if(focus||opening.contains(document.activeElement)||document.activeElement===opening){(previousFocus?.isConnected&&previousFocus!==document.body&&previousFocus.getClientRects().length?previousFocus:document.querySelector('#scene-title')).focus({preventScroll:true});}
 }
-async function playSound(){const epoch=++audioEpoch;try{await audio.play();if(done||!wantsSound||epoch!==audioEpoch){audio.pause();return;}sound.textContent='音を消す';sound.setAttribute('aria-pressed','true');}catch{if(epoch===audioEpoch){wantsSound=false;sound.textContent='音をつける';sound.setAttribute('aria-pressed','false');}}}
+function soundLabel(on){sound.textContent=on?'音を消す':'音をつける';sound.setAttribute('aria-pressed',String(on));}
+async function playSound(){const epoch=++audioEpoch;try{await audio.play();if(done||!wantsSound||epoch!==audioEpoch){audio.pause();return;}soundLabel(true);}catch{if(epoch===audioEpoch)soundLabel(false);}}
+// Sound is on by default; browsers release it on the first tap, click or key press.
+function unlock(event){if(!done&&wantsSound&&audio.paused&&!sound.contains(event.target))playSound();}
+const unlockEvents=['pointerdown','touchend','keydown'];
 function visibility(){if(document.hidden){audioEpoch++;audio.pause();}else if(!done&&wantsSound)playSound();}
 function keyboard(event){if(event.key==='Escape'){event.preventDefault();finish(true);}}
 function motionChange(event){if(event.matches)finish();}
-sound.addEventListener('click',()=>{wantsSound=!wantsSound;if(wantsSound)playSound();else{audioEpoch++;audio.pause();sound.textContent='音をつける';sound.setAttribute('aria-pressed','false');}});
+sound.addEventListener('click',()=>{if(audio.paused){wantsSound=true;playSound();}else{wantsSound=false;audioEpoch++;audio.pause();soundLabel(false);}});
 skip.addEventListener('click',()=>finish(true));
 hint.addEventListener('click',()=>opening.scrollBy({top:opening.clientHeight*1.2,behavior:'smooth'}));
 function start(){if(done)return;clearTimeout(startupTimer);resize();ready=true;}
@@ -248,10 +291,10 @@ function launch(){
  if(reduced.matches)return;
  if(stage.classList.contains('is-cinema'))document.querySelector('#movie-exit')?.click();
  const mainSound=document.querySelector('#sound-toggle');if(mainSound?.getAttribute('aria-pressed')==='true')mainSound.click();
- previousFocus=document.activeElement;done=false;ready=false;shown=0;wantsSound=false;audio.volume=.75;
- sound.textContent='音をつける';sound.setAttribute('aria-pressed','false');opening.hidden=false;opening.style.opacity='1';opening.scrollTop=0;stage.inert=true;document.body.classList.add('opening-active');
- document.addEventListener('visibilitychange',visibility);document.addEventListener('keydown',keyboard);reduced.addEventListener('change',motionChange);addEventListener('resize',resize);
- resize();draw(0);opening.focus({preventScroll:true});raf=requestAnimationFrame(frame);
+ previousFocus=document.activeElement;done=false;ready=false;shown=0;wantsSound=true;audio.volume=.75;soundLabel(false);
+opening.hidden=false;opening.style.opacity='1';opening.scrollTop=0;stage.inert=true;document.body.classList.add('opening-active');
+ document.addEventListener('visibilitychange',visibility);document.addEventListener('keydown',keyboard);reduced.addEventListener('change',motionChange);addEventListener('resize',resize);unlockEvents.forEach(e=>document.addEventListener(e,unlock,true));
+ resize();draw(0);playSound();opening.focus({preventScroll:true});raf=requestAnimationFrame(frame);
  // Start once the first photographs are ready; never hold the page hostage.
  startupTimer=setTimeout(()=>finish(),3500);
  const first=all.slice(0,3);let pending=first.length;
