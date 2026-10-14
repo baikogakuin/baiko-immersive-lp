@@ -3,8 +3,7 @@
 (() => {
 const opening=document.querySelector('#opening'),stage=document.querySelector('#experience'),reduced=matchMedia('(prefers-reduced-motion: reduce)');
 if(!opening)return;
-// PRE: the wake-up prologue. EVENT_*: the school-events montage, during which the day's clock pauses.
-const DURATION=24,PRE=4,EVENT_AT=12.6,EVENT_LEN=3.6,TOTAL=DURATION+PRE+EVENT_LEN;
+const DURATION=29,PRE=7,EVENT_AT=17.6,EVENT_LEN=3.6,TOTAL=DURATION+PRE+EVENT_LEN; // EVENT_*: school-events montage; the day pauses while it plays // PRE: the wake-up prologue before the school day
 const clamp=(x,a=0,b=1)=>Math.max(a,Math.min(b,x)),lerp=(a,b,p)=>a+(b-a)*p;
 const ease=x=>{x=clamp(x);return x*x*(3-2*x);},out=x=>1-(1-clamp(x))**3,inn=x=>clamp(x)**3;
 const expo=x=>{x=clamp(x);return x===1?1:1-2**(-10*x);},back=x=>{x=clamp(x);return 1+2.7*(x-1)**3+1.7*(x-1)**2;};
@@ -17,51 +16,50 @@ const show=(node,on)=>{node.style.visibility=on?'visible':'hidden';return on;};
 const world=opening.querySelector('.ob-world'),typeLayer=opening.querySelector('.ob-type');
 const flash=opening.querySelector('.ob-flash'),leak=opening.querySelector('.ob-leak'),rays=opening.querySelector('.ob-rays');
 const canvas=opening.querySelector('.ob-particles'),ctx=canvas.getContext('2d');
-const clock=opening.querySelector('.ob-clock'),clockTime=opening.querySelector('.ob-clock-time'),clockChapter=opening.querySelector('.ob-clock-chapter'),counter=opening.querySelector('.opening-time');
+const clock=opening.querySelector('.ob-clock'),dial=opening.querySelector('.ob-digital');
+const clockChapter=opening.querySelector('.ob-clock-chapter'),counter=opening.querySelector('.opening-time');
 let W=innerWidth,H=innerHeight,portrait=H>W;
 
 /* ---------- Scenes ---------- */
 const scenes=[];
 function scene(from,to,build,draw){const layer=el('div','ob-scene',world);const s={from,to,layer,draw};build(s,layer);scenes.push(s);return s;}
 
-// 00 Wake up: alarm, eyelids, curtains, a leap out of the futon.
-// The room is drawn; the view through the window is the school's real sea photograph.
+// A photographic room and a registered door surface share the same image coordinates.
 const wake=(()=>{
- const layer=el('div','ob-scene ob-wake');world.prepend(layer);
- const room=el('div','ob-room',layer);el('div','ob-wall',room);el('div','ob-rail',room);
- const win=el('div','ob-window',room);const view=photo('sea-view',win,'ob-view');view.style.objectPosition='60% 55%';
- el('div','ob-glass',win);el('div','ob-sash',win);const sun=el('div','ob-sun',win);el('div','ob-sill',room);
- const patch=el('div','ob-patch',room),left=el('div','ob-curtain left',room),right=el('div','ob-curtain right',room),slit=el('div','ob-slit',room);
- const beams=el('div','ob-beams',room),bloom=el('div','ob-bloom',room),warm=el('div','ob-warm',room);
- const futon=el('div','ob-futon',layer),lidTop=el('div','ob-lid top',layer),lidBottom=el('div','ob-lid bottom',layer);
- return {layer,room,view,sun,patch,left,right,slit,beams,bloom,warm,futon,lidTop,lidBottom};
+ const layer=el('div','ob-scene ob-wake',world);
+ const room=el('div','ob-home-camera',layer),canvas=el('div','ob-home-canvas',room);
+ const image=el('img','ob-home-image',canvas);image.src='assets/morning-home.png';image.alt='';all.push(image);
+ const portal=el('div','ob-door-portal',canvas);photo('sea-view',portal,'ob-door-view');
+ const door=el('div','ob-door-leaf',canvas),shade=el('div','ob-door-shade',door);
+ const light=el('div','ob-door-light',canvas);
+ const lidTop=el('div','ob-lid top',layer),lidBottom=el('div','ob-lid bottom',layer);
+ return {layer,room,canvas,door,shade,light,lidTop,lidBottom};
 })();
-// Eyes: a sleepy half-open, a blink, then wide awake.
-function lids(t){if(t<.45)return 0;if(t<.75)return .3*out((t-.45)/.3);if(t<.98)return .3*(1-ease((t-.75)/.23));return out((t-1.05)/.65);}
+function lids(t){if(t<.2)return .04;if(t<.85)return .04+.48*out((t-.2)/.65);if(t<1.1)return .52-.4*ease((t-.85)/.25);return .12+.88*out((t-1.1)/.8);}
+const arrivalLight=el('div','ob-arrival-light',opening.querySelector('.ob-sticky'));
+arrivalLight.setAttribute('aria-hidden','true');
 function drawWake(t){
- const on=t<PRE+1.4;wake.layer.style.display=on?'':'none';if(!on)return;wake.layer.style.visibility='visible';
- const now=performance.now()/1000,open=lids(t);
- wake.lidTop.style.transform=`translate3d(0,${-open*108}%,0)`;wake.lidBottom.style.transform=`translate3d(0,${open*108}%,0)`;
- const curtain=back((t-1.9)/.75),gather=lerp(1,.4,clamp(curtain));
- wake.left.style.transform=`translate3d(${-curtain*64}%,0,0) scaleX(${gather})`;wake.right.style.transform=`translate3d(${curtain*64}%,0,0) scaleX(${gather})`;
- const light=ease((t-1.95)/.6);
- wake.slit.style.opacity=String((1-light)*(.55+.1*Math.sin(now*1.3)));
- wake.beams.style.opacity=String(light*.8);wake.patch.style.opacity=String(light*.9);wake.warm.style.opacity=String(.15+light*.85);
- wake.bloom.style.opacity=String(light*(1-ease((t-3.2)/.8)*.4));wake.sun.style.opacity=String(.35+light*.65);
- // The eye adjusts: a bright overshoot when the curtains open, then it settles.
- const glare=Math.exp(-Math.abs(t-2.3)*3)*.45*light;
- // Spring up: a small dip, a bouncy leap, then the view rushes to the window; a breath of handheld sway throughout.
- const dip=Math.sin(clamp((t-2.3)/.25)*Math.PI)*4,jump=back((t-2.5)/.6),push=inn((t-3.2)/(PRE+1.1-3.2));
- const swayX=Math.sin(now*.9)*.35,swayY=Math.cos(now*.7)*.3,tilt=Math.sin(now*.55)*.35;
- wake.room.style.transform=`translate3d(${swayX}%,${dip-jump*3+swayY}%,0) rotate(${tilt*(1-push)}deg) scale(${1.04+jump*.06+push*1.4})`;
- wake.room.style.filter=`blur(${(1-out((t-.9)/1))*12}px) brightness(${lerp(.42,1.02,light)+glare}) saturate(${lerp(.7,1.05,light)})`;
- wake.view.style.filter=`blur(${lerp(2.2,.6,push)}px) brightness(${1.18+glare})`;
- wake.futon.style.transform=`translate3d(0,${jump*130}%,0) rotate(${jump*-3}deg)`;
+ // A sustained white exposure hides the room cut, then reveals the school.
+ const exposure=ease((t-4.5)/1.8)*(1-ease((t-7.25)/1.65));
+ arrivalLight.style.opacity=String(exposure);
+ arrivalLight.style.display=exposure>0?'':'none';
+ const on=t<PRE+.85;wake.layer.style.display=on?'':'none';if(!on)return;
+ wake.layer.style.visibility='visible';
+ const eyes=lids(t),door=ease((t-2.8)/2.5),push=ease((t-5.1)/2.5);
+ wake.lidTop.style.transform=`translateY(${-eyes*108}%)`;
+ wake.lidBottom.style.transform=`translateY(${eyes*108}%)`;
+ const roomWidth=Math.max(W,H*1.5),zoom=Math.max(W/(roomWidth*.2585),H/(roomWidth/1.5*.835))*1.12;
+ wake.room.style.transform=`translateY(${lerp(2,0,ease((t-1.4)/1.4))}%) scale(${lerp(1,zoom,push)})`;
+ wake.room.style.filter=`blur(${(1-ease(t/1.8))*5}px) brightness(${lerp(.68,1,ease(t/2.4))+door*.65})`;
+ wake.door.style.transform=`perspective(1600px) rotateY(${-door*104}deg)`;
+ wake.shade.style.opacity=String(door*.4);
+ wake.light.style.opacity=String(ease((t-3.1)/1.9)*.95);
+ wake.layer.style.opacity=String(1-ease((t-PRE)/.8));
 }
 
 // 01 Sea: light gathers, then an aperture opens onto the sea.
 scene(0,4.3,(s,l)=>{s.img=photo('sea-view',l);s.img.style.objectPosition='60% 50%';},(s,t)=>{
- const r=expo((t-1.05)/1.5);s.layer.style.clipPath=`circle(${r*82}% at 50% 52%)`;
+ s.layer.style.clipPath="none";
  const exit=out((t-3.6)/.7);
  s.img.style.transform=`translate3d(0,${-exit*22}%,0) scale(${lerp(1.5,1.12,out(t/3.6))})`;
  s.img.style.filter=`brightness(${1-exit*.45})`;
@@ -77,7 +75,7 @@ scene(3.6,7.2,(s,l)=>{s.a=photo('summer-stairs',l);s.b=photo('summer-building',l
 });
 
 // 03 Chapel: stained glass assembles from flying shards, the lead lines melt away.
-scene(6.6,10.2,(s,l)=>{
+scene(11.6,15.2,(s,l)=>{
  l.classList.add('ob-dark');s.mosaic=el('div','ob-mosaic',l);s.tiles=[];
  const cols=portrait?4:8,rows=portrait?7:5;
  for(let r=0;r<rows;r++)for(let c=0;c<cols;c++){
@@ -88,7 +86,7 @@ scene(6.6,10.2,(s,l)=>{
  }
  s.chapel=photo('chapel-wide',l);s.chapel.style.objectPosition='42% 50%';
 },(s,t)=>{
- const lt=t-6.6;
+ const lt=t-11.6;
  s.tiles.forEach(p=>{const r=out((lt-p.delay)/.85);p.tile.style.opacity=String(clamp(r*3));
   p.tile.style.transform=r>=1?'none':`translate3d(${(1-r)*p.x}vw,${(1-r)*p.y}vh,${(1-r)*p.z}px) rotateX(${(1-r)*p.rx}deg) rotateY(${(1-r)*p.ry}deg) rotateZ(${(1-r)*p.rz}deg)`;});
  s.mosaic.style.setProperty('--lead',lerp(3,0,ease((lt-1.45)/.6))+'px');
@@ -98,12 +96,12 @@ scene(6.6,10.2,(s,l)=>{
 
 // 04 Lunch break: snapshots land on the desk; we dive into one of them.
 const cardSet=[['friends',-27,-15,-9],['summer-window',26,-18,7],['window-near',-25,19,6],['ideas',25,18,-6],['summer-friends',0,1,-2]];
-scene(9.6,12.95,(s,l)=>{
+scene(14.6,17.95,(s,l)=>{
  s.bg=photo('classroom',l,'ob-photo ob-blurred');s.word=el('p','ob-giant',l);s.word.textContent='仲間。';
  s.cards=cardSet.map(([name,x,y,r],i)=>{const card=el('figure','ob-card',l);const img=photo(name,card,'ob-card-img');
   return {card,img,x,y,r,at:i*.3,from:[(i%2?1:-1)*(70+rand()*40),(rand()-.5)*80,(i%2?1:-1)*(35+rand()*30)]};});
 },(s,t)=>{
- const lt=t-9.6,enter=out(lt/.5);
+ const lt=t-14.6,enter=out(lt/.5);
  s.layer.style.clipPath=`inset(0 ${(1-enter)*50}% 0 ${(1-enter)*50}%)`;
  s.bg.style.transform=`scale(${lerp(1.35,1.2,ease(lt/3))})`;
  const word=out((lt-.1)/1.1);s.word.style.transform=`translate(-50%,-50%) scale(${lerp(1.5,1,word)})`;
@@ -123,41 +121,68 @@ scene(9.6,12.95,(s,l)=>{
 });
 
 // 05 Class: words are thrown at the blackboard; the frame slices into the next board.
-scene(12.6,15.35,(s,l)=>{
+scene(17.6,20.35,(s,l)=>{
  s.a=photo('summer-ideas',l);s.a.style.objectPosition='65% 50%';s.slices=[];
  for(let i=0;i<5;i++){const slice=el('div','ob-slice',l);Object.assign(slice.style,{left:i*20+'%',width:'20.2%'});
   const img=photo('ideas',slice);Object.assign(img.style,{width:'500%',left:-i*100+'%',objectPosition:'58% 50%'});s.slices.push({slice,img,delay:[.12,0,.2,.06,.16][i]});}
 },(s,t)=>{
- const lt=t-12.6;s.layer.style.clipPath=`polygon(0 0,${expo(lt/.45)*140}% 0,${expo(lt/.45)*140-40}% 100%,0 100%)`;
+ const lt=t-17.6;s.layer.style.clipPath=`polygon(0 0,${expo(lt/.45)*140}% 0,${expo(lt/.45)*140-40}% 100%,0 100%)`;
  s.a.style.transform=`scale(${lerp(1.25,1.08,out(lt/1.2))})`;
  s.slices.forEach((p,i)=>{const r=expo((lt-1.2-p.delay)/.5);show(p.slice,r>0);p.slice.style.transform=`translate3d(0,${(i%2?1:-1)*(1-r)*105}%,0)`;p.img.style.transform=`scale(${lerp(1.18,1.05,out((lt-1.2)/1.4))})`;});
 });
 
 // 06 Window: push through the glass into the town beyond.
-scene(15,17.95,(s,l)=>{s.a=photo('window-talk',l);s.a.style.objectPosition='53% 50%';s.a.style.transformOrigin='73% 32%';s.b=photo('high-view',l);},(s,t)=>{
- const lt=t-15,enter=out(lt/.45);
+scene(20,22.95,(s,l)=>{s.a=photo('window-talk',l);s.a.style.objectPosition='53% 50%';s.a.style.transformOrigin='73% 32%';s.b=photo('high-view',l);},(s,t)=>{
+ const lt=t-20,enter=out(lt/.45);
  s.layer.style.transform=`translate3d(${(1-enter)*100}%,0,0) skewX(${(1-enter)*-8}deg)`;s.a.style.filter=`blur(${(1-enter)*14}px)`;
  const push=inn((lt-.9)/1.55);s.a.style.transform=`scale(${lerp(1.06,7,push)})`;
  const b=ease((lt-1.75)/.6);show(s.b,b>0);s.b.style.opacity=String(b);s.b.style.transform=`scale(${lerp(1.8,1.1,out((lt-1.75)/1.2))})`;
 });
 
 // 07 Sunset: time slows; warm light and fireflies.
-scene(17.4,21.1,(s,l)=>{s.a=photo('sunset',l);s.a.style.objectPosition='50% 60%';s.glow=el('div','ob-sunglow',l);},(s,t)=>{
- const lt=t-17.4;s.layer.style.opacity=String(ease(lt/.5)*(1-ease((t-20.55)/.5)));
+scene(22.4,26.1,(s,l)=>{s.a=photo('sunset',l);s.a.style.objectPosition='50% 60%';s.glow=el('div','ob-sunglow',l);},(s,t)=>{
+ const lt=t-22.4;s.layer.style.opacity=String(ease(lt/.5)*(1-ease((t-25.55)/.5)));
  s.a.style.transform=`translate3d(${lerp(-3,2,ease(lt/3.6))}%,0,0) scale(${lerp(1.2,1.07,out(lt/3.4))})`;
  s.glow.style.opacity=String(.35+Math.sin(lt*1.6)*.12);
 });
 
+// Featured reel: three captured moments, credited to the original creator.
+scene(6.6,12.2,(s,l)=>{
+ l.classList.add('ob-feature');opening.querySelector('.ob-sticky').append(l);
+ s.bg=photo('sea-view',l,'ob-feature-sea');
+ const shade=el('div','ob-feature-shade',l);
+ s.strip=el('div','ob-feature-strip',l);
+ s.cards=['two','three','one'].map((name,i)=>{
+  const card=el('figure','ob-feature-card',s.strip),img=el('img','',card);
+  img.src='assets/houkago-scene-'+name+'.png';img.alt=['海と街を望む生徒たち','光の差す校内の階段','窓辺の教室で過ごす生徒たち'][i];
+  const caption=el('figcaption','',card);caption.textContent=['海の見える街','いつもの階段','放課後の教室'][i];return card;
+ });
+ s.copy=el('div','ob-feature-copy',l);
+ const credit=el('a','ob-feature-credit',s.copy);credit.href='https://www.instagram.com/reel/DeZHhwGBRWY/';credit.target='_blank';credit.rel='noopener noreferrer';
+ const icon=el('img','',credit);icon.src='assets/houkago-icon.jpg';icon.alt='あの日の放課後';
+ const name=el('span','',credit);name.innerHTML='<strong>あの日の放課後</strong><small>@houkago_anohi · Instagram ↗</small>';
+ const intro=el('p','ob-feature-intro',s.copy);intro.textContent='「あの日の放課後」が紹介した';
+ const title=el('p','ob-feature-title',s.copy);title.innerHTML='海の街の、<br>学校。';
+ const note=el('p','ob-feature-note',s.copy);note.textContent='海の向こうまで、青春が広がる。';
+ const source=el('a','ob-feature-source',s.copy);source.href=credit.href;source.target='_blank';source.rel='noopener noreferrer';source.textContent='紹介リールを見る ↗';
+},(s,t)=>{
+ const lt=t-6.6,enter=ease(lt/.65),exit=ease((lt-5)/.6);
+ s.layer.style.opacity=String(enter*(1-exit));s.layer.style.pointerEvents=enter>.8&&exit<.2?'auto':'none';s.layer.inert=enter<.8||exit>.2;
+ s.bg.style.transform=`scale(${lerp(1.16,1.04,ease(lt/5.5))})`;
+ s.cards.forEach((card,i)=>{const r=out((lt-.2-i*.24)/1);card.style.opacity=String(r);card.style.transform=`translateY(${(1-r)*100}px) rotate(${[-7,3,-4][i]*(.5+.5*r)}deg) scale(${lerp(.85,1,r)})`;});
+ s.copy.style.opacity=String(ease((lt-.65)/.7));s.copy.style.transform=`translateY(${(1-out((lt-.65)/.9))*24}px)`;
+});
+
 // 08 Your day: zoom out from the sunset into a wall of the whole day.
 const wall=['building','chapel-wide','classroom','corridor','friends','high-view','ideas','sunset','sea-view','stained-glass','summer-building','summer-friends','summer-ideas','summer-window','window-talk'];
-scene(20.4,99,(s,l)=>{
+scene(25.4,99,(s,l)=>{
  l.classList.add('ob-dark');s.grid=el('div','ob-grid',l);
  const cols=portrait?3:5,rows=portrait?5:3;s.grid.style.gridTemplateColumns=`repeat(${cols},1fr)`;s.grid.style.gridTemplateRows=`repeat(${rows},1fr)`;
  s.scale=Math.max(cols,rows);
  s.cells=wall.map((name,i)=>{const cell=el('div','ob-cell',s.grid);photo(name,cell);const c=i%cols,r=Math.floor(i/cols);return {cell,d:Math.hypot(c-(cols-1)/2,r-(rows-1)/2),center:i===7};});
  s.shade=el('div','ob-final-shade',l);
 },(s,t)=>{
- const lt=t-20.4,z=expo((lt-.1)/1.5);
+ const lt=t-25.4,z=expo((lt-.1)/1.5);
  s.grid.style.transform=`scale(${lerp(s.scale,.94,z)}) rotate(${lerp(0,-1.5,z)}deg)`;s.grid.style.gap=lerp(0,8,z)+'px';
  s.cells.forEach(c=>{if(c.center)return;const r=out((lt-.35-c.d*.18)/.6);c.cell.style.opacity=String(r);c.cell.style.transform=`scale(${lerp(.6,1,back((lt-.35-c.d*.18)/.6))})`;});
  const drift=ease((lt-1.6)/2.4);s.grid.style.translate=`0 ${-drift*2}%`;
@@ -199,19 +224,19 @@ const cues=[
  {at:2.6-PRE,end:3.95-PRE,lines:['今日が、','待ちきれない。'],anim:'bounce',pos:'center'},
  {at:1.55,end:3.45,lines:['もし、梅光を','選んだら。'],anim:'blur',pos:'center',label:'CHAPTER 01'},
  {at:3.95,end:6.35,lines:['昨日の自分を、','ひとつ越える。'],anim:'stairs',pos:'bl',label:'CHAPTER 02'},
- {at:7.05,end:9.45,lines:['ここでは、','そのままでいい。'],anim:'drop',pos:'center',label:'CHAPTER 03'},
- {at:12.75,end:14.85,lines:['やりたい。'],anim:'slam',pos:'tl',label:'CHAPTER 04'},
- {at:13.85,end:14.85,lines:['やってみる。'],anim:'slam',pos:'br',chalk:true},
- {at:15.1,end:17.25,lines:['ここから、','誰と何をしてみよう。'],anim:'depth',pos:'center',label:'CHAPTER 05'},
- {at:17.95,end:20.35,lines:['まだ、','帰りたくない。'],anim:'type',pos:'bl',label:'CHAPTER 06'},
- {at:21.55,end:99,lines:['自分らしさが、','武器になる。'],anim:'rise',pos:'center',final:true}
+ {at:12.05,end:14.45,lines:['ここでは、','そのままでいい。'],anim:'drop',pos:'center',label:'CHAPTER 03'},
+ {at:17.75,end:19.85,lines:['やりたい。'],anim:'slam',pos:'tl',label:'CHAPTER 04'},
+ {at:18.85,end:19.85,lines:['やってみる。'],anim:'slam',pos:'br',chalk:true},
+ {at:20.1,end:22.25,lines:['この街で、','可能性が広がる。'],anim:'depth',pos:'center',label:'CHAPTER 05'},
+ {at:22.95,end:25.35,lines:['まだ、','帰りたくない。'],anim:'type',pos:'bl',label:'CHAPTER 06'},
+ {at:26.55,end:99,lines:['ここから、','誰と何をやってみよう。'],anim:'rise',pos:'center',final:true}
 ].map(cue=>{
  const node=el('div',`ob-cue ${cue.anim} pos-${cue.pos}`,typeLayer);
  if(cue.label){cue.labelNode=el('small','ob-label',node);cue.labelNode.textContent=cue.label;}
  const text=el('p','',node);text.setAttribute('aria-label',cue.lines.join(''));cue.text=text;cue.chars=[];let n=0;
  cue.lines.forEach((line,li)=>{const row=el('span','ob-row',text);row.setAttribute('aria-hidden','true');[...line].forEach((ch,ci)=>{const c=el('span','ob-char',row);c.textContent=ch;cue.chars.push({c,li,ci,n:n++,r:rand()});});});
  if(cue.chalk){node.insertAdjacentHTML('beforeend','<svg class="ob-chalk" viewBox="0 0 300 40" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M6 26C58 12 118 34 178 19S262 21 294 11"/></svg>');cue.chalk=node.querySelector('path');}
- if(cue.final){cue.sub=el('p','ob-sub',node);cue.sub.textContent='梅光学院 中学校・高等学校';cue.credit=el('p','ob-credit-line',node);cue.credit.textContent='このWEBサイトは、生徒が0から100まで作成しています。';}
+ if(cue.final){cue.sub=el('p','ob-sub',node);cue.sub.textContent='梅光学院 中学校・高等学校';cue.credit=el('p','ob-credit-line',node);cue.credit.innerHTML='このWEBサイトは、<br>生徒が0から100まで作成しています。';}
  cue.node=node;return cue;
 });
 function drawCue(cue,t){
@@ -228,7 +253,7 @@ function drawCue(cue,t){
   if(cue.anim==='blur'){const r=out((age-n*.07)/.7);o=r;tr=`translate3d(${(1-r)*(n-mid)*.5}em,0,0) scale(${lerp(1.6,1,r)})`;f=`blur(${(1-r)*14}px)`;}
   else if(cue.anim==='stairs'){const r=back((age-n*.13)/.42);o=clamp(r*2);tr=`translate3d(0,${(1-r)*120-ci*9}%,0) scale(${lerp(.4,1,r)})`;}
   else if(cue.anim==='drop'){const r=out((age-rnd*.75)/.75);o=clamp(r*3);tr=`translate3d(0,${-(1-r)*60}vh,0) rotate(${(1-r)*(rnd-.5)*90}deg)`;f=r<1?`blur(${(1-r)*6}px)`:'';}
-  else if(cue.anim==='depth'){const r=out((age-n*.03)/.7),fly=inn((t-16.8-n*.02)/.6);tr=`translate3d(${(n-mid)*fly*.9}em,0,${lerp(-1600,0,r)+fly*1100}px)`;o=clamp(r*2)*(1-ease(fly*1.4));}
+  else if(cue.anim==='depth'){const r=out((age-n*.03)/.7),fly=inn((t-21.8-n*.02)/.6);tr=`translate3d(${(n-mid)*fly*.9}em,0,${lerp(-1600,0,r)+fly*1100}px)`;o=clamp(r*2)*(1-ease(fly*1.4));}
   else if(cue.anim==='type'){const r=out((age-n*.1)/.5);o=r;tr=`translate3d(0,${(1-r)*24}px,0)`;f=`blur(${(1-r)*8}px)`;}
   else if(cue.anim==='bounce'){const r=back((age-n*.06)/.5);o=clamp(r*2);tr=`translate3d(0,${(1-r)*90}%,0) scale(${lerp(.3,1,r)}) rotate(${(1-r)*(n%2?16:-16)}deg)`;}
   else if(cue.anim==='rise'){const r=out((age-li*.28-ci*.05)/.8);o=r;tr=`translate3d(0,${(1-r)*110}%,0)`;}
@@ -241,6 +266,7 @@ function drawCue(cue,t){
 const motes=Array.from({length:150},()=>({x:rand(),y:rand(),vx:(rand()-.5)*.02,vy:.01+rand()*.035,s:.6+rand()*2.2,tw:rand()*6.28,hue:Math.floor(rand()*4),a:Math.atan2(rand()-.5,rand()-.5),d:.15+rand()*.6}));
 const glass=['255,94,82','74,168,255','255,212,84','96,226,160'];
 function particles(t){
+ t=t>=11.6?t-5:t>=6.6?6.6:t;
  const a=performance.now()/1000;
  ctx.clearRect(0,0,canvas.width,canvas.height);const k=canvas.width/W;
  const gather=t<1.3?ease(t/1.25):t<2.6?1-expo((t-1.25)/1.1):0,regather=t>21.2?(t<22?ease((t-21.2)/.7):1-expo((t-22)/1.3)):0;
@@ -256,33 +282,35 @@ function particles(t){
  }
  ctx.globalAlpha=1;ctx.shadowBlur=0;
 }
-function resize(){const box=opening.querySelector('.ob-sticky');W=box.clientWidth||innerWidth;H=box.clientHeight||innerHeight;const dpr=Math.min(1.5,devicePixelRatio||1);canvas.width=Math.round(W*dpr);canvas.height=Math.round(H*dpr);measureClock();}
+function resize(){portrait=innerHeight>innerWidth;const box=opening.querySelector('.ob-sticky');W=box.clientWidth||innerWidth;H=box.clientHeight||innerHeight;const dpr=Math.min(1.5,devicePixelRatio||1);canvas.width=Math.round(W*dpr);canvas.height=Math.round(H*dpr);measureClock();}
 
 /* ---------- Camera, light and clock ---------- */
 const flashes=[[2.05-PRE,.45],[3.6,.22],[5.4,.6],[8.65,.35],[12.6,.5],[13.07,.25],[14.1,.35],[17.35,.15],[20.4,.25]];
 const shakes=[[2.55-PRE,7],[5.4,6],[10.15,4],[10.45,4],[10.75,4],[11.05,4],[11.35,5],[13.07,12],[14.17,12]];
 const clockKeys=[[-PRE,390,'WAKE UP'],[0,450,'MORNING'],[3.6,485,'THE HILL'],[6.6,515,'CHAPEL'],[9.6,745,'LUNCH BREAK'],[12.6,830,'CLASS'],[15,940,'AFTER SCHOOL'],[17.4,1040,'SUNSET'],[20.4,1062,'YOUR DAY']];
 function camera(t){
+ const featured=t>=6.6&&t<11.6;
+ t=t>=11.6?t-5:featured?6.59:t;
  let f=0,sx=0,sy=0;flashes.forEach(([at,a])=>{if(t>=at)f+=a*Math.exp(-(t-at)*7);});flash.style.opacity=String(clamp(f));
  shakes.forEach(([at,a])=>{const d=t-at;if(d>=0&&d<.5){const e=Math.exp(-d*10)*a;sx+=Math.sin(d*90)*e;sy+=Math.cos(d*77)*e;}});
  world.style.transform=typeLayer.style.transform=`translate3d(${sx}px,${sy}px,0)`;
  leak.style.opacity=String(Math.exp(-Math.abs(t-(2.2-PRE))*2.5)*.55+Math.exp(-Math.abs(t-17.55)*3.2)*.85+Math.exp(-Math.abs(t-1.5)*4)*.25);
  const ray=ease((t-8.55)/.5)*(1-ease((t-10)/.4));rays.style.opacity=String(ray*.55);rays.style.transform=`rotate(${t*4}deg)`;
  let key=clockKeys[0],prev=key;clockKeys.forEach(k=>{if(t>=k[0]){prev=key;key=k;}});
- // The digits roll forward through the hours between chapters.
- const minutes=Math.round(lerp(prev[1],key[1],out((t-key[0])/.55)));
- clockTime.textContent=String(Math.floor(minutes/60)).padStart(2,'0')+':'+String(minutes%60).padStart(2,'0');
- clockChapter.textContent=key[2];
+ // Digital time advances with each chapter.
+ const minutes=lerp(prev[1],key[1],out((t-key[0])/.55));
+ const wholeMinutes=Math.round(minutes);dial.textContent=String(Math.floor(wholeMinutes/60)%24).padStart(2,'0')+':'+String(wholeMinutes%60).padStart(2,'0');
+ clockChapter.textContent=featured?'FEATURED':key[2];
 }
 
-// The alarm time blinks large in the dark, then settles into the corner.
+// The digital alarm appears in the dark, then settles into the corner.
 let clockHome={ox:0,oy:0,dx:0,dy:0};
-function measureClock(){clock.style.transform='none';const c=clock.getBoundingClientRect(),d=clockTime.getBoundingClientRect(),box=opening.querySelector('.ob-sticky').getBoundingClientRect();
+function measureClock(){clock.style.transform='none';const c=clock.getBoundingClientRect(),d=dial.getBoundingClientRect(),box=opening.querySelector('.ob-sticky').getBoundingClientRect();
  clockHome={ox:d.left+d.width/2-c.left,oy:d.top+d.height/2-c.top,dx:box.left+W/2-(d.left+d.width/2),dy:box.top+H*.4-(d.top+d.height/2)};clock.style.transformOrigin=`${clockHome.ox}px ${clockHome.oy}px`;}
 function placeClock(t){
  const home=out((t-1.7)/.7),big=lerp(portrait?3.2:3.6,1,home),ring=1-ease((t-1.35)/.4),now=performance.now()/1000;
  clock.style.transform=home>=1?'none':`translate3d(${clockHome.dx*(1-home)}px,${clockHome.dy*(1-home)}px,0) scale(${big}) rotate(${Math.sin(now*55)*9*ring}deg)`;
- clockTime.style.opacity=String(ring>.05&&Math.sin(now*14)<-.3?.3:1);clockTime.style.textShadow=ring>.05?`0 0 ${18*ring}px #ffe7b8`:'';clockChapter.style.opacity=String(ease((t-2.2)/.4));
+ dial.style.opacity=String(1-ring*.18*(.5+.5*Math.sin(now*8)));clockChapter.style.opacity=String(ease((t-2.2)/.4));
 }
 
 /* ---------- Playback: scroll drives the clock ---------- */
@@ -298,7 +326,9 @@ function draw(t){
  scenes.forEach(s=>{const on=old>=s.from&&old<s.to;s.layer.style.display=on?'':'none';if(on){s.layer.style.visibility='visible';s.draw(s,old);}});
  cues.forEach(c=>drawCue(c,old));camera(old);particles(old);placeClock(t);
  if(drawMontage(tt))clockChapter.textContent='SCHOOL EVENTS';
- hint.style.opacity=String(1-ease(t/.8));
+ hint.style.opacity='1';
+ hint.querySelector('span').textContent=t<1.9?'スクロールして、目を覚ます':t<5.2?'スクロールして、扉を開ける':t<8.9?'光の先へ、スクロール':'スクロールで、時間を進める';
+ hint.querySelector('small').textContent=portrait?'タップかスワイプで進む · 止めると映像も止まる':'クリックかスクロールで進む · 止めると映像も止まる';
  counter.textContent=String(Math.min(TOTAL,Math.floor(t))).padStart(2,'0')+' / '+Math.round(TOTAL);opening.dataset.time=t.toFixed(2);
 }
 function scrolled(){const max=opening.scrollHeight-opening.clientHeight;return max>0?clamp(opening.scrollTop/max):0;}
@@ -324,11 +354,16 @@ async function playSound(){const epoch=++audioEpoch;try{await audio.play();if(do
 function unlock(event){if(!done&&wantsSound&&audio.paused&&!sound.contains(event.target))playSound();}
 const unlockEvents=['pointerdown','touchend','keydown'];
 function visibility(){if(document.hidden){audioEpoch++;audio.pause();}else if(!done&&wantsSound)playSound();}
-function keyboard(event){if(event.key==='Escape'){event.preventDefault();finish(true);}}
+function keyboard(event){if(event.key==='Escape'){event.preventDefault();finish(true);}else if(event.key==='ArrowRight'){event.preventDefault();advance();}}
 function motionChange(event){if(event.matches)finish();}
 sound.addEventListener('click',()=>{if(audio.paused){wantsSound=true;playSound();}else{wantsSound=false;audioEpoch++;audio.pause();soundLabel(false);}});
 skip.addEventListener('click',()=>finish(true));
-hint.addEventListener('click',()=>opening.scrollBy({top:opening.clientHeight*1.2,behavior:'smooth'}));
+// Tap or click anywhere except controls and links to glide to the next moment where the words are fully shown.
+const toFilm=x=>PRE+(x<EVENT_AT?x:x+EVENT_LEN);
+const stops=[3.6,toFilm(3),toFilm(5.6),toFilm(8.2),toFilm(13.6),toFilm(16.4),PRE+EVENT_AT+1.7,PRE+EVENT_AT+3.3,toFilm(19.4),toFilm(21.3),toFilm(24.4),toFilm(28.8)];
+function advance(){const max=opening.scrollHeight-opening.clientHeight,next=stops.find(x=>x>shown+.15);opening.scrollTo({top:next===undefined?max:next/TOTAL*FILM*max,behavior:'smooth'});}
+hint.addEventListener('click',advance);
+opening.addEventListener('click',event=>{if(!event.target.closest('button,a,input'))advance();});
 function start(){if(done)return;clearTimeout(startupTimer);resize();ready=true;}
 function launch(){
  if(reduced.matches)return;

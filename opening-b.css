@@ -4,8 +4,8 @@
 #opening{position:fixed;inset:0;z-index:100;background:#05080b;color:#fff;overflow:hidden;font-family:var(--sans);isolation:isolate;--progress:0;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:none;outline:none}
 #opening::-webkit-scrollbar{display:none}
 /* The stage stays pinned while the track below it supplies the scroll distance. */
-#opening .ob-sticky{position:sticky;top:0;height:100%;overflow:hidden;isolation:isolate}
-#opening .ob-track{height:1700%}
+#opening .ob-sticky{position:sticky;top:0;height:100%;overflow:clip;isolation:isolate}
+#opening .ob-track{height:2100%}
 #opening .ob-world,#opening .ob-type{position:absolute;inset:0}
 #opening .ob-scene{position:absolute;inset:0;overflow:hidden;visibility:hidden;perspective:1100px}
 #opening .ob-dark{background:#05080b}
@@ -33,38 +33,21 @@
 #opening .ob-grid .ob-cell:nth-child(8){opacity:1}
 #opening .ob-final-shade{position:absolute;inset:0;background:radial-gradient(ellipse at center,#05080bcc,#05080bf2);opacity:0}
 
-/* Wake-up room: drawn room, real sea photograph through the window */
-#opening .ob-wake{background:#060708}
-#opening .ob-room{position:absolute;inset:-4%;transform-origin:50% 42%;will-change:transform,filter}
-#opening .ob-wall{position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg viewBox='0 0 240 240' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.55' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 .9 0'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)'/%3E%3C/svg%3E"),radial-gradient(ellipse at 50% 40%,#d9cdb8,#a89a86 55%,#5d554b);background-blend-mode:soft-light,normal;background-size:240px,cover}
-#opening .ob-rail{position:absolute;left:18%;right:18%;top:9.4%;height:1.1%;background:linear-gradient(#7b7266,#4a443c);box-shadow:0 3px 6px #0004}
-#opening .ob-window{position:absolute;left:27%;top:13%;width:46%;height:54%;overflow:hidden;background:#cfe3f0;border:clamp(8px,1vw,14px) solid #c8c4bb;border-color:#e4e1da #aaa59c #9b968e #d6d2ca;box-shadow:inset 0 0 0 2px #8a857c,0 18px 50px #0005}
-#opening .ob-view{position:absolute;inset:-6%;width:112%;height:112%;object-fit:cover}
-#opening .ob-glass{position:absolute;inset:0;background:linear-gradient(115deg,#ffffff1f 0 18%,transparent 19% 46%,#ffffff14 47% 52%,transparent 53%);mix-blend-mode:screen}
-#opening .ob-sash{position:absolute;inset:0;background:linear-gradient(90deg,transparent calc(50% - 7px),#bdb8ae calc(50% - 7px),#e6e3dc calc(50% - 3px),#a29d94 calc(50% + 4px),transparent calc(50% + 7px))}
-#opening .ob-sun{position:absolute;right:-18%;top:-30%;width:75%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,#fffef6 0 12%,#fff4cf88 26%,#ffe3a033 45%,transparent 68%);mix-blend-mode:screen}
-#opening .ob-sill{position:absolute;left:25%;right:25%;top:67%;height:2.4%;background:linear-gradient(#efebe3,#b9b2a6);box-shadow:0 8px 14px #0005}
-#opening .ob-curtain{position:absolute;top:10%;height:68%;width:27%;background:linear-gradient(180deg,#fff7e055,transparent 40%),url("data:image/svg+xml,%3Csvg viewBox='0 0 240 240' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9 .06' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 .9 0'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)'/%3E%3C/svg%3E"),repeating-linear-gradient(90deg,#00000030 0,#ffffff1c 2.6%,#00000008 4.4%,#00000030 6.2%),linear-gradient(#ece2cf,#d8c9b0);background-blend-mode:screen,soft-light,multiply,normal;background-size:auto,240px,auto,auto;box-shadow:inset 0 -26px 40px #00000030,0 12px 30px #0004;border-radius:0 0 3px 3px}
-#opening .ob-curtain.left{left:23.2%;transform-origin:left center}
-#opening .ob-curtain.right{right:23.2%;transform-origin:right center}
-#opening .ob-slit{position:absolute;left:calc(50% - 3px);width:6px;top:11%;height:66%;background:linear-gradient(#fffef2,#fff3cf 60%,#ffe7b000);filter:blur(3px);box-shadow:0 0 40px 12px #fff1c766;mix-blend-mode:screen}
-#opening .ob-patch{position:absolute;inset:0;opacity:0;mix-blend-mode:soft-light;background:#fff2cf;clip-path:polygon(18% 100%,44% 70%,70% 70%,96% 100%);filter:blur(18px)}
-#opening .ob-beams{position:absolute;inset:0;opacity:0;mix-blend-mode:screen;background:linear-gradient(162deg,transparent 30%,#fff1c450 40%,transparent 50%),linear-gradient(152deg,transparent 38%,#ffe6a838 48%,transparent 58%),linear-gradient(172deg,transparent 44%,#fff3d038 54%,transparent 64%);filter:blur(6px)}
-#opening .ob-bloom{position:absolute;left:30%;top:2%;width:60%;height:70%;opacity:0;border-radius:50%;background:radial-gradient(ellipse,#fff8e2aa,transparent 65%);mix-blend-mode:screen;filter:blur(30px)}
-#opening .ob-warm{position:absolute;inset:0;opacity:.15;mix-blend-mode:soft-light;background:radial-gradient(ellipse at 52% 36%,#ffd58a,#c98a4a55 60%,transparent 80%)}
-#opening .ob-futon{position:absolute;left:-12%;right:-12%;bottom:-8%;height:36%;border-radius:48% 52% 0 0/40% 46% 0 0;background:radial-gradient(ellipse at 30% 8%,#ffffffcc,transparent 40%),radial-gradient(ellipse at 74% 22%,#00000022,transparent 45%),url("data:image/svg+xml,%3Csvg viewBox='0 0 240 240' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9 .06' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 .9 0'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)'/%3E%3C/svg%3E"),repeating-linear-gradient(97deg,#00000010 0 3%,#ffffff12 3% 6%),linear-gradient(#f4f0e8,#d8cfc0);background-blend-mode:normal,normal,soft-light,multiply,normal;background-size:auto,auto,240px,auto,auto;box-shadow:0 -14px 50px #0006;filter:blur(5px);will-change:transform}
+/* Photographic oak, plaster, linen and morning light; a hinged image plane opens in 3D. */
+#opening .ob-wake{z-index:3;background:#201c17;pointer-events:none}
+#opening .ob-home-camera{position:absolute;inset:0;transform-origin:50% 46%;will-change:transform,filter}
+#opening .ob-home-canvas{position:absolute;left:50%;top:50%;width:max(100vw,150vh);height:max(66.6667vw,100vh);transform:translate(-50%,-50%)}
+#opening .ob-home-image{position:absolute;width:100%;height:100%;inset:0}
+#opening .ob-door-portal,#opening .ob-door-leaf{position:absolute;left:37.3%;top:3.42%;width:25.85%;height:83.5%}
+#opening .ob-door-portal{overflow:hidden;background:#b5d4e1;box-shadow:inset 0 0 20px #071a2466}
+#opening .ob-door-view{width:100%;height:100%;object-fit:cover;object-position:60% 50%}
+#opening .ob-door-leaf{background-image:url('assets/morning-home.png');background-size:386.847% 119.76%;background-position:50.303% 20.727%;transform-origin:left center;backface-visibility:hidden;will-change:transform;box-shadow:3px 0 4px #21130788}
+#opening .ob-door-shade{position:absolute;inset:0;background:linear-gradient(90deg,#140e0700,#140e07);opacity:0}
+#opening .ob-door-light{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at 55% 45%,#fff7d1aa,transparent 62%);mix-blend-mode:screen;opacity:0}
 #opening .ob-lid{position:absolute;left:-12%;right:-12%;height:66%;background:linear-gradient(var(--dir),#000 62%,#0a0302 80%,#2a0d0700);filter:blur(16px);will-change:transform}
 #opening .ob-lid.top{--dir:180deg;top:-6%;border-radius:0 0 50% 50%/0 0 30% 30%}
 #opening .ob-lid.bottom{--dir:0deg;bottom:-6%;border-radius:50% 50% 0 0/30% 30% 0 0}
-#opening .ob-credit-line{font-family:"Yu Mincho","Hiragino Mincho ProN",serif!important;font-weight:600!important;font-size:clamp(14px,1.25vw,18px)!important;letter-spacing:.1em!important;line-height:1.6!important;color:#fff;text-shadow:0 2px 14px #000c;opacity:0;margin-top:6px!important}
-
-/* School events montage */
-#opening .ob-cut,#opening .ob-split,#opening .ob-quad{position:absolute;inset:0;overflow:hidden}
-#opening .ob-cut img,#opening .ob-split-panel img,#opening .ob-quad-cell img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;will-change:transform}
-#opening .ob-split{grid-template-columns:repeat(3,1fr);gap:6px;background:#05080b}
-#opening .ob-split-panel{position:relative;overflow:hidden}
-#opening .ob-quad{grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:6px;background:#05080b}
-#opening .ob-quad-cell{position:relative;overflow:hidden;opacity:0}
+#opening .ob-credit-line{font-family:"Yu Mincho","Hiragino Mincho ProN",serif!important;font-weight:600!important;font-size:clamp(17px,1.7vw,24px)!important;letter-spacing:.08em!important;line-height:1.8!important;color:#fff;opacity:0;margin-top:18px!important}
 
 /* Light */
 #opening .ob-particles{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;mix-blend-mode:screen}
@@ -98,7 +81,6 @@
 #opening button:focus-visible{outline:2px solid #fff;outline-offset:-3px}#opening button:hover{background:#ffffff22}
 #opening .ob-clock{position:absolute;left:5%;bottom:7%;display:flex;flex-direction:column;gap:4px;text-shadow:0 2px 16px #000a}
 #opening .ob-clock{z-index:2;align-items:flex-start;will-change:transform}
-#opening .ob-clock-time{font-size:clamp(26px,3vw,40px);font-weight:300;letter-spacing:.06em;font-variant-numeric:tabular-nums;line-height:1}
 #opening .ob-dial{width:clamp(50px,4.6vw,68px);height:auto;overflow:visible;filter:drop-shadow(0 2px 10px #000a)}
 #opening .ob-face{fill:#05080b66;stroke:#fff;stroke-width:3}
 #opening .ob-ticks line{stroke:#ffffffcc;stroke-width:2.4;stroke-linecap:round}
@@ -130,8 +112,7 @@ body.opening-active #experience{pointer-events:none}
  #opening .ob-hint{bottom:16%}
  #opening .ob-window{left:14%;width:72%;top:15%;height:44%}#opening .ob-rail{left:8%;right:8%;top:11.5%}#opening .ob-sill{left:12%;right:12%;top:59%}#opening .ob-curtain{width:40%;height:52%;top:12%}#opening .ob-curtain.left{left:10%}#opening .ob-curtain.right{right:10%}#opening .ob-slit{top:12.5%;height:50%}
  #opening .depth p{font-size:clamp(26px,8vw,40px);letter-spacing:.02em}
- #opening .ob-split{grid-template-columns:1fr;grid-template-rows:repeat(3,1fr)}
- #opening .ob-credit-line{font-size:12.5px!important;letter-spacing:.03em!important}
+ #opening .ob-credit-line{font-size:clamp(14px,3.8vw,19px)!important;letter-spacing:.025em!important}
  #opening .pos-bl{padding-bottom:20vh}#opening .pos-br{padding-bottom:22vh}#opening .pos-tl{padding-top:16vh}
  #opening .ob-clock{left:6%;bottom:7.5%}#opening .opening-bottom{left:6%;right:6%;gap:16px;font-size:8px}
  #opening .ob-sub{font-size:10px!important;letter-spacing:.2em}
@@ -141,3 +122,63 @@ body.opening-active #experience{pointer-events:none}
  #opening .pos-bl,#opening .pos-br{padding-bottom:16vh}#opening .pos-tl{padding-top:12vh}
  #opening .ob-card{width:34vw}#opening .ob-clock{display:none}
 }
+
+/* A persistent control explains that scrolling, rather than waiting, advances the film. */
+#opening .ob-hint{z-index:5;bottom:7%;width:max-content;max-width:68%;padding:12px 22px;border:1px solid #fff5;border-radius:12px;background:#101a20b8;backdrop-filter:blur(12px);gap:7px;letter-spacing:.08em}
+#opening .ob-hint span{font-size:14px;font-weight:600}
+#opening .ob-hint small{font-size:10px;letter-spacing:.03em;color:#fff9e4}
+#opening .ob-hint i{height:20px}
+@media(max-width:700px){#opening .ob-hint{bottom:8%;max-width:76%;padding:10px 13px}#opening .ob-hint span{font-size:12px}#opening .ob-hint small{font-size:9px}body.opening-active #online-shortcut{bottom:185px}}
+@media(max-height:450px){#opening .ob-hint{bottom:5%;padding:7px 13px}#opening .ob-hint i{display:none}}
+
+/* An editorial interlude from the credited Instagram reel. */
+#opening .ob-feature{z-index:4;background:#10272d;overflow:hidden}
+#opening .ob-feature-sea{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.45;filter:saturate(.6)}
+#opening .ob-feature-shade{position:absolute;inset:0;background:linear-gradient(90deg,#081f29eb,#081f2999 48%,#081f2922)}
+#opening .ob-feature-strip{position:absolute;right:5%;top:21%;width:51%;height:54%;display:flex;gap:14px;align-items:center}
+#opening .ob-feature-card{position:relative;flex:1;min-width:0;height:90%;margin:0;padding:7px 7px 32px;background:#f1ede3;box-shadow:0 18px 45px #0005;will-change:transform}
+#opening .ob-feature-card:nth-child(2){margin-top:-38px}
+#opening .ob-feature-card img{width:100%;height:100%;object-fit:cover;display:block}
+#opening .ob-feature-card figcaption{position:absolute;bottom:10px;left:0;right:0;text-align:center;font-size:10px;color:#293638;letter-spacing:.08em}
+#opening .ob-feature-copy{position:absolute;left:7%;top:20%;width:37%;color:#fff8ed}
+#opening .ob-feature-credit{display:flex;gap:12px;align-items:center;width:fit-content}
+#opening .ob-feature-credit img{width:48px;height:48px;border-radius:50%;border:2px solid #fff9}
+#opening .ob-feature-credit strong{font-size:14px;letter-spacing:.09em;font-weight:500}
+#opening .ob-feature-credit small{display:block;margin-top:5px;font-size:9px;letter-spacing:.08em;opacity:.75}
+#opening .ob-feature-intro{margin:32px 0 16px;font-size:12px;letter-spacing:.08em}
+#opening .ob-feature-title{font-family:'OB Mincho','Yu Mincho',serif;font-size:clamp(42px,5.4vw,80px);line-height:1.45;letter-spacing:.06em}
+#opening .ob-feature-note{margin-top:18px;font-size:12px;letter-spacing:.06em}
+#opening .ob-feature-source{display:inline-block;padding:12px 0;margin-top:8px;border-bottom:1px solid #fff6;font-size:11px}
+#opening .opening-controls,#opening .opening-credit{z-index:6}
+#opening .ob-clock,#opening .opening-bottom{z-index:5}
+@media(max-width:700px){
+ #opening .ob-feature-strip{left:8%;right:8%;width:84%;top:13%;height:29%;gap:8px}
+ #opening .ob-feature-card{padding:4px 4px 25px}#opening .ob-feature-card:nth-child(2){margin-top:-20px}
+ #opening .ob-feature-card figcaption{font-size:8px;bottom:8px;letter-spacing:0}
+ #opening .ob-feature-copy{left:8%;top:44%;width:84%}
+ #opening .ob-feature-credit img{width:32px;height:32px}#opening .ob-feature-credit strong{font-size:11px}#opening .ob-feature-credit small{font-size:8px;margin-top:2px}
+ #opening .ob-feature-intro{font-size:10px;margin:13px 0 6px}#opening .ob-feature-title{font-size:30px;line-height:1.35}
+ #opening .ob-feature-title br{display:none}#opening .ob-feature-note{font-size:10px;margin-top:8px}
+ #opening .ob-feature-source{font-size:10px;margin-top:0;padding:8px 0}
+}
+@media(max-height:560px) and (min-width:701px){#opening .ob-feature-copy{top:14%}#opening .ob-feature-intro{margin:12px 0 6px}#opening .ob-feature-title{font-size:36px;line-height:1.25}#opening .ob-feature-note{margin-top:8px}#opening .ob-feature-credit img{width:32px;height:32px}}
+
+/* Doorway sunlight blooms into a full-frame exposure before arrival. */
+#opening .ob-door-light{background:radial-gradient(ellipse at 52% 42%,#fffef4 0%,#fff7d6c9 20%,#fff0c166 45%,transparent 75%),conic-gradient(from 145deg at 51% 26%,transparent 0deg,#fff6d580 18deg,transparent 38deg,#fffbe699 65deg,transparent 94deg);filter:blur(12px)}
+#opening .ob-arrival-light{position:absolute;inset:0;z-index:4;background:#fffdf6;pointer-events:none;opacity:0;will-change:opacity}
+#opening .rise>p:first-child{font-size:clamp(32px,5.4vw,88px);letter-spacing:.04em}
+@media(max-width:700px){#opening .rise>p:first-child{font-size:clamp(22px,7.1vw,44px);letter-spacing:.015em}}
+
+#opening .ob-digital{display:block;font-family:ui-monospace,"SFMono-Regular",Consolas,monospace;font-size:clamp(23px,2.6vw,38px);font-weight:400;font-variant-numeric:tabular-nums;line-height:1.1;letter-spacing:.04em;color:#fff7e7;text-shadow:0 0 18px #ffe7b84d}
+#opening .ob-cue.rise{padding-bottom:12vh}
+
+/* School events montage */
+#opening .ob-cut,#opening .ob-split,#opening .ob-quad{position:absolute;inset:0;overflow:hidden}
+#opening .ob-cut img,#opening .ob-split-panel img,#opening .ob-quad-cell img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;will-change:transform}
+#opening .ob-split{grid-template-columns:repeat(3,1fr);gap:6px;background:#05080b}
+#opening .ob-split-panel{position:relative;overflow:hidden}
+#opening .ob-quad{grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:6px;background:#05080b}
+#opening .ob-quad-cell{position:relative;overflow:hidden;opacity:0}
+
+@media(max-width:700px){#opening .ob-split{grid-template-columns:1fr;grid-template-rows:repeat(3,1fr)}}
+#opening{cursor:pointer}#opening .opening-controls,#opening .ob-feature a{cursor:auto}
