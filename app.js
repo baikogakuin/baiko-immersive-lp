@@ -234,7 +234,7 @@
   }
 
   const soundButton=document.querySelector('#sound-toggle'),soundLabel=document.querySelector('#sound-label');
-  const bgm=new Audio('assets/youth-bgm.mp3');
+  const bgm=new Audio(window.BAIKO_BGM||'assets/youth-bgm.mp3');
   bgm.loop=true;bgm.preload='auto';bgm.volume=.75;
   let audioIsOn=false,soundEpoch=0;
   function soundUI(){

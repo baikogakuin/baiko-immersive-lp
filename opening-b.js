@@ -25,27 +25,39 @@ let W=innerWidth,H=innerHeight,portrait=H>W;
 const scenes=[];
 function scene(from,to,build,draw){const layer=el('div','ob-scene',world);const s={from,to,layer,draw};build(s,layer);scenes.push(s);return s;}
 
-// 00 Wake up: alarm, eyelids, curtains, a leap out of the futon. Drawn graphics only, no photographs.
+// 00 Wake up: alarm, eyelids, curtains, a leap out of the futon.
+// The room is drawn; the view through the window is the school's real sea photograph.
 const wake=(()=>{
  const layer=el('div','ob-scene ob-wake');world.prepend(layer);
- const room=el('div','ob-room',layer),win=el('div','ob-window',room);el('div','ob-sky',win);el('div','ob-mullion',win);
- const left=el('div','ob-curtain left',room),right=el('div','ob-curtain right',room),beams=el('div','ob-beams',room),warm=el('div','ob-warm',room);
+ const room=el('div','ob-room',layer);el('div','ob-wall',room);el('div','ob-rail',room);
+ const win=el('div','ob-window',room);const view=photo('sea-view',win,'ob-view');view.style.objectPosition='60% 55%';
+ el('div','ob-glass',win);el('div','ob-sash',win);const sun=el('div','ob-sun',win);el('div','ob-sill',room);
+ const patch=el('div','ob-patch',room),left=el('div','ob-curtain left',room),right=el('div','ob-curtain right',room),slit=el('div','ob-slit',room);
+ const beams=el('div','ob-beams',room),bloom=el('div','ob-bloom',room),warm=el('div','ob-warm',room);
  const futon=el('div','ob-futon',layer),lidTop=el('div','ob-lid top',layer),lidBottom=el('div','ob-lid bottom',layer);
- return {layer,room,left,right,beams,warm,futon,lidTop,lidBottom};
+ return {layer,room,view,sun,patch,left,right,slit,beams,bloom,warm,futon,lidTop,lidBottom};
 })();
 // Eyes: a sleepy half-open, a blink, then wide awake.
 function lids(t){if(t<.45)return 0;if(t<.75)return .3*out((t-.45)/.3);if(t<.98)return .3*(1-ease((t-.75)/.23));return out((t-1.05)/.65);}
 function drawWake(t){
  const on=t<PRE+1.4;wake.layer.style.display=on?'':'none';if(!on)return;wake.layer.style.visibility='visible';
- const open=lids(t);wake.lidTop.style.transform=`translate3d(0,${-open*102}%,0)`;wake.lidBottom.style.transform=`translate3d(0,${open*102}%,0)`;
- const curtain=back((t-1.9)/.7),gather=lerp(1,.42,clamp(curtain));
- wake.left.style.transform=`translate3d(${-curtain*62}%,0,0) scaleX(${gather})`;wake.right.style.transform=`translate3d(${curtain*62}%,0,0) scaleX(${gather})`;
- const light=ease((t-1.95)/.6);wake.beams.style.opacity=String(light*.85);wake.warm.style.opacity=String(.2+light*.8);
- // Spring up: a small dip, a bouncy leap, then the view rushes to the window.
+ const now=performance.now()/1000,open=lids(t);
+ wake.lidTop.style.transform=`translate3d(0,${-open*108}%,0)`;wake.lidBottom.style.transform=`translate3d(0,${open*108}%,0)`;
+ const curtain=back((t-1.9)/.75),gather=lerp(1,.4,clamp(curtain));
+ wake.left.style.transform=`translate3d(${-curtain*64}%,0,0) scaleX(${gather})`;wake.right.style.transform=`translate3d(${curtain*64}%,0,0) scaleX(${gather})`;
+ const light=ease((t-1.95)/.6);
+ wake.slit.style.opacity=String((1-light)*(.55+.1*Math.sin(now*1.3)));
+ wake.beams.style.opacity=String(light*.8);wake.patch.style.opacity=String(light*.9);wake.warm.style.opacity=String(.15+light*.85);
+ wake.bloom.style.opacity=String(light*(1-ease((t-3.2)/.8)*.4));wake.sun.style.opacity=String(.35+light*.65);
+ // The eye adjusts: a bright overshoot when the curtains open, then it settles.
+ const glare=Math.exp(-Math.abs(t-2.3)*3)*.45*light;
+ // Spring up: a small dip, a bouncy leap, then the view rushes to the window; a breath of handheld sway throughout.
  const dip=Math.sin(clamp((t-2.3)/.25)*Math.PI)*4,jump=back((t-2.5)/.6),push=inn((t-3.2)/(PRE+1.1-3.2));
- wake.room.style.transform=`translate3d(0,${dip-jump*3}%,0) scale(${1+jump*.06+push*1.4})`;
- wake.room.style.filter=`blur(${(1-out((t-.9)/1))*10}px) brightness(${lerp(.5,1.05,light)})`;
- wake.futon.style.transform=`translate3d(0,${jump*130}%,0)`;
+ const swayX=Math.sin(now*.9)*.35,swayY=Math.cos(now*.7)*.3,tilt=Math.sin(now*.55)*.35;
+ wake.room.style.transform=`translate3d(${swayX}%,${dip-jump*3+swayY}%,0) rotate(${tilt*(1-push)}deg) scale(${1.04+jump*.06+push*1.4})`;
+ wake.room.style.filter=`blur(${(1-out((t-.9)/1))*12}px) brightness(${lerp(.42,1.02,light)+glare}) saturate(${lerp(.7,1.05,light)})`;
+ wake.view.style.filter=`blur(${lerp(2.2,.6,push)}px) brightness(${1.18+glare})`;
+ wake.futon.style.transform=`translate3d(0,${jump*130}%,0) rotate(${jump*-3}deg)`;
 }
 
 // 01 Sea: light gathers, then an aperture opens onto the sea.
@@ -161,7 +173,7 @@ const cues=[
  {at:7.05,end:9.45,lines:['ここでは、','そのままでいい。'],anim:'drop',pos:'center',label:'CHAPTER 03'},
  {at:12.75,end:14.85,lines:['やりたい。'],anim:'slam',pos:'tl',label:'CHAPTER 04'},
  {at:13.85,end:14.85,lines:['やってみる。'],anim:'slam',pos:'br',chalk:true},
- {at:15.4,end:17.25,lines:['境界の、その先へ。'],anim:'depth',pos:'center',label:'CHAPTER 05'},
+ {at:15.1,end:17.25,lines:['ここから、','誰と何をしてみよう。'],anim:'depth',pos:'center',label:'CHAPTER 05'},
  {at:17.95,end:20.35,lines:['まだ、','帰りたくない。'],anim:'type',pos:'bl',label:'CHAPTER 06'},
  {at:21.55,end:99,lines:['自分らしさが、','武器になる。'],anim:'rise',pos:'center',final:true}
 ].map(cue=>{
@@ -170,7 +182,7 @@ const cues=[
  const text=el('p','',node);text.setAttribute('aria-label',cue.lines.join(''));cue.text=text;cue.chars=[];let n=0;
  cue.lines.forEach((line,li)=>{const row=el('span','ob-row',text);row.setAttribute('aria-hidden','true');[...line].forEach((ch,ci)=>{const c=el('span','ob-char',row);c.textContent=ch;cue.chars.push({c,li,ci,n:n++,r:rand()});});});
  if(cue.chalk){node.insertAdjacentHTML('beforeend','<svg class="ob-chalk" viewBox="0 0 300 40" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M6 26C58 12 118 34 178 19S262 21 294 11"/></svg>');cue.chalk=node.querySelector('path');}
- if(cue.final){cue.sub=el('p','ob-sub',node);cue.sub.textContent='梅光学院 中学校・高等学校';}
+ if(cue.final){cue.sub=el('p','ob-sub',node);cue.sub.textContent='梅光学院 中学校・高等学校';cue.credit=el('p','ob-credit-line',node);cue.credit.textContent='このWEBサイトは、生徒が0から100まで作成しています。';}
  cue.node=node;return cue;
 });
 function drawCue(cue,t){
@@ -187,13 +199,13 @@ function drawCue(cue,t){
   if(cue.anim==='blur'){const r=out((age-n*.07)/.7);o=r;tr=`translate3d(${(1-r)*(n-mid)*.5}em,0,0) scale(${lerp(1.6,1,r)})`;f=`blur(${(1-r)*14}px)`;}
   else if(cue.anim==='stairs'){const r=back((age-n*.13)/.42);o=clamp(r*2);tr=`translate3d(0,${(1-r)*120-ci*9}%,0) scale(${lerp(.4,1,r)})`;}
   else if(cue.anim==='drop'){const r=out((age-rnd*.75)/.75);o=clamp(r*3);tr=`translate3d(0,${-(1-r)*60}vh,0) rotate(${(1-r)*(rnd-.5)*90}deg)`;f=r<1?`blur(${(1-r)*6}px)`:'';}
-  else if(cue.anim==='depth'){const r=out((age-n*.06)/.8),fly=inn((t-16.45-n*.03)/.75);tr=`translate3d(${(n-mid)*fly*.9}em,0,${lerp(-1600,0,r)+fly*1100}px)`;o=clamp(r*2)*(1-ease(fly*1.4));}
+  else if(cue.anim==='depth'){const r=out((age-n*.03)/.7),fly=inn((t-16.8-n*.02)/.6);tr=`translate3d(${(n-mid)*fly*.9}em,0,${lerp(-1600,0,r)+fly*1100}px)`;o=clamp(r*2)*(1-ease(fly*1.4));}
   else if(cue.anim==='type'){const r=out((age-n*.1)/.5);o=r;tr=`translate3d(0,${(1-r)*24}px,0)`;f=`blur(${(1-r)*8}px)`;}
   else if(cue.anim==='bounce'){const r=back((age-n*.06)/.5);o=clamp(r*2);tr=`translate3d(0,${(1-r)*90}%,0) scale(${lerp(.3,1,r)}) rotate(${(1-r)*(n%2?16:-16)}deg)`;}
   else if(cue.anim==='rise'){const r=out((age-li*.28-ci*.05)/.8);o=r;tr=`translate3d(0,${(1-r)*110}%,0)`;}
   c.style.opacity=String(o);c.style.transform=tr;c.style.filter=f;
  });
- if(cue.sub){const r=ease((age-1.05)/.6);cue.sub.style.opacity=String(r);cue.sub.style.letterSpacing=lerp(.7,.3,out((age-1.05)/1.4))+'em';}
+ if(cue.sub){const r=ease((age-1.05)/.6);cue.sub.style.opacity=String(r);cue.sub.style.letterSpacing=lerp(.7,.3,out((age-1.05)/1.4))+'em';cue.credit.style.opacity=String(ease((age-1.6)/.6));}
 }
 
 /* ---------- Particles: a stateless field computed from time ---------- */
@@ -270,8 +282,9 @@ function frame(){
  if(p>.995&&shown>TOTAL-.05)finish();
 }
 function finish(focus=false){
- if(done)return;done=true;ready=false;cancelAnimationFrame(raf);clearTimeout(startupTimer);audioEpoch++;audio.pause();
+ if(done)return;const carrySound=!audio.paused;done=true;ready=false;cancelAnimationFrame(raf);clearTimeout(startupTimer);audioEpoch++;audio.pause();
  opening.hidden=true;stage.inert=false;document.body.classList.remove('opening-active');
+ if(carrySound){const lpSound=document.querySelector('#sound-toggle');if(lpSound?.getAttribute('aria-pressed')!=='true')lpSound.click();}
  document.removeEventListener('visibilitychange',visibility);document.removeEventListener('keydown',keyboard);reduced.removeEventListener('change',motionChange);removeEventListener('resize',resize);unlockEvents.forEach(e=>document.removeEventListener(e,unlock,true));
  if(focus||opening.contains(document.activeElement)||document.activeElement===opening){(previousFocus?.isConnected&&previousFocus!==document.body&&previousFocus.getClientRects().length?previousFocus:document.querySelector('#scene-title')).focus({preventScroll:true});}
 }
