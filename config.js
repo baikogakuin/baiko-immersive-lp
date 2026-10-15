@@ -5,3 +5,9 @@ window.BAIKO_EVENTS = {
   visit: { date: '', url: '' },  // 来校する入試説明会
   fallbackUrl: 'https://www.baiko.ac.jp/highschool/openschool/'
 };
+// オンライン説明会の参加者特典。公式LINEで受け取る。nameを空にするとカードごと消える。
+window.BAIKO_PERK = {
+  name: '学費まるごとガイド（スマホで読めるPDF）',
+  note: '説明会の最後にお伝えする合言葉を、梅光の公式LINEに送ると届きます。',
+  line: 'https://lin.ee/xZlPS00'
+};

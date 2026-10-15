@@ -68,6 +68,21 @@
     const event=scenes[key].event;if(!event)return [];
     const e=events[event]||{};return [[e.url?eventNames[event]+'に申し込む ↗':'学校サイトで最新の案内を見る ↗',e.url||fallbackUrl]];
   }
+  // Online-session perk, received through the official LINE account.
+  const perk=window.BAIKO_PERK||{};
+  function renderPerk(){
+    let card=document.querySelector('#perk-card');
+    if(current!=='online'||!perk.name){if(card)card.hidden=true;return;}
+    if(!card){
+      card=document.createElement('div');card.id='perk-card';card.setAttribute('role','group');card.setAttribute('aria-label','オンライン説明会の参加者特典');
+      const tag=document.createElement('p');tag.className='perk-tag';tag.textContent='参加者特典';
+      const name=document.createElement('p');name.className='perk-name';name.textContent=perk.name;
+      const how=document.createElement('p');how.className='perk-note';how.textContent=perk.note||'';
+      const a=document.createElement('a');a.className='perk-line';a.href=perk.line;a.target='_blank';a.rel='noopener noreferrer';a.textContent='公式LINEを友だち追加して受け取る ↗';
+      card.append(tag,name,how,a);actions.before(card);
+    }
+    card.hidden=false;
+  }
   const cache=new Map();
   function loadPhoto(name){
     if(cache.has(name))return cache.get(name);
@@ -96,6 +111,7 @@
     for(const [text,next] of scene.choices){const button=document.createElement('button');button.type='button';button.dataset.next=next;if(single)button.className='is-next';button.append(document.createTextNode(text));const arrow=document.createElement('span');arrow.textContent='→';arrow.setAttribute('aria-hidden','true');button.append(arrow);actions.append(button);}
     for(const [text,action] of scene.tools||[]){const button=document.createElement('button');button.type='button';button.dataset.action=action;button.append(document.createTextNode(text));const arrow=document.createElement('span');arrow.textContent='→';arrow.setAttribute('aria-hidden','true');button.append(arrow);actions.append(button);}
     for(const [text,url] of sceneLinks(current)){const a=document.createElement('a');a.textContent=text;a.href=url;a.target='_blank';a.rel='noopener noreferrer';actions.append(a);}
+    renderPerk();
     viewOptions.hidden=current!=='views';
     document.querySelectorAll('[data-phase]').forEach(li=>{const phase=Number(li.dataset.phase);li.classList.toggle('is-past',phase<scene.phase);if(phase===scene.phase)li.setAttribute('aria-current','step');else li.removeAttribute('aria-current');});
     document.querySelector('#scene-announcement').textContent=scene.label+'。'+scene.title.replace('\n','');
@@ -311,6 +327,7 @@
   document.addEventListener('keydown',event=>{if(event.key==='Escape'&&movieOn)exitMovie();});
   document.addEventListener('visibilitychange',()=>{if(document.hidden){if(movieOn)pauseMovie();else if(audioIsOn)setSound(false);}});
   const onlineShortcut=document.querySelector('#online-shortcut');
+  if(perk.name&&!onlineShortcut.querySelector('.cta-perk')){const badge=document.createElement('span');badge.className='cta-perk';badge.textContent='特典つき';onlineShortcut.prepend(badge);}
   let onlineJump=false;
   onlineShortcut.addEventListener('click',async()=>{
     if(onlineJump)return;
