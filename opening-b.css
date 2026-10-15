@@ -240,3 +240,7 @@ body.opening-active #experience{pointer-events:none}
  #opening .ob-cue.rise{padding-bottom:calc(var(--dock) + 64px)}
 }
 @media(max-width:700px) and (max-height:700px){#opening{--dock:calc(var(--safe-b) + 104px)}#opening .ob-hint{bottom:calc(var(--safe-b) + 98px)}}
+
+/* Student-made credit, visible from the very first frame. */
+#opening .opening-made{display:block;margin-top:8px;font-family:"Yu Mincho","Hiragino Mincho ProN",serif;font-size:13px;font-weight:600;letter-spacing:.06em;line-height:1.6;color:#fff;text-shadow:0 1px 10px #000c}
+@media(max-width:700px){#opening .opening-made{margin-top:34px;font-size:12px;letter-spacing:.03em}}
