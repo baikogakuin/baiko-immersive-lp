@@ -30,9 +30,9 @@
     stairs:{image:'summer-stairs',phase:1,label:'朝 ｜ 登校',title:'空へ向かって、\n一段ずつ。',note:'いつもの朝が、少し楽しみになる。',mobile:'48% 50%',choices:[['途中で、空を見上げる','sky']]},
     sky:{image:'sunny-stairs',phase:1,label:'朝 ｜ 階段の途中',title:'見上げると、\n空が近い。',note:'風が抜けていく。少しだけ、深呼吸。',focus:'48% 50%',mobile:'48% 50%',choices:[['のぼりきって、校舎へ','door']]},
     door:{image:'summer-building',phase:1,label:'朝 ｜ 校舎の入口',title:'この校舎が、\n今日の居場所。',note:'さあ、中へ。',mobile:'60% 50%',choices:[['校舎に入る','glass']]},
-    glass:{image:'stained-glass',phase:1,label:'朝 ｜ 光に誘われて',title:'光にも、\nいろんな色がある。',note:'好きな色を、見つけてみる。',focus:'50% 50%',mobile:'76% 50%',choices:[['チャペルを見渡す','chapel']]},
+    glass:{image:'stained-glass-stairs-duo',phase:1,label:'朝 ｜ 光に誘われて',title:'光にも、\nいろんな色がある。',note:'好きな色を、見つけてみる。',focus:'50% 50%',mobile:'50% 50%',choices:[['チャペルを見渡す','chapel']]},
     chapel:{image:'chapel-wide',phase:1,label:'朝 ｜ チャペル',title:'光が落ちる、\n静かな場所。',note:'ゆっくり、見渡してみる。',mobile:'42% 50%',choices:[['教室へ','morning']]},
-    morning:{image:'window',phase:2,label:'午前 ｜ 窓辺の席',title:'窓の向こうに、\nいつもの街。',note:'ノートを開く。一日が動き出す。',mobile:'50% 50%',choices:[['午前を過ごして、お昼へ','lunch']]},
+    morning:{image:'window-view-boy',phase:2,label:'午前 ｜ 窓辺の席',title:'窓の向こうに、\nいつもの街。',note:'ノートを開く。一日が動き出す。',focus:'62% 50%',mobile:'62% 50%',choices:[['午前を過ごして、お昼へ','lunch']]},
     lunch:{image:'classroom',phase:3,label:'昼 ｜ お弁当の時間',title:'お腹、すいた。\nいつもの席に座ろう。',note:'ふたを開ける。お弁当の香り。',mobile:'42% 50%',choices:[['お昼を食べて、ひと休み','break']]},
     break:{image:'high-view',phase:4,label:'休み時間 ｜ いまの気分は？',title:'少し、時間がある。\nどこで過ごそう。',note:'にぎやかな時間も、静かな時間も。',mobile:'58% 50%',choices:[['みんなのところへ','friends'],['窓辺でひと息','quiet']]},
     friends:{image:'friends',phase:4,label:'休み時間 ｜ 友人と',title:'なんでもない話で、\nこんなに笑う。',note:'もう少し、ここにいたい。',mobile:'52% 50%',choices:[['ちょっと景色も見に行く','views'],['午後を過ごして、放課後へ','after']]},
@@ -42,8 +42,8 @@
     windowTalk:{image:'window-talk',phase:5,label:'放課後 ｜ 窓辺で',title:'同じ景色を、\nとなりで眺める。',note:'なんでもない話が、続いていく。',mobile:'53% 50%',choices:[['やってみたいことを話す','ideas']]},
     ideas:{image:'ideas',phase:5,label:'放課後 ｜ アイデアの時間',title:'「やってみたい」を、\nここから。',note:'浮かんだことを、黒板に。',mobile:'58% 50%',choices:[['帰り道へ','sunset']]},
     sunset:{image:'sunset',phase:6,label:'帰り道 ｜ 今日の終わり',title:'朝の階段が、\n少し違って見えた。',note:'「また明日。」',mobile:'55% 50%',choices:[['今日を振り返る','end']]},
-    end:{image:'sunset',phase:6,label:'あなたの、梅光の一日',title:'ありのままで、\n本気の青春。',note:'次は、この景色の中で。',mobile:'55% 50%',choices:[['オンライン説明会をのぞく','online']]},
-    online:{image:'summer-building',phase:6,label:'つぎの一歩 ｜ オンライン説明会',title:'まずは画面越しに、\n梅光をのぞいてみる。',event:'online',mobile:'60% 50%',choices:[['その次は、本物の景色へ','visit']]},
+    end:{image:'festival-booth-girls',phase:6,label:'あなたの、梅光の一日',title:'ありのままで、\n本気の青春。',note:'次は、この景色の中で。',focus:'45% 50%',mobile:'45% 50%',choices:[['オンライン説明会をのぞく','online']]},
+    online:{image:'phone-filming-classroom',phase:6,label:'つぎの一歩 ｜ オンライン説明会',title:'まずは画面越しに、\n梅光をのぞいてみる。',event:'online',focus:'62% 50%',mobile:'62% 50%',choices:[['その次は、本物の景色へ','visit']]},
     visit:{image:'summer-stairs',phase:6,label:'つぎの一歩 ｜ 入試説明会（来校）',title:'写真で見た階段を、\n自分の足で。',event:'visit',mobile:'48% 50%',choices:[['来校したあと、家族と振り返る','recap']]},
     recap:{image:'high-view',phase:6,label:'来校のあとで ｜ 家族と振り返る',title:'見てきた景色を、\nもう一度いっしょに。',note:'「ここ、どうだった？」と話してみる。',mobile:'58% 50%',choices:[],tools:[['場所の写真で振り返る','places'],['このページを家族に送る','share']]}
   };
@@ -57,7 +57,8 @@
     'sea-view':['82% 50%',1.5],'summer-stairs':['45% 78%',1.4],'sunny-stairs':['80% 25%',1.6],'summer-building':['72% 22%',1.5],
     'stained-glass':['66% 42%',1.8],'chapel-wide':['56% 36%',1.7],'window':['24% 48%',1.5],'classroom':['72% 70%',1.6],
     'high-view':['30% 28%',1.5],'friends':['42% 48%',1.4],'window-near':['86% 52%',1.6],'window-talk':['62% 66%',1.6],
-    'ideas':['34% 46%',1.6],'sunset':['46% 30%',1.5],'corridor':['35% 50%',1.5],'building':['60% 40%',1.5]
+    'ideas':['34% 46%',1.6],'sunset':['46% 30%',1.5],'corridor':['35% 50%',1.5],'building':['60% 40%',1.5],
+    'stained-glass-stairs-duo':['55% 18%',1.6],'window-view-boy':['40% 45%',1.5],'phone-filming-classroom':['62% 48%',1.6],'festival-booth-girls':['40% 45%',1.5]
   };
   const events=window.BAIKO_EVENTS||{};
   const fallbackUrl=events.fallbackUrl||'https://www.baiko.ac.jp/highschool/openschool/';
