@@ -193,7 +193,7 @@
   const routeDialog=document.querySelector('#route-dialog');
   let cameraX=0,cameraY=0,cameraZoom=1.08,dragState=null,landscapeOnly=false;
   function cameraGeometry(plane){
-    // Measure the photo frame, not the stage: on phones the frame is a 3:2 window so no one is cropped out.
+    // Measure the photo frame, not the stage: on phones the frame is a slightly zoomed window (about 5:4) on the landscape photo.
     const img=plane.querySelector('img'),w=plane.clientWidth||stage.clientWidth,h=plane.clientHeight||stage.clientHeight;
     const cover=Math.max(w/(img.naturalWidth||w),h/(img.naturalHeight||h));
     const width=(img.naturalWidth||w)*cover,height=(img.naturalHeight||h)*cover;

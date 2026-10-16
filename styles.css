@@ -234,3 +234,35 @@ h1,#experience[data-scene=views] h1{font-size:clamp(22px,6.4vw,26px);line-height
 /* Online-session scene: the fixed CTA would point to the page you are already on, so the in-page apply button takes its place. Phones keep the perk card to names + one-line steps. */
 body:has(#experience[data-scene=online]) #online-shortcut{display:none}
 @media(max-width:700px){#perk-card .perk-items span{display:none}#perk-card .perk-items li{padding:6px 8px}#perk-card .perk-how{margin-top:8px;font-size:10px}#perk-card .perk-line{min-height:40px}#perk-card .perk-apply{margin-top:10px;min-height:48px;font-size:14px}}
+/* Phones, redesigned (2026-10-16): phones are the main screen.
+   The photo runs edge to edge from the very top under the header, slightly zoomed in on the landscape shot;
+   below it the backdrop is dimmed so the words read cleanly; the steps forward are compact so every choice stays on screen. */
+@media(max-width:700px){
+#experience{--photo-top:0px;--photo-h:min(92vw,48svh);--cta:calc(env(safe-area-inset-bottom,0px) + 86px)}
+.photo-shade,#experience[data-scene="start"] .photo-shade{background:linear-gradient(180deg,#06141ab3 0,#06141a40 90px,transparent 150px)}
+.photographs{-webkit-mask-image:linear-gradient(180deg,#000 82%,transparent);mask-image:linear-gradient(180deg,#000 82%,transparent)}
+#experience::before{filter:saturate(.9) brightness(.55)}
+#experience::after{background:linear-gradient(180deg,transparent 0,transparent calc(var(--photo-h)*.8),#06141ad0 calc(var(--photo-h) + 24px),#06141ae6 100%)}
+.scene-caption{top:calc(var(--photo-h) + 14px);bottom:calc(var(--cta) + 44px)}
+h1,#experience[data-scene=views] h1{font-size:clamp(23px,6.6vw,29px);line-height:1.5}
+#scene-label{margin-bottom:6px}
+#scene-note{margin-top:6px;line-height:1.7}
+.actions{margin-top:14px;gap:8px}
+.actions button,.actions a{min-height:48px;padding:11px 18px}
+footer{bottom:calc(var(--cta) + 2px)}
+#experience[data-scene=online]{--photo-h:min(62vw,29svh)}
+}
+/* Short phones (SE class). */
+@media(max-width:700px) and (max-height:700px){
+#experience{--photo-top:0px;--photo-h:min(80vw,40svh);--cta:calc(env(safe-area-inset-bottom,0px) + 72px)}
+.scene-caption{top:calc(var(--photo-h) + 10px)}
+h1,#experience[data-scene=views] h1{font-size:clamp(21px,6vw,25px);line-height:1.45}
+.actions{margin-top:10px}
+.actions button,.actions a{min-height:44px;padding:9px 16px}
+#experience[data-scene=online]{--photo-h:min(46vw,24svh)}
+}
+/* Online-session scene on phones: the fixed CTA is hidden there, so the words may use its space. */
+@media(max-width:700px){
+#experience[data-scene=online] .scene-caption{bottom:calc(env(safe-area-inset-bottom,0px) + 52px)}
+#experience[data-scene=online] footer{bottom:calc(env(safe-area-inset-bottom,0px) + 14px)}
+}
