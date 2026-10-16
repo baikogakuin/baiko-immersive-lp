@@ -70,16 +70,22 @@
   }
   // Online-session perk, received through the official LINE account.
   const perk=window.BAIKO_PERK||{};
+  const perkItems=perk.items||[];
   function renderPerk(){
     let card=document.querySelector('#perk-card');
-    if(current!=='online'||!perk.name){if(card)card.hidden=true;return;}
+    if(current!=='online'||!perkItems.length){if(card)card.hidden=true;return;}
     if(!card){
       card=document.createElement('div');card.id='perk-card';card.setAttribute('role','group');card.setAttribute('aria-label','オンライン説明会の参加者特典');
-      const tag=document.createElement('p');tag.className='perk-tag';tag.textContent='参加者特典';
-      const name=document.createElement('p');name.className='perk-name';name.textContent=perk.name;
-      const how=document.createElement('p');how.className='perk-note';how.textContent=perk.note||'';
-      const a=document.createElement('a');a.className='perk-line';a.href=perk.line;a.target='_blank';a.rel='noopener noreferrer';a.textContent='公式LINEを友だち追加して受け取る ↗';
-      card.append(tag,name,how,a);actions.before(card);
+      const tag=document.createElement('p');tag.className='perk-tag';tag.textContent='参加者特典 '+perkItems.length+'つ';
+      const list=document.createElement('ul');list.className='perk-items';
+      for(const item of perkItems){const li=document.createElement('li');const name=document.createElement('b');name.textContent=item.name;const note=document.createElement('span');note.textContent=item.note||'';li.append(name,note);list.append(li);}
+      const how=document.createElement('ol');how.className='perk-how';how.setAttribute('aria-label','受け取り方');
+      for(const step of perk.how||[]){const li=document.createElement('li');li.textContent=step;how.append(li);}
+      // The apply button lives in the card so it never falls below the fold behind the perk.
+      const [applyText,applyUrl]=sceneLinks('online')[0];
+      const apply=document.createElement('a');apply.className='perk-apply';apply.href=applyUrl;apply.target='_blank';apply.rel='noopener noreferrer';apply.textContent=applyText;
+      const a=document.createElement('a');a.className='perk-line';a.href=perk.line;a.target='_blank';a.rel='noopener noreferrer';a.textContent='公式LINEを友だち追加しておく ↗';
+      card.append(tag,list,how,apply,a);actions.before(card);
     }
     card.hidden=false;
   }
@@ -104,13 +110,13 @@
     stage.dataset.scene=current; resetCamera(); renderHotspots(scene); document.querySelector('#place-name').textContent=(current==='start'?'一日のはじまり':scene.label.split('｜').pop().trim());
     syncMobileControls();
     setText(scene.title);label.textContent=scene.label;note.textContent=current==='end'&&selectedMood?(selectedMood==='friends'?'みんなと笑った時間を、また。':'自分のペースで過ごす時間を、また。'):scene.event?eventNote(scene.event):scene.note;
-    document.querySelector('#interaction-hint').textContent=current==='start'?'ボタンを押して、あなたの一日を進めてください。':current==='views'?'写真を選ぶと、眺める方向が変わります。':current==='online'?'開催日時・参加方法・当日の内容は、確定後にご案内します。':'';
+    document.querySelector('#interaction-hint').textContent=current==='start'?'ボタンを押して、あなたの一日を進めてください。':current==='views'?'写真を選ぶと、眺める方向が変わります。':'';
     actions.replaceChildren();
+    for(const [text,url] of current==='online'&&perkItems.length?[]:sceneLinks(current)){const a=document.createElement('a');a.textContent=text;a.href=url;a.target='_blank';a.rel='noopener noreferrer';if(scene.event)a.className='is-apply';actions.append(a);}
     // One way forward is not a choice: show it as a single "next" step, and let a tap on the photo advance too.
     const single=scene.choices.length===1&&!scene.event&&current!=='end';stage.dataset.single=String(single);
     for(const [text,next] of scene.choices){const button=document.createElement('button');button.type='button';button.dataset.next=next;if(single)button.className='is-next';button.append(document.createTextNode(text));const arrow=document.createElement('span');arrow.textContent='→';arrow.setAttribute('aria-hidden','true');button.append(arrow);actions.append(button);}
     for(const [text,action] of scene.tools||[]){const button=document.createElement('button');button.type='button';button.dataset.action=action;button.append(document.createTextNode(text));const arrow=document.createElement('span');arrow.textContent='→';arrow.setAttribute('aria-hidden','true');button.append(arrow);actions.append(button);}
-    for(const [text,url] of sceneLinks(current)){const a=document.createElement('a');a.textContent=text;a.href=url;a.target='_blank';a.rel='noopener noreferrer';actions.append(a);}
     renderPerk();
     viewOptions.hidden=current!=='views';
     document.querySelectorAll('[data-phase]').forEach(li=>{const phase=Number(li.dataset.phase);li.classList.toggle('is-past',phase<scene.phase);if(phase===scene.phase)li.setAttribute('aria-current','step');else li.removeAttribute('aria-current');});
@@ -327,7 +333,7 @@
   document.addEventListener('keydown',event=>{if(event.key==='Escape'&&movieOn)exitMovie();});
   document.addEventListener('visibilitychange',()=>{if(document.hidden){if(movieOn)pauseMovie();else if(audioIsOn)setSound(false);}});
   const onlineShortcut=document.querySelector('#online-shortcut');
-  if(perk.name&&!onlineShortcut.querySelector('.cta-perk')){const badge=document.createElement('span');badge.className='cta-perk';badge.textContent='特典つき';onlineShortcut.prepend(badge);}
+  if(perkItems.length&&!onlineShortcut.querySelector('.cta-perk')){const badge=document.createElement('span');badge.className='cta-perk';badge.textContent='特典動画つき';onlineShortcut.prepend(badge);}
   let onlineJump=false;
   onlineShortcut.addEventListener('click',async()=>{
     if(onlineJump)return;

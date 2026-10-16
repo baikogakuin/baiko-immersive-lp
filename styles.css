@@ -210,13 +210,27 @@ h1,#experience[data-scene=views] h1{font-size:clamp(22px,6.4vw,26px);line-height
 @media(max-width:700px){#online-shortcut,body.opening-active #online-shortcut,#online-shortcut:hover{background:#fff;color:#7d2231;border:2px solid #7d2231;box-shadow:0 6px 24px #0006}#online-shortcut:hover{background:#fbf3f4}}/* Online-session perk: a wine-red framed card under the actions, received via the official LINE account. */
 #perk-card{margin-top:20px;max-width:420px;padding:18px 20px 20px;background:#fffdf8f2;color:#2a1b1e;border:2px solid #7d2231;box-shadow:0 0 0 3px #fffdf8f2,0 0 0 4px #b8924a,0 10px 30px #0006;text-shadow:none}
 #perk-card .perk-tag{display:inline-block;padding:3px 10px;background:#7d2231;color:#fff;font-size:10px;font-weight:700;letter-spacing:.2em}
-#perk-card .perk-name{margin-top:10px;font-family:var(--serif);font-size:17px;font-weight:600;line-height:1.6;color:#7d2231}
-#perk-card .perk-note{margin-top:6px;font-size:11px;line-height:1.9;color:#4a3a3c}
-#perk-card .perk-line{display:flex;align-items:center;justify-content:center;margin-top:14px;min-height:50px;padding:12px 16px;background:#06c755;color:#fff;font-size:14px;font-weight:700;letter-spacing:.06em;border-radius:6px}
+#perk-card .perk-items{list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0 0;padding:0}
+#perk-card .perk-items li{display:grid;align-content:start;gap:2px;padding:9px 10px;background:#f5ece0;border-top:2px solid #b8924a}
+#perk-card .perk-items b{font-family:var(--serif);font-size:15px;font-weight:600;line-height:1.45;color:#7d2231}
+#perk-card .perk-items span{font-size:10.5px;line-height:1.6;color:#4a3a3c}
+#perk-card .perk-how{display:flex;flex-wrap:wrap;align-items:center;gap:2px 4px;margin:10px 0 0;padding:0;list-style:none;counter-reset:how;font-size:10.5px;line-height:1.6;color:#4a3a3c}
+#perk-card .perk-how::before{content:"受け取り方";margin-right:4px;font-weight:700;color:#7d2231}
+#perk-card .perk-how li{counter-increment:how}
+#perk-card .perk-how li::before{content:counter(how);display:inline-grid;place-items:center;width:15px;height:15px;margin-right:3px;border-radius:50%;background:#7d2231;color:#fff;font-size:9px;font-weight:700}
+#perk-card .perk-how li:not(:last-child)::after{content:"→";margin-left:4px;color:#b8924a}
+.actions a.is-apply{background:#fffdf8;color:#7d2231;border:2px solid #7d2231;font-weight:700;text-shadow:none}
+.actions a.is-apply:hover{background:#fbf3f4;border-color:#7d2231}
+#perk-card .perk-apply{display:flex;align-items:center;justify-content:center;margin-top:12px;min-height:52px;padding:12px 16px;background:#7d2231;color:#fff;font-size:15px;font-weight:700;letter-spacing:.08em;border-radius:6px}
+#perk-card .perk-apply:hover{background:#621726}
+#perk-card .perk-line{display:flex;align-items:center;justify-content:center;margin-top:6px;min-height:40px;padding:8px 16px;background:#06c755;color:#fff;font-size:13px;font-weight:700;letter-spacing:.06em;border-radius:6px}
 #perk-card .perk-line:hover{background:#05b34c}
 #perk-card .perk-line:focus-visible{outline:2px solid #7d2231;outline-offset:3px}
 #online-shortcut .cta-perk{position:absolute;top:-11px;left:14px;padding:2px 8px;box-shadow:0 2px 6px #0004;background:#7d2231;color:#fff;font-family:var(--sans);font-size:10px;font-weight:700;letter-spacing:.12em;border-radius:3px;white-space:nowrap}
-@media(max-width:700px){#perk-card{margin-top:16px;max-width:none;padding:14px 16px 16px}#perk-card .perk-name{font-size:15px}#perk-card .perk-note{font-size:10.5px}#perk-card .perk-line{min-height:48px;font-size:13px}#online-shortcut .cta-perk{font-size:9px;padding:2px 6px;top:-10px}}
+@media(max-width:700px){#perk-card{margin-top:16px;max-width:none;padding:14px 16px 16px}#perk-card .perk-items b{font-size:14px}#perk-card .perk-line{min-height:48px;font-size:13px}#online-shortcut .cta-perk{font-size:9px;padding:2px 6px;top:-10px}}
 /* Phones: on the online-session scene the photo frame gets shorter so the perk card and its LINE button stay on screen. */
-@media(max-width:700px){#experience[data-scene=online]{--photo-h:min(40vw,18svh)}#perk-card .perk-note{margin-top:4px;line-height:1.75}#perk-card .perk-line{margin-top:10px}}
+@media(max-width:700px){#experience[data-scene=online]{--photo-h:min(40vw,18svh)}#perk-card .perk-line{margin-top:10px}}
 @media(max-width:700px) and (max-height:700px){#experience[data-scene=online]{--photo-h:min(30vw,14svh)}}
+/* Online-session scene: the fixed CTA would point to the page you are already on, so the in-page apply button takes its place. Phones keep the perk card to names + one-line steps. */
+body:has(#experience[data-scene=online]) #online-shortcut{display:none}
+@media(max-width:700px){#perk-card .perk-items span{display:none}#perk-card .perk-items li{padding:6px 8px}#perk-card .perk-how{margin-top:8px;font-size:10px}#perk-card .perk-line{min-height:40px}#perk-card .perk-apply{margin-top:10px;min-height:48px;font-size:14px}}
