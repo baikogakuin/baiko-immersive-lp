@@ -283,3 +283,16 @@ h1,#experience[data-scene=views] h1{font-size:clamp(21px,6vw,25px);line-height:1
 }
 /* The page itself never scrolls: overflow:hidden still lets focus and touch scroll the body, which shifted the whole stage up. */
 html,body{overflow:clip;overscroll-behavior:none}
+/* First notice (2026-10-16): the site is meant to be seen sideways. Shown only on phones held upright; turning the phone hides it. */
+#rotate-notice{display:none}
+@media(max-width:700px) and (orientation:portrait){
+#rotate-notice{position:fixed;inset:0;z-index:200;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:0 10%;background:#0b1d27f5;color:#fff8ec;text-align:center;font-family:var(--serif)}
+#rotate-notice .rn-phone{width:72px;height:72px;color:#e2c27c;animation:rn-turn 2.4s var(--ease,ease) infinite}
+#rotate-notice p{margin:0}
+#rotate-title{font-size:21px;font-weight:600;line-height:1.7;letter-spacing:.06em}
+#rotate-notice .rn-sub{font-family:var(--sans);font-size:13px;color:#d9cfc0;letter-spacing:.04em}
+#rotate-dismiss{margin-top:22px;min-height:44px;padding:10px 22px;border:1px solid #ffffff80;border-radius:999px;background:transparent;color:#fff8ec;font-family:var(--sans);font-size:13px;letter-spacing:.06em}
+}
+#rotate-notice[hidden]{display:none!important}
+@keyframes rn-turn{0%,25%{transform:rotate(0)}55%,85%{transform:rotate(-90deg)}100%{transform:rotate(0)}}
+@media(prefers-reduced-motion:reduce){#rotate-notice .rn-phone{animation:none;transform:rotate(-90deg)}}
