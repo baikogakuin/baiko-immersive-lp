@@ -41,7 +41,7 @@
 #opening .opening-time{font-variant-numeric:tabular-nums;min-width:35px}
 body.opening-active #experience{pointer-events:none}
 #mobile-menu-controls #opening-replay{grid-column:1/-1}
-@media(max-width:700px){
+@media(max-width:700px) and (orientation:portrait){
 #opening .opening-bar{height:9%}#opening .opening-credit{top:3.5%;font-size:8px;left:6%;letter-spacing:.16em}
 #opening .opening-controls{top:1.5%;right:3%;gap:0}#opening button{font-size:10px;padding:10px}
 #opening .triptych{grid-template-columns:1fr;grid-template-rows:repeat(3,1fr);gap:4px}
@@ -66,7 +66,7 @@ body.opening-active #experience{pointer-events:none}
 #opening .opening-copy small{font-family:"BIZ UDGothic","Yu Gothic",sans-serif;font-weight:700}
 #opening .opening-underline,#opening .final .opening-underline{width:clamp(100px,13vw,200px);height:2px;transform-origin:left;margin-top:0}
 #opening .opening-copy.spark{justify-content:center}
-@media(max-width:700px){
+@media(max-width:700px) and (orientation:portrait){
  #opening .opening-copy p,
  #opening .opening-copy:is(.question,.begin,.laugh,.learn,.self,.spark,.final) p{font-size:clamp(26px,8.2vw,40px);line-height:1.6;letter-spacing:.025em}
 }

@@ -173,7 +173,7 @@
   views.forEach((view,i)=>{const b=document.createElement('button');b.className='view-button';b.type='button';b.dataset.view=String(i);b.setAttribute('aria-label',view.name+'の景色を見る');b.setAttribute('aria-pressed',String(i===0));const img=document.createElement('img');img.src='assets/'+view.image+'.webp';img.alt='';const span=document.createElement('span');span.textContent=view.name;b.append(img,span);b.addEventListener('click',()=>{if(i!==viewIndex)transition('views',{view:i});});viewOptions.append(b);});
   const about=document.querySelector('#about-dialog');document.querySelector('#about-button').addEventListener('click',()=>about.showModal());document.querySelector('#about-close').addEventListener('click',()=>about.close());
 
-  const mobileQuery=matchMedia('(max-width:700px)');
+  const mobileQuery=matchMedia('(max-width:700px) and (orientation:portrait)');
   const mobileMenu=document.createElement('dialog');mobileMenu.id='mobile-menu';mobileMenu.setAttribute('aria-labelledby','mobile-menu-title');
   mobileMenu.innerHTML='<div class="route-heading"><h2 id="mobile-menu-title">体験メニュー</h2><button id="mobile-menu-close" type="button">閉じる ×</button></div><p>写真はドラッグや指で動かして見渡せます。</p><div id="mobile-menu-controls"></div>';
   document.body.append(mobileMenu);
@@ -197,7 +197,7 @@
     const img=plane.querySelector('img'),w=plane.clientWidth||stage.clientWidth,h=plane.clientHeight||stage.clientHeight;
     const cover=Math.max(w/(img.naturalWidth||w),h/(img.naturalHeight||h));
     const width=(img.naturalWidth||w)*cover,height=(img.naturalHeight||h)*cover;
-    const focus=(plane.style.getPropertyValue(w<=700?'--mobile-focus':'--focus')||'50% 50%').trim().split(/\s+/).map(v=>parseFloat(v)/100);
+    const focus=(plane.style.getPropertyValue(mobileQuery.matches?'--mobile-focus':'--focus')||'50% 50%').trim().split(/\s+/).map(v=>parseFloat(v)/100);
     const left=(w-width)*focus[0],top=(h-height)*(focus[1]??.5);
     return {img,width,height,left,top,minX:w-left-width-(cameraZoom-1)*width/2,maxX:-left+(cameraZoom-1)*width/2,minY:h-top-height-(cameraZoom-1)*height/2,maxY:-top+(cameraZoom-1)*height/2};
   }

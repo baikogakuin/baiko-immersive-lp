@@ -101,7 +101,7 @@
 body.opening-active #experience{pointer-events:none}
 #mobile-menu-controls #opening-replay{grid-column:1/-1}
 
-@media(max-width:700px){
+@media(max-width:700px) and (orientation:portrait){
  #opening .opening-credit{top:3.5%;font-size:8px;left:6%;letter-spacing:.16em}
  #opening .opening-controls{gap:0}#opening button{font-size:10px;padding:10px}
  #opening .ob-cue{padding:0 6%}
@@ -128,7 +128,7 @@ body.opening-active #experience{pointer-events:none}
 #opening .ob-hint span{font-size:14px;font-weight:600}
 #opening .ob-hint small{font-size:10px;letter-spacing:.03em;color:#fff9e4}
 #opening .ob-hint i{height:20px}
-@media(max-width:700px){#opening .ob-hint{bottom:8%;max-width:76%;padding:10px 13px}#opening .ob-hint span{font-size:12px}#opening .ob-hint small{font-size:9px}}
+@media(max-width:700px) and (orientation:portrait){#opening .ob-hint{bottom:8%;max-width:76%;padding:10px 13px}#opening .ob-hint span{font-size:12px}#opening .ob-hint small{font-size:9px}}
 @media(max-height:450px){#opening .ob-hint{bottom:5%;padding:7px 13px}#opening .ob-hint i{display:none}}
 
 /* An editorial interlude from the credited Instagram reel. */
@@ -151,7 +151,7 @@ body.opening-active #experience{pointer-events:none}
 #opening .ob-feature-source{display:inline-block;padding:12px 0;margin-top:8px;border-bottom:1px solid #fff6;font-size:11px}
 #opening .opening-controls,#opening .opening-credit{z-index:6}
 #opening .ob-clock,#opening .opening-bottom{z-index:5}
-@media(max-width:700px){
+@media(max-width:700px) and (orientation:portrait){
  #opening .ob-feature-strip{left:8%;right:8%;width:84%;top:13%;height:29%;gap:8px}
  #opening .ob-feature-card{padding:4px 4px 25px}#opening .ob-feature-card:nth-child(2){margin-top:-20px}
  #opening .ob-feature-card figcaption{font-size:8px;bottom:8px;letter-spacing:0}
@@ -167,7 +167,7 @@ body.opening-active #experience{pointer-events:none}
 #opening .ob-door-light{background:radial-gradient(ellipse at 52% 42%,#fffef4 0%,#fff7d6c9 20%,#fff0c166 45%,transparent 75%),conic-gradient(from 145deg at 51% 26%,transparent 0deg,#fff6d580 18deg,transparent 38deg,#fffbe699 65deg,transparent 94deg);filter:blur(12px)}
 #opening .ob-arrival-light{position:absolute;inset:0;z-index:4;background:#fffdf6;pointer-events:none;opacity:0;will-change:opacity}
 #opening .rise>p:first-child{font-size:clamp(32px,5.4vw,88px);letter-spacing:.04em}
-@media(max-width:700px){#opening .rise>p:first-child{font-size:clamp(22px,7.1vw,44px);letter-spacing:.015em}}
+@media(max-width:700px) and (orientation:portrait){#opening .rise>p:first-child{font-size:clamp(22px,7.1vw,44px);letter-spacing:.015em}}
 
 #opening .ob-digital{display:block;font-family:ui-monospace,"SFMono-Regular",Consolas,monospace;font-size:clamp(23px,2.6vw,38px);font-weight:400;font-variant-numeric:tabular-nums;line-height:1.1;letter-spacing:.04em;color:#fff7e7;text-shadow:0 0 18px #ffe7b84d}
 #opening .ob-cue.rise{padding-bottom:12vh}
@@ -180,14 +180,14 @@ body.opening-active #experience{pointer-events:none}
 #opening .ob-quad{grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:6px;background:#05080b}
 #opening .ob-quad-cell{position:relative;overflow:hidden;opacity:0}
 
-@media(max-width:700px){#opening .ob-split{grid-template-columns:1fr;grid-template-rows:repeat(3,1fr)}}
+@media(max-width:700px) and (orientation:portrait){#opening .ob-split{grid-template-columns:1fr;grid-template-rows:repeat(3,1fr)}}
 #opening{cursor:pointer}#opening .opening-controls,#opening .ob-feature a{cursor:auto}
 
 
 /* Phone-first HUD (main audience). Top: brand and controls under the notch.
    Bottom dock, thumb reach: tap hint, then clock + online CTA, then progress.
    Copy stays in the band between them so nothing overlaps. */
-@media(max-width:700px){
+@media(max-width:700px) and (orientation:portrait){
  #opening{--safe-t:env(safe-area-inset-top,0px);--safe-b:env(safe-area-inset-bottom,0px);--dock:calc(var(--safe-b) + 168px)}
  #opening .opening-credit{top:calc(var(--safe-t) + 20px);left:5%;font-size:11px;letter-spacing:.2em}
  #opening .opening-controls{top:calc(var(--safe-t) + 6px);right:3%;gap:4px}
@@ -217,7 +217,7 @@ body.opening-active #experience{pointer-events:none}
  #opening .ob-feature-credit small{font-size:10px}
 }
 /* Short phones (SE class): tighten the dock and the type. */
-@media(max-width:700px) and (max-height:700px){
+@media(max-width:700px) and (orientation:portrait) and (max-height:700px){
  #opening{--dock:calc(var(--safe-b) + 150px)}
  #opening .ob-hint{bottom:calc(var(--safe-b) + 94px);padding:7px 16px}
  #opening .ob-hint small{display:none}
@@ -228,7 +228,7 @@ body.opening-active #experience{pointer-events:none}
 
 /* Simplified phone HUD (2026-10-14 meeting): only one thing at the bottom, the large online-session button.
    The clock moves under the brand, the progress is a thin line, the tap hint shows only at the start and the end. */
-@media(max-width:700px){
+@media(max-width:700px) and (orientation:portrait){
  #opening{--dock:calc(var(--safe-b) + 112px)}
  #opening .ob-clock{left:5%;top:calc(var(--safe-t) + 52px);bottom:auto;gap:0}
  #opening .ob-digital{font-size:18px}
@@ -239,8 +239,8 @@ body.opening-active #experience{pointer-events:none}
  #opening .pos-tl{padding-top:calc(var(--safe-t) + 112px)}
  #opening .ob-cue.rise{padding-bottom:calc(var(--dock) + 64px)}
 }
-@media(max-width:700px) and (max-height:700px){#opening{--dock:calc(var(--safe-b) + 104px)}#opening .ob-hint{bottom:calc(var(--safe-b) + 98px)}}
+@media(max-width:700px) and (orientation:portrait) and (max-height:700px){#opening{--dock:calc(var(--safe-b) + 104px)}#opening .ob-hint{bottom:calc(var(--safe-b) + 98px)}}
 
 /* Student-made credit, visible from the very first frame. */
 #opening .opening-made{display:block;margin-top:8px;font-family:"Yu Mincho","Hiragino Mincho ProN",serif;font-size:13px;font-weight:600;letter-spacing:.06em;line-height:1.6;color:#fff;text-shadow:0 1px 10px #000c}
-@media(max-width:700px){#opening .opening-made{margin-top:34px;font-size:12px;letter-spacing:.03em}}
+@media(max-width:700px) and (orientation:portrait){#opening .opening-made{margin-top:34px;font-size:12px;letter-spacing:.03em}}
