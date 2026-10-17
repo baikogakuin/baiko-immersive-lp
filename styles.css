@@ -296,6 +296,9 @@ html,body{overflow:clip;overscroll-behavior:none}
 #guide .gd-phone{flex:none;width:34px;height:34px;color:#e2c27c;animation:rn-turn 2.4s var(--ease,ease) infinite}
 #guide .gd-num{flex:none;width:34px;height:34px;display:grid;place-items:center;border:1.5px solid #e2c27c;border-radius:50%;color:#e2c27c;font-family:var(--serif);font-size:16px}
 #guide-start{min-height:54px;margin-top:4px;padding:12px 22px;border-radius:999px;background:#e2c27c;color:#10202a;font-size:16px;font-weight:700;letter-spacing:.08em}
+/* Not everyone will turn the phone: let them start upright. Only shown while the phone is upright. */
+#guide-portrait{display:none;min-height:46px;padding:10px 22px;border:1px solid #ffffff80;border-radius:999px;color:#fff8ec;font-size:14px;letter-spacing:.05em}
+@media(orientation:portrait){#guide-portrait{display:block}}
 #guide .gd-made{font-size:11px;color:#bfb6a8;text-align:center}
 @media(orientation:landscape) and (max-height:520px){
 #guide .gd-card{width:min(760px,100%);display:grid;grid-template-columns:1fr 1fr;column-gap:22px;row-gap:8px;align-items:center}
