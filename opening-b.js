@@ -327,11 +327,13 @@ function draw(t){
  cues.forEach(c=>drawCue(c,old));camera(old);particles(old);placeClock(t);
  if(drawMontage(tt))clockChapter.textContent='SCHOOL EVENTS';
  // Phones are the main audience: name the tap first, keep it to one short line.
- const verb=portrait?'タップ':'スクロール',last=t>=TOTAL-1.2;
+ // Touch screens tap even when held sideways; only mouse users scroll.
+ const touch=matchMedia('(pointer: coarse)').matches,verb=portrait||touch?'タップ':'スクロール',last=t>=TOTAL-1.2;
  // On phones the hint shows only at the start and the end, so it never sits on the words or photos.
  const quiet=portrait&&t>=1.9&&!last;hint.style.opacity=quiet?'0':'1';hint.style.pointerEvents=quiet?'none':'';
- hint.querySelector('span').textContent=last?`${verb}して、本編へ`:t<1.9?`${verb}して、目を覚ます`:t<5.2?`${verb}して、扉を開ける`:t<8.9?`光の先へ、${verb}`:`${verb}で、時間を進める`;
- hint.querySelector('small').textContent=portrait?'スワイプでも進めます':'クリックかスクロールで進む · 止めると映像も止まる';
+ // Say the operation plainly (Shigemura 10/17): poetic hints read as copy, not as instructions.
+ hint.querySelector('span').textContent=last?`${verb}すると、本編へ進みます`:`画面を${verb}すると進みます`;
+ hint.querySelector('small').textContent=portrait||touch?'スワイプでも進めます':'クリックかスクロールで進む · 止めると映像も止まる';
  counter.textContent=String(Math.min(TOTAL,Math.floor(t))).padStart(2,'0')+' / '+Math.round(TOTAL);opening.dataset.time=t.toFixed(2);
 }
 function scrolled(){const max=opening.scrollHeight-opening.clientHeight;return max>0?clamp(opening.scrollTop/max):0;}

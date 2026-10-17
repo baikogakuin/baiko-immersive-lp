@@ -109,7 +109,10 @@
     stage.dataset.scene=current; resetCamera(); renderHotspots(scene); document.querySelector('#place-name').textContent=(current==='start'?'一日のはじまり':scene.label.split('｜').pop().trim());
     syncMobileControls();
     setText(scene.title);label.textContent=scene.label;note.textContent=current==='end'&&selectedMood?(selectedMood==='friends'?'みんなと笑った時間を、また。':'自分のペースで過ごす時間を、また。'):scene.event?eventNote(scene.event):scene.note;
-    document.querySelector('#interaction-hint').textContent=current==='start'?'ボタンを押して、あなたの一日を進めてください。':current==='views'?'写真を選ぶと、眺める方向が変わります。':'';
+    // Main route only; side trips share the step of the scene they branch from. Ends at the online briefing, the page's purpose.
+    const route=['start','stairs','sky','door','glass','chapel','morning','lunch','break','friends','after','ideas','sunset','end','online'],step=route.indexOf({quiet:'friends',views:'friends'}[current]||current);
+    document.querySelector('#scene-progress').textContent=step>0&&step<route.length-1?`${step} / ${route.length-1}　あと${route.length-1-step}回で説明会のご案内`:'';
+    document.querySelector('#interaction-hint').textContent=current==='start'?'下のボタンを押すと進みます（約2分）。':current==='views'?'写真を選ぶと、眺める方向が変わります。':'';
     actions.replaceChildren();
     for(const [text,url] of current==='online'&&perkItems.length?[]:sceneLinks(current)){const a=document.createElement('a');a.textContent=text;a.href=url;a.target='_blank';a.rel='noopener noreferrer';if(scene.event)a.className='is-apply';actions.append(a);}
     // One way forward is not a choice: show it as a single "next" step, and let a tap on the photo advance too.
