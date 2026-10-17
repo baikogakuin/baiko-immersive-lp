@@ -296,7 +296,6 @@ html,body{overflow:clip;overscroll-behavior:none}
 #guide .gd-phone{flex:none;width:34px;height:34px;color:#e2c27c;animation:rn-turn 2.4s var(--ease,ease) infinite}
 #guide .gd-num{flex:none;width:34px;height:34px;display:grid;place-items:center;border:1.5px solid #e2c27c;border-radius:50%;color:#e2c27c;font-family:var(--serif);font-size:16px}
 #guide-start{min-height:54px;margin-top:4px;padding:12px 22px;border-radius:999px;background:#e2c27c;color:#10202a;font-size:16px;font-weight:700;letter-spacing:.08em}
-#guide-apply{min-height:44px;padding:6px 4px;color:#fff8ec;font-size:13px;text-decoration:underline;text-underline-offset:4px}
 #guide .gd-made{font-size:11px;color:#bfb6a8;text-align:center}
 @media(orientation:landscape) and (max-height:520px){
 #guide .gd-card{width:min(760px,100%);display:grid;grid-template-columns:1fr 1fr;column-gap:22px;row-gap:8px;align-items:center}
@@ -305,7 +304,6 @@ html,body{overflow:clip;overscroll-behavior:none}
 #guide .gd-steps li{padding:7px 12px}
 #guide .gd-steps b{font-size:13px}#guide .gd-steps small{font-size:11px}
 #guide-start{grid-column:1;min-height:46px;font-size:15px}
-#guide-apply{grid-column:1;min-height:36px;font-size:12px}
 #guide .gd-made{grid-column:1/-1}
 #guide h2{font-size:19px}
 }
