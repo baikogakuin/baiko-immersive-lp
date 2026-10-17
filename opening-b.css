@@ -244,3 +244,17 @@ body.opening-active #experience{pointer-events:none}
 /* Student-made credit, visible from the very first frame. */
 #opening .opening-made{display:block;margin-top:8px;font-family:"Yu Mincho","Hiragino Mincho ProN",serif;font-size:13px;font-weight:600;letter-spacing:.06em;line-height:1.6;color:#fff;text-shadow:0 1px 10px #000c}
 @media(max-width:700px) and (orientation:portrait){#opening .opening-made{margin-top:34px;font-size:12px;letter-spacing:.03em}}
+/* スマホ横向き：見出し・制作クレジット・案内・説明会ボタンが重ならないよう、上下の帯に整理する */
+@media(orientation:landscape) and (max-height:500px){
+ #opening .opening-credit{top:10px;left:16px;display:flex;align-items:baseline;gap:10px;font-size:9px;letter-spacing:.14em}
+ #opening .opening-made{margin:0;font-size:11px;letter-spacing:.02em;line-height:1.3}
+ #opening .opening-made br{display:none}
+ #opening .opening-controls{top:2px}
+ #opening .opening-bottom{display:none}
+ #opening .ob-hint{left:16px;bottom:10px;transform:none;max-width:42%;padding:6px 12px;border-radius:18px;gap:0}
+ #opening .ob-hint.is-quiet{transform:scale(.92);transform-origin:left bottom}
+ #opening .ob-hint span{font-size:11px}
+ #opening .ob-hint small,#opening .ob-hint i{display:none}
+ #opening .ob-feature-copy{top:52px}
+ #opening .ob-feature-strip{top:auto;bottom:62px;height:48%}
+}

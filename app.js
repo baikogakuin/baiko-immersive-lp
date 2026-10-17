@@ -268,14 +268,24 @@
   const soundButton=document.querySelector('#sound-toggle'),soundLabel=document.querySelector('#sound-label');
   const bgm=new Audio(window.BAIKO_BGM||'assets/youth-bgm.mp3');
   bgm.loop=true;bgm.preload='auto';bgm.volume=.75;
-  let audioIsOn=false,soundEpoch=0;
+  let audioIsOn=false,soundEpoch=0,bgmPrimed=false,priming=false,soundPending=false;
+  // iPhone only lets a page start audio from a tap. The opening scrolls into the main part without one,
+  // so the opening unlocks this element silently during its first tap, and a blocked start retries on the next tap.
+  window.BAIKO_PRIME_BGM=()=>{
+    if(bgmPrimed||priming||audioIsOn)return;priming=true;bgm.muted=true;
+    bgm.play().then(()=>{if(priming){bgm.pause();bgm.currentTime=0;}bgmPrimed=true;}).catch(()=>{}).finally(()=>{priming=false;bgm.muted=false;});
+  };
+  function retrySound(event){if(soundPending&&!soundButton.contains(event.target)){soundPending=false;setSound(true);}}
+  ['pointerdown','touchend','keydown'].forEach(e=>document.addEventListener(e,retrySound,true));
   function soundUI(){
     soundButton.setAttribute('aria-pressed',String(audioIsOn));
     soundLabel.textContent=audioIsOn?'音 ON':'音 OFF';
   }
   async function setSound(on){
     const epoch=++soundEpoch;
+    soundPending=false;
     if(!on){bgm.pause();audioIsOn=false;soundUI();return;}
+    if(priming){priming=false;bgm.muted=false;}
     soundLabel.textContent='音 読込中';
     try{
       // Call play within the tap handler; iPad routes media through playback audio.
@@ -284,12 +294,12 @@
       audioIsOn=!bgm.paused;soundUI();
     }catch(error){
       if(epoch!==soundEpoch)return;
-      audioIsOn=false;soundUI();
-      announce('音楽を開始できませんでした。「音 OFF」を押すと再試行できます。');
+      audioIsOn=false;soundUI();soundPending=true;
+      announce('画面をタップすると、音楽が流れます。');
     }
   }
-  bgm.addEventListener('pause',()=>{audioIsOn=false;soundUI();});
-  bgm.addEventListener('playing',()=>{audioIsOn=true;soundUI();});
+  bgm.addEventListener('pause',()=>{if(priming)return;audioIsOn=false;soundUI();});
+  bgm.addEventListener('playing',()=>{if(priming)return;audioIsOn=true;soundUI();});
   bgm.addEventListener('error',()=>{audioIsOn=false;soundUI();announce('音楽を読み込めませんでした。ページを再読み込みしてください。');});
   soundButton.addEventListener('click',()=>{const next=!audioIsOn;if(movieOn)movieMusicWanted=next;setSound(next);});
 

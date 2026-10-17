@@ -296,3 +296,19 @@ html,body{overflow:clip;overscroll-behavior:none}
 #rotate-notice[hidden]{display:none!important}
 @keyframes rn-turn{0%,25%{transform:rotate(0)}55%,85%{transform:rotate(-90deg)}100%{transform:rotate(0)}}
 @media(prefers-reduced-motion:reduce){#rotate-notice .rn-phone{animation:none;transform:rotate(-90deg)}}
+
+/* スマホ横向き：説明会ボタンは右下の小さな帯に。見出しや写真の説明文に重ねない */
+@media(orientation:landscape) and (max-height:500px){
+ #online-shortcut,body.opening-active #online-shortcut,body:has(#experience.is-cinema) #online-shortcut{left:auto;right:16px;bottom:calc(env(safe-area-inset-bottom,0px) + 8px);min-height:36px;padding:6px 14px;gap:10px;font-size:12px;letter-spacing:.06em;border-width:1.5px}
+ #online-shortcut .cta-perk{top:-9px;left:10px;font-size:8px;padding:1px 6px}
+}
+
+/* スマホ横向き・景色を選ぶ場面：選択肢と「次へ」を1画面に収め、下の説明会ボタン・戻るボタンと重ねない */
+@media(orientation:landscape) and (max-height:500px){
+ #experience[data-scene=views] .scene-caption{top:80px;bottom:58px;max-height:none}
+ #experience[data-scene=views] h1{font-size:22px;line-height:1.3}
+ #experience[data-scene=views] .scene-caption>h1+p{display:none}
+ #experience[data-scene=views] #view-options{margin-top:8px;padding:2px}
+ #experience[data-scene=views] .view-button{width:78px;height:50px}
+ #experience[data-scene=views] .actions{margin-top:8px}
+}

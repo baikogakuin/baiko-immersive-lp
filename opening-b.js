@@ -317,7 +317,7 @@ function placeClock(t){
 // The film occupies the first FILM share of the scroll track; the rest dissolves into the LP.
 const FILM=.92,sticky=opening.querySelector('.ob-sticky'),hint=opening.querySelector('.ob-hint');
 const sound=opening.querySelector('#opening-sound'),skip=opening.querySelector('#opening-skip');
-const audio=new Audio('assets/opening-b-score.mp3');audio.preload='auto';audio.loop=true;audio.volume=.75;
+const audio=new Audio('assets/ghibli-opening.mp3');audio.preload='auto';audio.loop=true;audio.volume=.75;
 let done=true,ready=false,shown=0,raf=0,wantsSound=false,audioEpoch=0,startupTimer,previousFocus=null;
 function draw(t){
  // t runs over the whole film; tt is school-day time, negative during the wake-up prologue.
@@ -345,7 +345,7 @@ function frame(){
  if(p>.995&&shown>TOTAL-.05)finish();
 }
 function finish(focus=false){
- if(done)return;const carrySound=!audio.paused;done=true;ready=false;cancelAnimationFrame(raf);clearTimeout(startupTimer);audioEpoch++;audio.pause();
+ if(done)return;const carrySound=wantsSound;done=true;ready=false;cancelAnimationFrame(raf);clearTimeout(startupTimer);audioEpoch++;audio.pause();
  opening.hidden=true;stage.inert=false;document.body.classList.remove('opening-active');
  if(carrySound){const lpSound=document.querySelector('#sound-toggle');if(lpSound?.getAttribute('aria-pressed')!=='true')lpSound.click();}
  document.removeEventListener('visibilitychange',visibility);document.removeEventListener('keydown',keyboard);reduced.removeEventListener('change',motionChange);removeEventListener('resize',resize);unlockEvents.forEach(e=>document.removeEventListener(e,unlock,true));
@@ -354,7 +354,7 @@ function finish(focus=false){
 function soundLabel(on){sound.textContent=on?'音を消す':'音をつける';sound.setAttribute('aria-pressed',String(on));}
 async function playSound(){const epoch=++audioEpoch;try{await audio.play();if(done||!wantsSound||epoch!==audioEpoch){audio.pause();return;}soundLabel(true);}catch{if(epoch===audioEpoch)soundLabel(false);}}
 // Sound is on by default; browsers release it on the first tap, click or key press.
-function unlock(event){if(!done&&wantsSound&&audio.paused&&!sound.contains(event.target))playSound();}
+function unlock(event){if(done||sound.contains(event.target))return;window.BAIKO_PRIME_BGM?.();if(wantsSound&&audio.paused)playSound();}
 const unlockEvents=['pointerdown','touchend','keydown'];
 function visibility(){if(document.hidden){audioEpoch++;audio.pause();}else if(!done&&wantsSound)playSound();}
 function keyboard(event){if(event.key==='Escape'){event.preventDefault();finish(true);}else if(event.key==='ArrowRight'){event.preventDefault();advance();}}
