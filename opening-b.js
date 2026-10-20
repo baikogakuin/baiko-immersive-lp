@@ -195,7 +195,7 @@ const montage=(()=>{
  const single=(name,focus)=>{const box=el('div','ob-cut',layer);const img=photo(name,box);img.style.objectPosition=focus;return {box,img};};
  const cuts=[{at:0,end:.5,from:1.3,rot:-2,...single('event-stage','50% 45%')},{at:.45,end:.95,from:1.25,rot:2,...single('sports-team-huddle','50% 45%')},{at:.9,end:1.4,from:1.2,rot:-1.5,...single('event-music','50% 55%')}];
  const split=el('div','ob-split',layer);
- const panels=[['gym-mic-interview','62% 50%'],['event-festival','50% 55%'],['gym-teal-class-photo','50% 50%']].map(([n,f],i)=>{const panel=el('div','ob-split-panel',split);const img=photo(n,panel);img.style.objectPosition=f;return {panel,img,i};});
+ const panels=[['gym-mic-interview','62% 50%'],['event-team','62% 50%'],['gym-teal-class-photo','50% 50%']].map(([n,f],i)=>{const panel=el('div','ob-split-panel',split);const img=photo(n,panel);img.style.objectPosition=f;return {panel,img,i};});
  const finale=single('lecture-selection-focus','22% 55%');
  const grid=el('div','ob-quad',layer);
  const quads=['event-stage','sports-red-team-group','event-music','event-spotlight'].map(n=>{const cell=el('div','ob-quad-cell',grid);photo(n,cell);return cell;});
