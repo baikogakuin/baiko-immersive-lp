@@ -1,0 +1,36 @@
+/* 2026-10-27: after choosing "walk the day", a how-to step: turn the phone sideways, then the three controls. */
+#guide .gd-howto{display:none;flex-direction:column;gap:12px}
+#guide.is-howto .gd-howto{display:flex}
+#guide.is-howto .gd-choices,#guide.is-howto #guide-title{display:none}
+#guide .gd-howto-title{font-family:var(--serif);font-size:clamp(21px,5.6vw,26px);font-weight:600;line-height:1.5;letter-spacing:.05em;text-align:center}
+#guide .gd-rot{display:none;align-items:center;gap:16px;padding:14px 16px;border:1.5px solid #e2c27c;border-radius:14px;background:#e2c27c1f}
+#guide .gd-rot .gd-phone{width:56px;height:56px}
+#guide .gd-rot b{display:block;font-size:17px;font-weight:700;line-height:1.5;letter-spacing:.04em}
+#guide .gd-rot small{display:block;font-size:12px;color:#d9cfc0;line-height:1.6}
+#guide .gd-rot-l{display:none}
+#guide .gd-rot-l .gd-check{flex:none;width:56px;height:56px;display:grid;place-items:center;border-radius:50%;background:#e2c27c;color:#10202a;font-size:30px;font-weight:700}
+#guide .gd-rot-p,#guide .gd-rot-l{align-items:center;gap:16px}
+#guide .gd-rot-p{display:flex}
+@media(max-width:600px) and (orientation:portrait),(max-height:520px) and (orientation:landscape){#guide .gd-rot{display:flex}}
+@media(orientation:landscape){#guide .gd-rot-p{display:none}#guide .gd-rot-l{display:flex}}
+#guide .gd-ops{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+#guide .gd-ops li{display:flex;align-items:center;gap:14px;padding:10px 14px;border:1px solid #ffffff33;border-radius:10px;background:#ffffff0d}
+#guide .gd-ops .gd-num{flex:none;width:30px;height:30px;display:grid;place-items:center;border:1.5px solid #e2c27c;border-radius:50%;color:#e2c27c;font-family:var(--serif);font-size:15px}
+#guide .gd-ops b{display:block;font-size:15px;font-weight:600;letter-spacing:.03em;line-height:1.5}
+#guide .gd-ops small{display:block;font-size:12px;color:#d9cfc0;line-height:1.6}
+#guide-go{min-height:54px;padding:12px 22px;border-radius:999px;background:#e2c27c;color:#10202a;font-size:17px;font-weight:700;letter-spacing:.08em}
+#guide-go:focus-visible{outline:3px solid #fff8ec;outline-offset:3px}
+#guide-portrait{align-self:center}
+@media(orientation:landscape) and (max-height:520px){
+#guide.is-howto{align-items:flex-start}
+#guide .gd-howto{display:none;flex-direction:row;flex-wrap:wrap;column-gap:14px;row-gap:8px;align-items:center}
+#guide.is-howto .gd-howto{display:flex}
+#guide .gd-howto-title{display:none}
+#guide .gd-rot{flex:1 1 100%;padding:8px 14px}
+#guide .gd-rot .gd-check{width:34px;height:34px;font-size:20px}
+#guide .gd-rot b{font-size:15px}
+#guide .gd-ops{flex:1 1 55%;gap:5px}
+#guide .gd-ops li{padding:6px 10px}
+#guide .gd-ops b{font-size:13px}#guide .gd-ops small{font-size:11px}
+#guide-go{flex:1 1 30%;min-height:46px}
+}
