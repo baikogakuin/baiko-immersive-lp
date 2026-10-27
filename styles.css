@@ -331,3 +331,10 @@ html,body{overflow:clip;overscroll-behavior:none}
  #experience[data-scene=views] .view-button{width:78px;height:50px}
  #experience[data-scene=views] .actions{margin-top:8px}
 }
+
+/* Registration is available on the first-visit guide, before starting the experience. */
+#guide-online{min-height:54px;padding:12px 18px;border:2px solid #7d2231;border-radius:999px;background:#fff;color:#7d2231;font-size:16px;font-weight:700;line-height:1.5;letter-spacing:.03em}
+#guide-online:hover{background:#fbf3f4}
+#guide-online:focus-visible{outline:3px solid #e2c27c;outline-offset:3px}
+@media(orientation:landscape) and (max-height:500px){#guide-online{grid-column:1;min-height:46px;font-size:14px;padding:8px 12px}#guide .gd-steps{grid-row:1/span 4}}
+@media(orientation:portrait) and (max-height:700px){#guide .gd-card{gap:10px}#guide h2{font-size:20px}#guide .gd-steps li{padding:7px 12px}}

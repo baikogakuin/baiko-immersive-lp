@@ -63,7 +63,7 @@
   const eventNames={online:'オンライン説明会',visit:'入試説明会'};
   function eventNote(key){const e=events[key]||{};return e.date?'日時：'+e.date:'日時・申込方法は未確定です。決まり次第、ここでお知らせします。';}
   function sceneLinks(key){
-    if(key==='end')return [['学校をもっと知る ↗','https://www.baiko.ac.jp/highschool/']];
+    if(key==='end')return [['入試説明会を予約する ↗','https://seed.software/public/baiko/322f7735d1']];
     const event=scenes[key].event;if(!event)return [];
     const e=events[event]||{};return [[e.url?eventNames[event]+'に申し込む ↗':'学校サイトで最新の案内を見る ↗',e.url||fallbackUrl]];
   }
