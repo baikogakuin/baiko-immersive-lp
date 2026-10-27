@@ -77,7 +77,7 @@
       card=document.createElement('div');card.id='perk-card';card.setAttribute('role','group');card.setAttribute('aria-label','オンライン説明会の参加者特典');
       const tag=document.createElement('p');tag.className='perk-tag';tag.textContent='豪華特典 '+perkItems.length+'つ';
       // Perks split into "on sign-up" and "only for attendees" (after:true), each under its own caption.
-      const groups=[['申し込んだら、すぐ届く',perkItems.filter(i=>!i.after)],['参加した人だけ',perkItems.filter(i=>i.after)]].filter(([,items])=>items.length);
+      const groups=[['公式LINEで、順番に届く',perkItems.filter(i=>!i.after)],['参加した人だけ',perkItems.filter(i=>i.after)]].filter(([,items])=>items.length);
       const lists=[];
       for(const [caption,items] of groups){
         const cap=document.createElement('p');cap.className='perk-group';cap.textContent=caption+' '+items.length+'つ';
@@ -90,7 +90,7 @@
       // The apply button sits right under the tag so it never falls below the fold behind the perk list.
       const [applyText,applyUrl]=sceneLinks('online')[0];
       const apply=document.createElement('a');apply.className='perk-apply';apply.href=applyUrl;apply.target='_blank';apply.rel='noopener noreferrer';apply.textContent=applyText;
-      const a=document.createElement('a');a.className='perk-line';a.href=perk.line;a.target='_blank';a.rel='noopener noreferrer';a.textContent='公式LINEを友だち追加しておく ↗';
+      const a=document.createElement('a');a.className='perk-line';a.href=perk.line;a.target='_blank';a.rel='noopener noreferrer';a.textContent='公式LINEを友だち追加して、特典を受け取る ↗';
       card.append(tag,apply,...lists,how,a);actions.before(card);
     }
     card.hidden=false;
