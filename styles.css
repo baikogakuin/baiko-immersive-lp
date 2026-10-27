@@ -286,29 +286,41 @@ html,body{overflow:clip;overscroll-behavior:none}
 /* First screen (2026-10-17, from Vice Principal Shigemura): say what the page is, how to move, how long, and what waits at the end. Parents open it cold from the flyer QR. */
 #guide{position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;padding:16px;background:#0b1d27;color:#fff8ec;overflow-y:auto}
 #guide[hidden]{display:none!important}
-#guide .gd-card{width:min(560px,100%);display:flex;flex-direction:column;align-items:stretch;gap:14px;text-align:left}
-#guide .gd-school{font-size:11px;letter-spacing:.14em;color:#e2c27c}
-#guide h2{font-family:var(--serif);font-size:clamp(20px,5.4vw,26px);font-weight:600;line-height:1.6;letter-spacing:.04em}
-#guide .gd-steps{list-style:none;margin:2px 0;padding:0;display:flex;flex-direction:column;gap:10px}
-#guide .gd-steps li{display:flex;align-items:center;gap:14px;padding:10px 14px;border:1px solid #ffffff33;border-radius:10px;background:#ffffff0d}
-#guide .gd-steps b{display:block;font-size:15px;font-weight:600;letter-spacing:.03em;line-height:1.5}
-#guide .gd-steps small{display:block;font-size:12px;color:#d9cfc0;line-height:1.6}
-#guide .gd-phone{flex:none;width:34px;height:34px;color:#e2c27c;animation:rn-turn 2.4s var(--ease,ease) infinite}
-#guide .gd-num{flex:none;width:34px;height:34px;display:grid;place-items:center;border:1.5px solid #e2c27c;border-radius:50%;color:#e2c27c;font-family:var(--serif);font-size:16px}
-#guide-start{min-height:54px;margin-top:4px;padding:12px 22px;border-radius:999px;background:#e2c27c;color:#10202a;font-size:16px;font-weight:700;letter-spacing:.08em}
+/* 2026-10-27: first screen is an equal two-way choice: walk the day, or go straight to registering for the online session. */
+#guide .gd-card{width:min(720px,100%);display:flex;flex-direction:column;align-items:stretch;gap:16px;text-align:left}
+#guide .gd-school{font-size:11px;letter-spacing:.14em;color:#e2c27c;text-align:center}
+#guide h2{font-family:var(--serif);font-size:clamp(21px,5.6vw,28px);font-weight:600;line-height:1.55;letter-spacing:.05em;text-align:center}
+#guide .gd-br{display:none}
+#guide .gd-choices{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+#guide .gd-choice{display:flex;flex-direction:column;gap:8px}
+#guide-start,#guide-online{position:relative;flex:1;display:flex;flex-direction:column;align-items:flex-start;gap:8px;min-height:150px;padding:18px 18px 20px;border-radius:14px;text-align:left;transition:transform .2s,box-shadow .2s}
+#guide-start{background:#e2c27c;color:#10202a}
+#guide-online{background:#7d2231;color:#fff8ec;border:1.5px solid #e2c27c}
+#guide-start:hover,#guide-online:hover{transform:translateY(-2px);box-shadow:0 10px 26px #0007}
+#guide-start:focus-visible,#guide-online:focus-visible{outline:3px solid #fff8ec;outline-offset:3px}
+#guide .gd-tag{font-size:12px;font-weight:700;letter-spacing:.06em;padding:3px 10px;border-radius:999px;background:#10202a1a}
+#guide-online .gd-tag{background:#ffffff26}
+#guide .gd-choice b{font-family:var(--serif);font-size:clamp(19px,4.8vw,23px);font-weight:700;line-height:1.5;letter-spacing:.05em}
+#guide .gd-go{position:absolute;right:16px;bottom:14px;font-size:24px;line-height:1}
+#guide .gd-tip{display:flex;align-items:center;gap:8px;font-size:12px;line-height:1.6;color:#d9cfc0;padding:0 4px}
+#guide .gd-phone{flex:none;width:22px;height:22px;color:#e2c27c;animation:rn-turn 2.4s var(--ease,ease) infinite}
 /* Not everyone will turn the phone: let them start upright. Only shown while the phone is upright. */
-#guide-portrait{display:none;min-height:46px;padding:10px 22px;border:1px solid #ffffff80;border-radius:999px;color:#fff8ec;font-size:14px;letter-spacing:.05em}
+#guide-portrait{display:none;align-self:flex-start;min-height:40px;padding:6px 4px;color:#fff8ec;font-size:13px;letter-spacing:.04em;text-decoration:underline;text-underline-offset:4px}
 @media(orientation:portrait){#guide-portrait{display:block}}
 #guide .gd-made{font-size:11px;color:#bfb6a8;text-align:center}
+@media(max-width:520px){
+#guide .gd-br{display:inline}
+#guide .gd-choices{grid-template-columns:1fr;gap:12px}
+#guide-start,#guide-online{min-height:0;padding:14px 48px 14px 16px;gap:6px}
+#guide .gd-go{top:50%;bottom:auto;transform:translateY(-50%)}
+}
 @media(orientation:landscape) and (max-height:520px){
-#guide .gd-card{width:min(760px,100%);display:grid;grid-template-columns:1fr 1fr;column-gap:22px;row-gap:8px;align-items:center}
-#guide .gd-school,#guide h2{grid-column:1}
-#guide .gd-steps{grid-column:2;grid-row:1/span 3;gap:6px}
-#guide .gd-steps li{padding:7px 12px}
-#guide .gd-steps b{font-size:13px}#guide .gd-steps small{font-size:11px}
-#guide-start{grid-column:1;min-height:46px;font-size:15px}
-#guide .gd-made{grid-column:1/-1}
-#guide h2{font-size:19px}
+#guide{align-items:flex-start}
+#guide .gd-card{gap:8px}
+#guide h2{font-size:18px}
+#guide-start,#guide-online{min-height:0;padding:12px 44px 12px 14px;gap:4px}
+#guide .gd-choice b{font-size:17px}
+#guide .gd-tip{font-size:11px}
 }
 @keyframes rn-turn{0%,25%{transform:rotate(0)}55%,85%{transform:rotate(-90deg)}100%{transform:rotate(0)}}
 @media(prefers-reduced-motion:reduce){#guide .gd-phone{animation:none;transform:rotate(-90deg)}}
@@ -332,9 +344,3 @@ html,body{overflow:clip;overscroll-behavior:none}
  #experience[data-scene=views] .actions{margin-top:8px}
 }
 
-/* Registration is available on the first-visit guide, before starting the experience. */
-#guide-online{min-height:54px;padding:12px 18px;border:2px solid #7d2231;border-radius:999px;background:#fff;color:#7d2231;font-size:16px;font-weight:700;line-height:1.5;letter-spacing:.03em}
-#guide-online:hover{background:#fbf3f4}
-#guide-online:focus-visible{outline:3px solid #e2c27c;outline-offset:3px}
-@media(orientation:landscape) and (max-height:500px){#guide-online{grid-column:1;min-height:46px;font-size:14px;padding:8px 12px}#guide .gd-steps{grid-row:1/span 4}}
-@media(orientation:portrait) and (max-height:700px){#guide .gd-card{gap:10px}#guide h2{font-size:20px}#guide .gd-steps li{padding:7px 12px}}
