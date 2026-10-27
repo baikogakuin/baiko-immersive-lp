@@ -75,16 +75,23 @@
     if(current!=='online'||!perkItems.length){if(card)card.hidden=true;return;}
     if(!card){
       card=document.createElement('div');card.id='perk-card';card.setAttribute('role','group');card.setAttribute('aria-label','オンライン説明会の参加者特典');
-      const tag=document.createElement('p');tag.className='perk-tag';tag.textContent='参加者特典 '+perkItems.length+'つ';
-      const list=document.createElement('ul');list.className='perk-items';
-      for(const item of perkItems){const li=document.createElement('li');const name=document.createElement('b');name.textContent=item.name;const note=document.createElement('span');note.textContent=item.note||'';li.append(name,note);list.append(li);}
+      const tag=document.createElement('p');tag.className='perk-tag';tag.textContent='豪華特典 '+perkItems.length+'つ';
+      // Perks split into "on sign-up" and "only for attendees" (after:true), each under its own caption.
+      const groups=[['申し込んだら、すぐ届く',perkItems.filter(i=>!i.after)],['参加した人だけ',perkItems.filter(i=>i.after)]].filter(([,items])=>items.length);
+      const lists=[];
+      for(const [caption,items] of groups){
+        const cap=document.createElement('p');cap.className='perk-group';cap.textContent=caption+' '+items.length+'つ';
+        const list=document.createElement('ul');list.className='perk-items';
+        for(const item of items){const li=document.createElement('li');const name=document.createElement('b');name.textContent=item.name;const note=document.createElement('span');note.textContent=item.note||'';li.append(name,note);list.append(li);}
+        lists.push(cap,list);
+      }
       const how=document.createElement('ol');how.className='perk-how';how.setAttribute('aria-label','受け取り方');
       for(const step of perk.how||[]){const li=document.createElement('li');li.textContent=step;how.append(li);}
-      // The apply button lives in the card so it never falls below the fold behind the perk.
+      // The apply button sits right under the tag so it never falls below the fold behind the perk list.
       const [applyText,applyUrl]=sceneLinks('online')[0];
       const apply=document.createElement('a');apply.className='perk-apply';apply.href=applyUrl;apply.target='_blank';apply.rel='noopener noreferrer';apply.textContent=applyText;
       const a=document.createElement('a');a.className='perk-line';a.href=perk.line;a.target='_blank';a.rel='noopener noreferrer';a.textContent='公式LINEを友だち追加しておく ↗';
-      card.append(tag,list,how,apply,a);actions.before(card);
+      card.append(tag,apply,...lists,how,a);actions.before(card);
     }
     card.hidden=false;
   }
@@ -345,7 +352,7 @@
   document.addEventListener('keydown',event=>{if(event.key==='Escape'&&movieOn)exitMovie();});
   document.addEventListener('visibilitychange',()=>{if(document.hidden){if(movieOn)pauseMovie();else if(audioIsOn)setSound(false);}});
   const onlineShortcut=document.querySelector('#online-shortcut');
-  if(perkItems.length&&!onlineShortcut.querySelector('.cta-perk')){const badge=document.createElement('span');badge.className='cta-perk';badge.textContent='特典動画つき';onlineShortcut.prepend(badge);}
+  if(perkItems.length&&!onlineShortcut.querySelector('.cta-perk')){const badge=document.createElement('span');badge.className='cta-perk';badge.textContent='豪華'+perkItems.length+'特典つき';onlineShortcut.prepend(badge);}
   let onlineJump=false;
   onlineShortcut.addEventListener('click',async()=>{
     if(onlineJump)return;

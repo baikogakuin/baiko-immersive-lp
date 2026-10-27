@@ -211,6 +211,8 @@ h1,#experience[data-scene=views] h1{font-size:clamp(22px,6.4vw,26px);line-height
 #perk-card{margin-top:20px;max-width:420px;padding:18px 20px 20px;background:#fffdf8f2;color:#2a1b1e;border:2px solid #7d2231;box-shadow:0 0 0 3px #fffdf8f2,0 0 0 4px #b8924a,0 10px 30px #0006;text-shadow:none}
 #perk-card .perk-tag{display:inline-block;padding:3px 10px;background:#7d2231;color:#fff;font-size:10px;font-weight:700;letter-spacing:.2em}
 #perk-card .perk-items{list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0 0;padding:0}
+#perk-card .perk-group{margin:10px 0 0;font-size:11px;font-weight:700;letter-spacing:.08em;color:#7d2231}
+#perk-card .perk-group+.perk-items{margin-top:4px}
 #perk-card .perk-items li{display:grid;align-content:start;gap:2px;padding:9px 10px;background:#f5ece0;border-top:2px solid #b8924a}
 #perk-card .perk-items b{font-family:var(--serif);font-size:15px;font-weight:600;line-height:1.45;color:#7d2231}
 #perk-card .perk-items span{font-size:10.5px;line-height:1.6;color:#4a3a3c}
@@ -233,7 +235,7 @@ h1,#experience[data-scene=views] h1{font-size:clamp(22px,6.4vw,26px);line-height
 @media(max-width:700px) and (orientation:portrait) and (max-height:700px){#experience[data-scene=online]{--photo-h:min(30vw,14svh)}}
 /* Online-session scene: the fixed CTA would point to the page you are already on, so the in-page apply button takes its place. Phones keep the perk card to names + one-line steps. */
 body:has(#experience[data-scene=online]) #online-shortcut{display:none}
-@media(max-width:700px) and (orientation:portrait){#perk-card .perk-items span{display:none}#perk-card .perk-items li{padding:6px 8px}#perk-card .perk-how{margin-top:8px;font-size:10px}#perk-card .perk-line{min-height:40px}#perk-card .perk-apply{margin-top:10px;min-height:48px;font-size:14px}}
+@media(max-width:700px) and (orientation:portrait){#perk-card .perk-items span{display:none}#perk-card .perk-items{grid-template-columns:repeat(3,1fr);gap:5px}#perk-card .perk-items b{font-size:12px;line-height:1.4}#perk-card .perk-group{margin-top:8px;font-size:10.5px}#perk-card .perk-items li{padding:5px 6px}#perk-card .perk-how{margin-top:8px;font-size:10px}#perk-card .perk-line{min-height:40px}#perk-card .perk-apply{margin-top:10px;min-height:48px;font-size:14px}}
 /* Phones, redesigned (2026-10-16): phones are the main screen.
    The photo runs edge to edge from the very top under the header, slightly zoomed in on the landscape shot;
    below it the backdrop is dimmed so the words read cleanly; the steps forward are compact so every choice stays on screen. */
