@@ -91,7 +91,8 @@
       const [applyText,applyUrl]=sceneLinks('online')[0];
       const apply=document.createElement('a');apply.className='perk-apply';apply.href=applyUrl;apply.target='_blank';apply.rel='noopener noreferrer';apply.textContent=applyText;
       const a=document.createElement('a');a.className='perk-line';a.href=perk.line;a.target='_blank';a.rel='noopener noreferrer';a.textContent='公式LINEを友だち追加して、特典を受け取る ↗';
-      card.append(tag,apply,...lists,how,a);actions.before(card);
+      const notice=document.createElement('p');notice.className='perk-notice';notice.textContent='※本説明会は2027年度入試の受験料免除の対象外です。';
+      card.append(tag,apply,notice,...lists,how,a);actions.before(card);
     }
     card.hidden=false;
   }

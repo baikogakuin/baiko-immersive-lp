@@ -227,6 +227,7 @@ h1,#experience[data-scene=views] h1{font-size:clamp(22px,6.4vw,26px);line-height
 #perk-card .perk-apply:hover{background:#621726}
 #perk-card .perk-line{display:flex;align-items:center;justify-content:center;margin-top:6px;min-height:40px;padding:8px 16px;background:#06c755;color:#fff;font-size:13px;font-weight:700;letter-spacing:.06em;border-radius:6px}
 #perk-card .perk-line:hover{background:#05b34c}
+#perk-card .perk-notice{margin:6px 0 0;font-size:11px;line-height:1.5;font-weight:700;color:#7d2231;text-align:center}
 #perk-card .perk-line:focus-visible{outline:2px solid #7d2231;outline-offset:3px}
 #online-shortcut .cta-perk{position:absolute;top:-11px;left:14px;padding:2px 8px;box-shadow:0 2px 6px #0004;background:#7d2231;color:#fff;font-family:var(--sans);font-size:10px;font-weight:700;letter-spacing:.12em;border-radius:3px;white-space:nowrap}
 @media(max-width:700px) and (orientation:portrait){#perk-card{margin-top:16px;max-width:none;padding:14px 16px 16px}#perk-card .perk-items b{font-size:14px}#perk-card .perk-line{min-height:48px;font-size:13px}#online-shortcut .cta-perk{font-size:9px;padding:2px 6px;top:-10px}}
