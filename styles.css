@@ -347,3 +347,23 @@ html,body{overflow:clip;overscroll-behavior:none}
  #experience[data-scene=views] .actions{margin-top:8px}
 }
 
+/* Online-session card, simplified (2026-10-30): one apply button, three headline perks, the rest folded under "すべて見る". */
+#perk-card .perk-apply{margin-top:0;min-height:54px;font-size:16px}
+#perk-card .perk-lead{margin:12px 0 0;font-family:var(--serif);font-size:15px;font-weight:600;color:#7d2231}
+#perk-card .perk-top{margin:6px 0 0;padding:0;list-style:none;display:grid;gap:4px;font-size:13px;line-height:1.5;color:#2a1b1e}
+#perk-card .perk-top li::before{content:"・";color:#b8924a;font-weight:700}
+#perk-card .perk-more{margin-top:10px;border-top:1px solid #e3d6c3;padding-top:8px}
+#perk-card .perk-more summary{cursor:pointer;font-size:12px;font-weight:700;color:#7d2231;list-style:none}
+#perk-card .perk-more summary::-webkit-details-marker{display:none}
+#perk-card .perk-more summary::after{content:" ▾"}
+#perk-card .perk-more[open] summary::after{content:" ▴"}
+#perk-card .perk-more .perk-line{min-height:44px;font-size:14px}
+#perk-card .perk-notice{margin-top:10px;font-size:10px;font-weight:400;color:#6b5a5c}
+@media(orientation:landscape) and (max-height:560px){#perk-card .perk-apply{min-height:44px;font-size:14px}#perk-card .perk-lead{margin-top:8px;font-size:14px}#perk-card .perk-top{font-size:12px;gap:2px}#perk-card .perk-more{max-height:40svh;overflow-y:auto}}
+/* On the online-session scene the "next" choice steps back so the apply button is the only strong action. */
+#experience[data-scene=online] #scene-actions button{min-height:40px;padding:8px 4px;background:none;border:0;box-shadow:none;font-size:13px;opacity:.85;justify-content:flex-start;gap:8px}
+/* Online-session scene (2026-10-30): scenery stays still and the caption scrolls by itself, so the card never fights the camera. */
+#experience[data-scene=online] .scene-caption{pointer-events:auto;overscroll-behavior:contain;touch-action:pan-y}
+#experience[data-scene=online] .photo-plane img{transition:none}
+#experience[data-scene=online] #look-surface{cursor:default}
+#experience[data-scene=online] :is(#zoom-in,#zoom-out,#view-reset,.look-hint){display:none}

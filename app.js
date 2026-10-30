@@ -75,7 +75,15 @@
     if(current!=='online'||!perkItems.length){if(card)card.hidden=true;return;}
     if(!card){
       card=document.createElement('div');card.id='perk-card';card.setAttribute('role','group');card.setAttribute('aria-label','オンライン説明会の参加者特典');
-      const tag=document.createElement('p');tag.className='perk-tag';tag.textContent='豪華特典 '+perkItems.length+'つ';
+      // One action only (2026-10-30): the apply button, then three headline perks. The full list and the LINE sign-up fold away under "すべて見る".
+      const [applyText,applyUrl]=sceneLinks('online')[0];
+      const apply=document.createElement('a');apply.className='perk-apply';apply.href=applyUrl;apply.target='_blank';apply.rel='noopener noreferrer';apply.textContent=applyText;
+      const lead=document.createElement('p');lead.className='perk-lead';lead.textContent='参加すると、特典'+perkItems.length+'つ';
+      const tops=(perkItems.some(i=>i.top)?perkItems.filter(i=>i.top):perkItems).slice(0,3);
+      const topList=document.createElement('ul');topList.className='perk-top';
+      for(const item of tops){const li=document.createElement('li');li.textContent=item.name;topList.append(li);}
+      const more=document.createElement('details');more.className='perk-more';
+      const summary=document.createElement('summary');summary.textContent='特典'+perkItems.length+'つをすべて見る';
       // Perks split into "on sign-up" and "only for attendees" (after:true), each under its own caption.
       const groups=[['公式LINEで、順番に届く',perkItems.filter(i=>!i.after)],['参加した人だけ',perkItems.filter(i=>i.after)]].filter(([,items])=>items.length);
       const lists=[];
@@ -87,16 +95,13 @@
       }
       const how=document.createElement('ol');how.className='perk-how';how.setAttribute('aria-label','受け取り方');
       for(const step of perk.how||[]){const li=document.createElement('li');li.textContent=step;how.append(li);}
-      // The apply button sits right under the tag so it never falls below the fold behind the perk list.
-      const [applyText,applyUrl]=sceneLinks('online')[0];
-      const apply=document.createElement('a');apply.className='perk-apply';apply.href=applyUrl;apply.target='_blank';apply.rel='noopener noreferrer';apply.textContent=applyText;
       const a=document.createElement('a');a.className='perk-line';a.href=perk.line;a.target='_blank';a.rel='noopener noreferrer';
       const lineTitle=document.createElement('span');lineTitle.textContent='公式LINEを友だち追加 ↗';
       const lineNote=document.createElement('small');lineNote.textContent='特典'+perkItems.filter(i=>!i.after).length+'つが順番に届きます';
       a.append(lineTitle,lineNote);
       const notice=document.createElement('p');notice.className='perk-notice';notice.textContent='※本説明会は2027年度入試の受験料免除の対象外です。';
-      // Keep both actions above the long perk list, including on small phone screens.
-      card.append(tag,apply,notice,a,...lists,how);actions.before(card);
+      more.append(summary,...lists,how,a);
+      card.append(apply,lead,topList,more,notice);actions.before(card);
     }
     card.hidden=false;
   }
@@ -245,12 +250,13 @@
   const surface=document.querySelector('#look-surface');
   // Phones show the whole photo, so a tap moves the day forward instead of panning.
   surface.addEventListener('click',()=>{if(!mobileQuery.matches||busy||stage.dataset.single!=='true')return;const next=actions.querySelector('[data-next]');if(next)next.click();});
-  surface.addEventListener('pointerdown',event=>{if(busy||mobileQuery.matches)return;dragState={x:event.clientX,y:event.clientY,originX:cameraX,originY:cameraY};surface.setPointerCapture(event.pointerId);stage.classList.add('is-looking');});
+  // The online-session scene keeps the scenery still (2026-10-30), so scrolling the apply card never fights the camera.
+  surface.addEventListener('pointerdown',event=>{if(busy||mobileQuery.matches||current==='online')return;dragState={x:event.clientX,y:event.clientY,originX:cameraX,originY:cameraY};surface.setPointerCapture(event.pointerId);stage.classList.add('is-looking');});
   surface.addEventListener('pointermove',event=>{if(!dragState)return;cameraX=dragState.originX+event.clientX-dragState.x;cameraY=dragState.originY+event.clientY-dragState.y;applyCamera();});
   planes.forEach(plane=>plane.querySelector('img').addEventListener('load',applyCamera));
   function stopLooking(){dragState=null;stage.classList.remove('is-looking');}
   surface.addEventListener('pointerup',stopLooking);surface.addEventListener('pointercancel',stopLooking);
-  surface.addEventListener('wheel',event=>{event.preventDefault();const min=motionOff?1:1.08;cameraZoom=Math.max(min,Math.min(1.6,cameraZoom-Math.sign(event.deltaY)*.08));applyCamera();},{passive:false});
+  surface.addEventListener('wheel',event=>{if(current==='online')return;event.preventDefault();const min=motionOff?1:1.08;cameraZoom=Math.max(min,Math.min(1.6,cameraZoom-Math.sign(event.deltaY)*.08));applyCamera();},{passive:false});
   document.querySelector('#route-toggle').addEventListener('click',()=>{
     const recap=current==='recap';
     document.querySelector('#route-title').textContent=recap?'どの場所が、心に残った？':'今日は、どこへ。';
