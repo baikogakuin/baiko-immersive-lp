@@ -41,15 +41,16 @@
     after:{image:'window-near',phase:5,label:'放課後 ｜ まだ帰りたくない',title:'もう少しだけ、\nここにいよう。',note:'窓の外を眺めて、ひと息。',mobile:'53% 50%',choices:[['やってみたいことを話す','ideas']]},
     ideas:{image:'ideas',phase:5,label:'放課後 ｜ アイデアの時間',title:'「やってみたい」を、\nここから。',note:'浮かんだことを、黒板に。',mobile:'58% 50%',choices:[['帰り道へ','sunset']]},
     sunset:{image:'sunset',phase:6,label:'帰り道 ｜ 今日の終わり',title:'朝の階段が、\n少し違って見えた。',note:'「また明日。」',mobile:'55% 50%',choices:[['今日を振り返る','end']]},
-    end:{image:'sunset',phase:6,label:'あなたの、梅光の一日',title:'ありのままで、\n本気の青春。',note:'次は、この景色の中で。',mobile:'55% 50%',choices:[['オンライン説明会をのぞく','online']]},
-    online:{image:'summer-building',phase:6,label:'つぎの一歩 ｜ オンライン説明会',title:'まずは画面越しに、\n梅光をのぞいてみる。',event:'online',mobile:'60% 50%',choices:[['その次は、本物の景色へ','visit']]},
+    end:{image:'sunset',phase:6,label:'あなたの、梅光の一日',title:'ありのままで、\n本気の青春。',note:'次は、この景色の中で。',mobile:'55% 50%',choices:[['11/28 入試説明会の案内へ','online']]},
+    // 2026-11-14: the main CTA scene now leads to the 11/28 entrance-exam briefing (on campus) instead of the online session.
+    online:{image:'summer-stairs',phase:6,label:'つぎの一歩 ｜ 11/28 入試説明会（来校）',title:'写真で見た階段を、\n自分の足で。',event:'online',mobile:'48% 50%',choices:[['来校したあと、家族と振り返る','recap']]},
     visit:{image:'summer-stairs',phase:6,label:'つぎの一歩 ｜ 入試説明会（来校）',title:'写真で見た階段を、\n自分の足で。',event:'visit',mobile:'48% 50%',choices:[['来校したあと、家族と振り返る','recap']]},
     recap:{image:'high-view',phase:6,label:'来校のあとで ｜ 家族と振り返る',title:'見てきた景色を、\nもう一度いっしょに。',note:'「ここ、どうだった？」と話してみる。',mobile:'58% 50%',choices:[],tools:[['場所の写真で振り返る','places'],['このページを家族に送る','share']]}
   };
 
   scenes.start.title='もし、梅光を\n選んだら。';
   scenes.start.note='今日は、梅光生の気分で。';
-  scenes.start.choices=[['梅光の日常へ','stairs'],['オンライン説明会の案内','online']];
+  scenes.start.choices=[['梅光の日常へ','stairs'],['11/28 入試説明会の案内','online']];
   scenes.stairs.choices=[['校舎へ向かう','door'],['景色に寄り道する','sky']];
   // Phone backdrop: which detail of each photo to enlarge behind the frame ([position, zoom]).
   const backdrops={
@@ -60,10 +61,10 @@
   };
   const events=window.BAIKO_EVENTS||{};
   const fallbackUrl=events.fallbackUrl||'https://www.baiko.ac.jp/highschool/openschool/';
-  const eventNames={online:'オンライン説明会',visit:'入試説明会'};
+  const eventNames={online:'11/28 入試説明会',visit:'入試説明会'};
   function eventNote(key){const e=events[key]||{};return e.date?'日時：'+e.date:'日時・申込方法は未確定です。決まり次第、ここでお知らせします。';}
   function sceneLinks(key){
-    if(key==='end')return [['入試説明会を予約する ↗','https://seed.software/public/baiko/322f7735d1']];
+    if(key==='end')return [['11/28 入試説明会を予約する ↗','https://www.baiko.ac.jp/highschool/openschool/#events']];
     const event=scenes[key].event;if(!event)return [];
     const e=events[event]||{};return [[e.url?eventNames[event]+'に申し込む ↗':'学校サイトで最新の案内を見る ↗',e.url||fallbackUrl]];
   }
@@ -74,11 +75,11 @@
     let card=document.querySelector('#perk-card');
     if(current!=='online'||!perkItems.length){if(card)card.hidden=true;return;}
     if(!card){
-      card=document.createElement('div');card.id='perk-card';card.setAttribute('role','group');card.setAttribute('aria-label','オンライン説明会の参加者特典');
+      card=document.createElement('div');card.id='perk-card';card.setAttribute('role','group');card.setAttribute('aria-label','公式LINEの特典');
       // One action only (2026-10-30): the apply button, then three headline perks. The full list and the LINE sign-up fold away under "すべて見る".
       const [applyText,applyUrl]=sceneLinks('online')[0];
       const apply=document.createElement('a');apply.className='perk-apply';apply.href=applyUrl;apply.target='_blank';apply.rel='noopener noreferrer';apply.textContent=applyText;
-      const lead=document.createElement('p');lead.className='perk-lead';lead.textContent='参加すると、特典'+perkItems.length+'つ';
+      const lead=document.createElement('p');lead.className='perk-lead';lead.textContent='公式LINEで、特典'+perkItems.length+'つ';
       const tops=(perkItems.some(i=>i.top)?perkItems.filter(i=>i.top):perkItems).slice(0,3);
       const topList=document.createElement('ul');topList.className='perk-top';
       for(const item of tops){const li=document.createElement('li');li.textContent=item.name;topList.append(li);}
@@ -99,7 +100,7 @@
       const lineTitle=document.createElement('span');lineTitle.textContent='公式LINEを友だち追加 ↗';
       const lineNote=document.createElement('small');lineNote.textContent='特典'+perkItems.filter(i=>!i.after).length+'つが順番に届きます';
       a.append(lineTitle,lineNote);
-      const notice=document.createElement('p');notice.className='perk-notice';notice.textContent='※本説明会は2027年度入試の受験料免除の対象外です。';
+      const notice=document.createElement('p');notice.className='perk-notice';notice.hidden=true;
       more.append(summary,...lists,how,a);
       card.append(apply,lead,topList,more,notice);actions.before(card);
     }
@@ -363,7 +364,7 @@
   document.addEventListener('keydown',event=>{if(event.key==='Escape'&&movieOn)exitMovie();});
   document.addEventListener('visibilitychange',()=>{if(document.hidden){if(movieOn)pauseMovie();else if(audioIsOn)setSound(false);}});
   const onlineShortcut=document.querySelector('#online-shortcut');
-  if(perkItems.length&&!onlineShortcut.querySelector('.cta-perk')){const badge=document.createElement('span');badge.className='cta-perk';badge.textContent='豪華'+perkItems.length+'特典つき';onlineShortcut.prepend(badge);}
+  if(false&&perkItems.length&&!onlineShortcut.querySelector('.cta-perk')){const badge=document.createElement('span');badge.className='cta-perk';badge.textContent='豪華'+perkItems.length+'特典つき';onlineShortcut.prepend(badge);}
   let onlineJump=false;
   onlineShortcut.addEventListener('click',async()=>{
     if(onlineJump)return;
